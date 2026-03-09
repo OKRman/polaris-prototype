@@ -66,7 +66,7 @@
         placeholder="What was the meeting's stated purpose? What decisions needed making?"></textarea>
     </div>
 
-    <button id="evaluateBtn" onclick="evaluate()">Evaluate This Meeting</button>
+    <button id="evaluateBtn" onclick="runEvaluation()">Evaluate This Meeting</button>
 
     <div id="loading" class="loading" style="display:none;">
       <div class="spinner"></div>
@@ -78,7 +78,7 @@
   </div>
 
   <script>
-    async function evaluate() {
+    async function runEvaluation() {
       const transcript = document.getElementById('transcript').value.trim();
       const agenda = document.getElementById('agenda').value.trim();
 
