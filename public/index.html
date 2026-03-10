@@ -111,6 +111,7 @@
         }
 
         results.innerHTML = renderReport(data);
+        console.log('API RESPONSE:', JSON.stringify(data.red_flags), JSON.stringify(data.recommendations));
 
       } catch (err) {
         errorDiv.textContent = 'Error: ' + err.message;
@@ -183,10 +184,9 @@
         var flagItems = '';
         for (var i = 0; i < data.red_flags.length; i++) {
           var f = data.red_flags[i];
-          var fVals = Object.values(f).filter(function(v) { return typeof v === 'string'; });
-          var fName = fVals[0] || '';
-          var fDesc = fVals[1] || '';
-          var fRec = fVals[2] || '';
+         var fName, fDesc, fRec;
+          if (typeof f === 'string') { fName = f; fDesc = ''; fRec = ''; }
+          else { fName = f.pattern || f.name || f.title || f.flag || ''; fDesc = f.description || f.detail || f.message || f.explanation || ''; fRec = f.recommendation || f.action || f.suggestion || f.fix || ''; }
           flagItems += '<div style="background:#fef2f2; border-left:4px solid #dc2626; padding:16px; margin-bottom:12px; border-radius:0 8px 8px 0;">' +
             '<strong>' + fName + '</strong>' +
             '<p style="font-size:0.9rem; margin-top:4px;">' + fDesc + '</p>' +
@@ -205,10 +205,9 @@
         var recItems = '';
         for (var j = 0; j < data.recommendations.length; j++) {
           var r = data.recommendations[j];
-          var rVals = Object.values(r).filter(function(v) { return typeof v === 'string'; });
-          var rTitle = rVals[0] || '';
-          var rQuad = rVals[1] || '';
-          var rDetail = rVals[2] || '';
+          var rTitle, rQuad, rDetail;
+          if (typeof r === 'string') { rTitle = r; rQuad = ''; rDetail = ''; }
+          else { rTitle = r.title || r.name || r.recommendation || ''; rQuad = r.quadrant || r.area || r.category || r.focus || ''; rDetail = r.detail || r.description || r.message || r.explanation || r.rationale || ''; }
           recItems += '<div style="background:white; border-radius:12px; padding:20px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,0.08);">' +
             '<div style="display:flex; gap:12px; align-items:start;">' +
               '<span style="background:#1a1a1a; color:white; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:700; flex-shrink:0;">' + (j + 1) + '</span>' +
