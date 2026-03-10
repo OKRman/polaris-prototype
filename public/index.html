@@ -79,18 +79,18 @@
 
   <script>
     async function runEvaluation() {
-      const transcript = document.getElementById('transcript').value.trim();
-      const agenda = document.getElementById('agenda').value.trim();
+      var transcript = document.getElementById('transcript').value.trim();
+      var agenda = document.getElementById('agenda').value.trim();
 
       if (!transcript) {
         alert('Please paste a meeting transcript.');
         return;
       }
 
-      const btn = document.getElementById('evaluateBtn');
-      const loading = document.getElementById('loading');
-      const errorDiv = document.getElementById('error');
-      const results = document.getElementById('results');
+      var btn = document.getElementById('evaluateBtn');
+      var loading = document.getElementById('loading');
+      var errorDiv = document.getElementById('error');
+      var results = document.getElementById('results');
 
       btn.disabled = true;
       loading.style.display = 'block';
@@ -98,19 +98,18 @@
       results.innerHTML = '';
 
       try {
-        const response = await fetch('/api/evaluate', {
+        var response = await fetch('/api/evaluate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ transcript, agenda })
+          body: JSON.stringify({ transcript: transcript, agenda: agenda })
         });
 
-        const data = await response.json();
+        var data = await response.json();
 
         if (!response.ok) {
           throw new Error(data.detail || data.error || 'Evaluation failed');
         }
 
-        // Render the report
         results.innerHTML = renderReport(data);
 
       } catch (err) {
@@ -122,217 +121,213 @@
       }
     }
 
+    function scoreColor(score, max) {
+      var pct = score / max;
+      if (pct >= 0.75) return '#22c55e';
+      if (pct >= 0.50) return '#f59e0b';
+      if (pct >= 0.25) return '#ef4444';
+      return '#991b1b';
+    }
+
+    function bar(score, max, label) {
+      var pct = (score / max) * 100;
+      var color = scoreColor(score, max);
+      return '<div style="margin-bottom:16px;">' +
+        '<div style="display:flex; justify-content:space-between; margin-bottom:4px;">' +
+          '<span style="font-weight:600; font-size:0.9rem;">' + label + '</span>' +
+          '<span style="font-weight:700; color:' + color + '">' + score + '/' + max + '</span>' +
+        '</div>' +
+        '<div style="background:#e5e7eb; border-radius:4px; height:8px; overflow:hidden;">' +
+          '<div style="background:' + color + '; height:100%; width:' + pct + '%; border-radius:4px;"></div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    function quadrantCard(quadrant) {
+      var items = quadrant.disciplines || quadrant.skill_sets || {};
+      var itemsHtml = '';
+      var keys = Object.keys(items);
+      for (var k = 0; k < keys.length; k++) {
+        var key = keys[k];
+        var item = items[key];
+        var name = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
+        var weightPct = Math.round((item.weight || 0) * 100);
+        var evidence = item.evidence || '';
+        var itemColor = scoreColor(item.score, 4);
+        itemsHtml += '<div style="padding:8px 0; border-bottom:1px solid #f0f0f0;">' +
+          '<div style="display:flex; justify-content:space-between;">' +
+            '<span style="font-size:0.85rem;">' + name + ' <span style="color:#999; font-size:0.8rem;">(' + weightPct + '%)</span></span>' +
+            '<span style="font-weight:700; color:' + itemColor + '">' + item.score + '/4</span>' +
+          '</div>' +
+          '<p style="font-size:0.8rem; color:#666; margin-top:4px;">' + evidence + '</p>' +
+        '</div>';
+      }
+      var qColor = scoreColor(quadrant.weighted_score, 4);
+      return '<div style="background:white; border-radius:12px; padding:24px; margin-bottom:20px; box-shadow:0 1px 3px rgba(0,0,0,0.08);">' +
+        '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">' +
+          '<h3 style="font-size:1.1rem;">' + (quadrant.label || '') + '</h3>' +
+          '<span style="font-size:1.4rem; font-weight:700; color:' + qColor + '">' + quadrant.weighted_score.toFixed(1) + '/4</span>' +
+        '</div>' +
+        itemsHtml +
+        '<p style="margin-top:12px; font-size:0.9rem; color:#444;">' + (quadrant.summary || '') + '</p>' +
+      '</div>';
+    }
+
     function renderReport(data) {
-      // This is where you build the HTML report from the JSON
-      // I've included a functional starter version below.
-      // You'll want to refine the design before showing George.
-
-      const u = data.universal_score;
-      const p = data.polaris_score;
-
-      function scoreColor(score, max) {
-        const pct = score / max;
-        if (pct >= 0.75) return '#22c55e';
-        if (pct >= 0.50) return '#f59e0b';
-        if (pct >= 0.25) return '#ef4444';
-        return '#991b1b';
-      }
-
-      function bar(score, max, label) {
-        const pct = (score / max) * 100;
-        return `
-          <div style="margin-bottom:16px;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-              <span style="font-weight:600; font-size:0.9rem;">${label}</span>
-              <span style="font-weight:700; color:${scoreColor(score, max)}">${score}/${max}</span>
-            </div>
-            <div style="background:#e5e7eb; border-radius:4px; height:8px; overflow:hidden;">
-              <div style="background:${scoreColor(score, max)}; height:100%; width:${pct}%; border-radius:4px; transition:width 0.5s;"></div>
-            </div>
-          </div>`;
-      }
-
-      function quadrantCard(quadrant) {
-        const items = quadrant.disciplines || quadrant.skill_sets;
-        let itemsHtml = '';
-        for (const [key, item] of Object.entries(items)) {
-          const name = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
-          itemsHtml += `
-            <div style="padding:8px 0; border-bottom:1px solid #f0f0f0;">
-              <div style="display:flex; justify-content:space-between;">
-                <span style="font-size:0.85rem;">${name} <span style="color:#999; font-size:0.8rem;">(${Math.round(item.weight*100)}%)</span></span>
-                <span style="font-weight:700; color:${scoreColor(item.score, 4)}">${item.score}/4</span>
-              </div>
-              <p style="font-size:0.8rem; color:#666; margin-top:4px;">${item.evidence}</p>
-            </div>`;
-        }
-        return `
-          <div style="background:white; border-radius:12px; padding:24px; margin-bottom:20px; box-shadow:0 1px 3px rgba(0,0,0,0.08);">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-              <h3 style="font-size:1.1rem;">${quadrant.label}</h3>
-              <span style="font-size:1.4rem; font-weight:700; color:${scoreColor(quadrant.weighted_score, 4)}">${quadrant.weighted_score.toFixed(1)}/4</span>
-            </div>
-            ${itemsHtml}
-            <p style="margin-top:12px; font-size:0.9rem; color:#444;">${quadrant.summary}</p>
-          </div>`;
-      }
+      var u = data.universal_score;
+      var p = data.polaris_score;
 
       // Red flags
-      let redFlagsHtml = '';
+      var redFlagsHtml = '';
       if (data.red_flags && data.red_flags.length > 0) {
-        redFlagsHtml = `
-          <div style="margin-top:32px;">
-            <h2 style="font-size:1.3rem; margin-bottom:16px; color:#dc2626;">Red Flags</h2>
-            ${data.red_flags.map(f => {
-              const name = f.pattern || f.name || f.title || '';
-              const desc = f.description || f.detail || f.message || '';
-              const rec = f.recommendation || f.action || f.suggestion || '';
-              return '<div style="background:#fef2f2; border-left:4px solid #dc2626; padding:16px; margin-bottom:12px; border-radius:0 8px 8px 0;">' +
-                '<strong>' + name + '</strong>' +
-                '<p style="font-size:0.9rem; margin-top:4px;">' + desc + '</p>' +
-                '<p style="font-size:0.85rem; color:#666; margin-top:4px;"><em>Recommendation: ' + rec + '</em></p>' +
-              '</div>';
-            }).join('')}
+        var flagItems = '';
+        for (var i = 0; i < data.red_flags.length; i++) {
+          var f = data.red_flags[i];
+          var fName = f.pattern || f.name || f.title || '';
+          var fDesc = f.description || f.detail || f.message || '';
+          var fRec = f.recommendation || f.action || f.suggestion || '';
+          flagItems += '<div style="background:#fef2f2; border-left:4px solid #dc2626; padding:16px; margin-bottom:12px; border-radius:0 8px 8px 0;">' +
+            '<strong>' + fName + '</strong>' +
+            '<p style="font-size:0.9rem; margin-top:4px;">' + fDesc + '</p>' +
+            '<p style="font-size:0.85rem; color:#666; margin-top:4px;"><em>Recommendation: ' + fRec + '</em></p>' +
+          '</div>';
+        }
+        redFlagsHtml = '<div style="margin-top:32px;">' +
+          '<h2 style="font-size:1.3rem; margin-bottom:16px; color:#dc2626;">Red Flags</h2>' +
+          flagItems +
+        '</div>';
       }
 
       // Recommendations
-      let recsHtml = '';
+      var recsHtml = '';
       if (data.recommendations && data.recommendations.length > 0) {
-        recsHtml = `
-          <div style="margin-top:32px;">
-            <h2 style="font-size:1.3rem; margin-bottom:16px;">Recommendations</h2>
-            ${data.recommendations.map((r, i) => {
-              const title = r.title || r.name || '';
-              const quad = r.quadrant || r.area || r.category || '';
-              const detail = r.detail || r.description || r.message || '';
-              return '<div style="background:white; border-radius:12px; padding:20px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,0.08);">' +
-                '<div style="display:flex; gap:12px; align-items:start;">' +
-                  '<span style="background:#1a1a1a; color:white; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:700; flex-shrink:0;">' + (i+1) + '</span>' +
-                  '<div>' +
-                    '<strong>' + title + '</strong>' +
-                    '<span style="font-size:0.8rem; color:#999; margin-left:8px;">' + quad + '</span>' +
-                    '<p style="font-size:0.9rem; margin-top:4px; color:#444;">' + detail + '</p>' +
-                  '</div>' +
-                '</div>' +
-              '</div>';
-            }).join('')}
-          </div>`;
+        var recItems = '';
+        for (var j = 0; j < data.recommendations.length; j++) {
+          var r = data.recommendations[j];
+          var rTitle = r.title || r.name || '';
+          var rQuad = r.quadrant || r.area || r.category || '';
+          var rDetail = r.detail || r.description || r.message || '';
+          recItems += '<div style="background:white; border-radius:12px; padding:20px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,0.08);">' +
+            '<div style="display:flex; gap:12px; align-items:start;">' +
+              '<span style="background:#1a1a1a; color:white; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:700; flex-shrink:0;">' + (j + 1) + '</span>' +
+              '<div>' +
+                '<strong>' + rTitle + '</strong>' +
+                '<span style="font-size:0.8rem; color:#999; margin-left:8px;">' + rQuad + '</span>' +
+                '<p style="font-size:0.9rem; margin-top:4px; color:#444;">' + rDetail + '</p>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        }
+        recsHtml = '<div style="margin-top:32px;">' +
+          '<h2 style="font-size:1.3rem; margin-bottom:16px;">Recommendations</h2>' +
+          recItems +
+        '</div>';
       }
 
-      return `
-        <!-- Headline -->
-        <div style="background:white; border-radius:12px; padding:24px; margin-bottom:24px; box-shadow:0 1px 3px rgba(0,0,0,0.08); border-left:4px solid #1a1a1a;">
-          <p style="font-size:1.1rem; font-weight:600;">${data.headline}</p>
-        </div>
+      // Universal dimension detail
+      var dimKeys = Object.keys(u.dimensions);
+      var dimHtml = '';
+      for (var d = 0; d < dimKeys.length; d++) {
+        var dKey = dimKeys[d];
+        var dim = u.dimensions[dKey];
+        var dName = dKey.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+        var dColor = scoreColor(dim.score, 4);
+        dimHtml += '<div style="background:white; border-radius:12px; padding:20px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,0.08);">' +
+          '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+            '<strong>' + dName + '</strong>' +
+            '<span style="font-weight:700; color:' + dColor + '">' + dim.score + '/4</span>' +
+          '</div>' +
+          '<p style="font-size:0.85rem; color:#444; margin-top:8px;">' + (dim.evidence || '') + '</p>' +
+          (dim.gap ? '<p style="font-size:0.85rem; color:#ef4444; margin-top:4px;"><em>Gap: ' + dim.gap + '</em></p>' : '') +
+        '</div>';
+      }
 
-        <!-- Two-column scores -->
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:32px;">
+      var uColor = scoreColor(u.overall, 20);
+      var pColor = scoreColor(p.overall_percentage, 100);
 
-          <!-- Universal Score -->
-          <div style="background:white; border-radius:12px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.08);">
-            <h2 style="font-size:1rem; color:#666; margin-bottom:4px;">Universal Meeting Health</h2>
-            <div style="font-size:2.5rem; font-weight:700; color:${scoreColor(u.overall, 20)}; margin-bottom:16px;">${u.overall}/20</div>
-            ${bar(u.dimensions.purpose_and_structure.score, 4, 'Purpose & Structure')}
-            ${bar(u.dimensions.participation_and_inclusion.score, 4, 'Participation & Inclusion')}
-            ${bar(u.dimensions.quality_of_dialogue.score, 4, 'Quality of Dialogue')}
-            ${bar(u.dimensions.decisions_and_outcomes.score, 4, 'Decisions & Outcomes')}
-            ${bar(u.dimensions.leadership_and_culture.score, 4, 'Leadership & Culture')}
-          </div>
+      return '<div style="background:white; border-radius:12px; padding:24px; margin-bottom:24px; box-shadow:0 1px 3px rgba(0,0,0,0.08); border-left:4px solid #1a1a1a;">' +
+        '<p style="font-size:1.1rem; font-weight:600;">' + (data.headline || '') + '</p>' +
+      '</div>' +
 
-          <!-- Polaris Score -->
-          <div style="background:white; border-radius:12px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.08);">
-            <h2 style="font-size:1rem; color:#666; margin-bottom:4px;">Polaris Behavioural Analysis</h2>
-            <div style="font-size:2.5rem; font-weight:700; color:${scoreColor(p.overall_percentage, 100)}; margin-bottom:16px;">${p.overall_percentage}%</div>
-            ${bar(p.quadrants.starting_clarity.weighted_score, 4, 'Starting Clarity (PORT In)')}
-            ${bar(p.quadrants.psychological_safety.weighted_score, 4, 'Psychological Safety (SAFE)')}
-            ${bar(p.quadrants.quality_and_efficiency.weighted_score, 4, 'Quality & Efficiency (RACE)')}
-            ${bar(p.quadrants.ending_clarity.weighted_score, 4, 'Ending Clarity (PORT Out)')}
-            <div style="margin-top:12px; padding-top:12px; border-top:1px solid #eee;">
-              <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
-                <span>Total Clarity</span>
-                <span style="font-weight:700;">${p.total_clarity.toFixed(1)}/4</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      '<div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:32px;">' +
+        '<div style="background:white; border-radius:12px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.08);">' +
+          '<h2 style="font-size:1rem; color:#666; margin-bottom:4px;">Universal Meeting Health</h2>' +
+          '<div style="font-size:2.5rem; font-weight:700; color:' + uColor + '; margin-bottom:16px;">' + u.overall + '/20</div>' +
+          bar(u.dimensions.purpose_and_structure.score, 4, 'Purpose & Structure') +
+          bar(u.dimensions.participation_and_inclusion.score, 4, 'Participation & Inclusion') +
+          bar(u.dimensions.quality_of_dialogue.score, 4, 'Quality of Dialogue') +
+          bar(u.dimensions.decisions_and_outcomes.score, 4, 'Decisions & Outcomes') +
+          bar(u.dimensions.leadership_and_culture.score, 4, 'Leadership & Culture') +
+        '</div>' +
+        '<div style="background:white; border-radius:12px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.08);">' +
+          '<h2 style="font-size:1rem; color:#666; margin-bottom:4px;">Polaris Behavioural Analysis</h2>' +
+          '<div style="font-size:2.5rem; font-weight:700; color:' + pColor + '; margin-bottom:16px;">' + p.overall_percentage + '%</div>' +
+          bar(p.quadrants.starting_clarity.weighted_score, 4, 'Starting Clarity (PORT In)') +
+          bar(p.quadrants.psychological_safety.weighted_score, 4, 'Psychological Safety (SAFE)') +
+          bar(p.quadrants.quality_and_efficiency.weighted_score, 4, 'Quality & Efficiency (RACE)') +
+          bar(p.quadrants.ending_clarity.weighted_score, 4, 'Ending Clarity (PORT Out)') +
+          '<div style="margin-top:12px; padding-top:12px; border-top:1px solid #eee;">' +
+            '<div style="display:flex; justify-content:space-between; font-size:0.9rem;">' +
+              '<span>Total Clarity</span>' +
+              '<span style="font-weight:700;">' + p.total_clarity.toFixed(1) + '/4</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
 
-        <!-- Narrative Summary -->
-        <div style="background:white; border-radius:12px; padding:24px; margin-bottom:24px; box-shadow:0 1px 3px rgba(0,0,0,0.08);">
-          <h2 style="font-size:1.1rem; margin-bottom:12px;">Summary</h2>
-          <p style="color:#444; line-height:1.7;">${data.narrative_summary}</p>
-        </div>
+      '<div style="background:white; border-radius:12px; padding:24px; margin-bottom:24px; box-shadow:0 1px 3px rgba(0,0,0,0.08);">' +
+        '<h2 style="font-size:1.1rem; margin-bottom:12px;">Summary</h2>' +
+        '<p style="color:#444; line-height:1.7;">' + (data.narrative_summary || '') + '</p>' +
+      '</div>' +
 
-        <!-- Polaris Quadrant Detail -->
-        <h2 style="font-size:1.3rem; margin-bottom:16px;">Polaris Quadrant Detail</h2>
-        ${quadrantCard(p.quadrants.starting_clarity)}
-        ${quadrantCard(p.quadrants.psychological_safety)}
-        ${quadrantCard(p.quadrants.quality_and_efficiency)}
-        ${quadrantCard(p.quadrants.ending_clarity)}
+      '<h2 style="font-size:1.3rem; margin-bottom:16px;">Polaris Quadrant Detail</h2>' +
+      quadrantCard(p.quadrants.starting_clarity) +
+      quadrantCard(p.quadrants.psychological_safety) +
+      quadrantCard(p.quadrants.quality_and_efficiency) +
+      quadrantCard(p.quadrants.ending_clarity) +
 
-        <!-- Universal Dimension Detail -->
-        <h2 style="font-size:1.3rem; margin-bottom:16px; margin-top:32px;">Universal Health Detail</h2>
-        ${Object.entries(u.dimensions).map(([key, dim]) => `
-          <div style="background:white; border-radius:12px; padding:20px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,0.08);">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <strong>${key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</strong>
-              <span style="font-weight:700; color:${scoreColor(dim.score, 4)}">${dim.score}/4</span>
-            </div>
-            <p style="font-size:0.85rem; color:#444; margin-top:8px;">${dim.evidence}</p>
-            ${dim.gap ? `<p style="font-size:0.85rem; color:#ef4444; margin-top:4px;"><em>Gap: ${dim.gap}</em></p>` : ''}
-          </div>
-        `).join('')}
+      '<h2 style="font-size:1.3rem; margin-bottom:16px; margin-top:32px;">Universal Health Detail</h2>' +
+      dimHtml +
 
-        ${redFlagsHtml}
-        ${recsHtml}
+      redFlagsHtml +
+      recsHtml +
 
-        <!-- Download button -->
-        <div style="text-align:center; margin-top:40px; padding-top:24px; border-top:1px solid #eee;">
-          <button onclick="downloadReport()" style="background:#1a1a1a; color:white; border:none; padding:12px 32px; border-radius:8px; cursor:pointer; font-size:0.95rem;">
-            Download Report (HTML)
-          </button>
-          <p style="font-size:0.8rem; color:#999; margin-top:8px;">Self-contained file — no data is stored</p>
-        </div>
-      `;
+      '<div style="text-align:center; margin-top:40px; padding-top:24px; border-top:1px solid #eee;">' +
+        '<button onclick="downloadReport()" style="background:#1a1a1a; color:white; border:none; padding:12px 32px; border-radius:8px; cursor:pointer; font-size:0.95rem;">Download Report (HTML)</button>' +
+        '<p style="font-size:0.8rem; color:#999; margin-top:8px;">Self-contained file — no data is stored</p>' +
+      '</div>';
     }
 
     function downloadReport() {
-      // Generate a self-contained HTML file with inline styles
-      const reportContent = document.getElementById('results').innerHTML;
-      const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meeting Evaluation Report</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f8f8; color: #1a1a1a; line-height: 1.6; }
-  .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
-  .header { text-align: center; margin-bottom: 32px; padding-bottom: 16px; border-bottom: 2px solid #1a1a1a; }
-  .footer { text-align: center; margin-top: 40px; padding-top: 16px; border-top: 1px solid #ddd; font-size: 0.8rem; color: #999; }
-  button { display: none; }
-</style>
-</head>
-<body>
-<div class="container">
-  <div class="header">
-    <h1 style="font-size:1.5rem;">Meeting Evaluation Report</h1>
-    <p style="color:#666; font-size:0.9rem;">Dual-Lens Analysis: Universal Health Score + Polaris Behavioural Analysis</p>
-    <p style="color:#999; font-size:0.8rem; margin-top:4px;">Generated ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-  </div>
-  ${reportContent}
-  <div class="footer">
-    <p>This report is self-contained. No data has been stored or retained.</p>
-  </div>
-</div>
-</body>
-</html>`;
+      var reportContent = document.getElementById('results').innerHTML;
+      var html = '<!DOCTYPE html>\n<html lang="en">\n<head>\n' +
+        '<meta charset="UTF-8">\n' +
+        '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+        '<title>Meeting Evaluation Report</title>\n' +
+        '<style>\n' +
+        '* { box-sizing: border-box; margin: 0; padding: 0; }\n' +
+        'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f8f8f8; color: #1a1a1a; line-height: 1.6; }\n' +
+        '.container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }\n' +
+        '.header { text-align: center; margin-bottom: 32px; padding-bottom: 16px; border-bottom: 2px solid #1a1a1a; }\n' +
+        '.footer { text-align: center; margin-top: 40px; padding-top: 16px; border-top: 1px solid #ddd; font-size: 0.8rem; color: #999; }\n' +
+        'button { display: none; }\n' +
+        '</style>\n</head>\n<body>\n' +
+        '<div class="container">\n' +
+        '<div class="header">\n' +
+        '<h1 style="font-size:1.5rem;">Meeting Evaluation Report</h1>\n' +
+        '<p style="color:#666; font-size:0.9rem;">Dual-Lens Analysis: Universal Health Score + Polaris Behavioural Analysis</p>\n' +
+        '<p style="color:#999; font-size:0.8rem; margin-top:4px;">Generated ' + new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + '</p>\n' +
+        '</div>\n' +
+        reportContent + '\n' +
+        '<div class="footer">\n' +
+        '<p>This report is self-contained. No data has been stored or retained.</p>\n' +
+        '</div>\n</div>\n</body>\n</html>';
 
-      const blob = new Blob([html], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      var blob = new Blob([html], { type: 'text/html' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
       a.href = url;
-      a.download = 'meeting-evaluation-' + new Date().toISOString().slice(0,10) + '.html';
+      a.download = 'meeting-evaluation-' + new Date().toISOString().slice(0, 10) + '.html';
       a.click();
       URL.revokeObjectURL(url);
     }
