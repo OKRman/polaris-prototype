@@ -1,112 +1,107 @@
+// ============================================================
+// POLARIS MEETING EVALUATOR — SERVERLESS FUNCTION
 // api/evaluate.js
-// Polaris × Meeting Evaluator — Dual-Lens Prototype
-// Serverless function for Vercel
+// Vercel serverless function — ES module syntax (export default)
+// ============================================================
 
-import { SYSTEM_PROMPT } from '../lib/prompt.js';
-export const config = { maxDuration: 60 };
+import { buildPrompt } from '../lib/prompt.js';
 
 export default async function handler(req, res) {
-  // CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
+  // Only allow POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { transcript, agenda } = req.body;
+  // Extract transcript and meetingType from request body
+  // meetingType: 'team' (default) | 'crossFunctional'
+  const { transcript, meetingType = 'team' } = req.body;
 
-  if (!transcript || transcript.trim().length === 0) {
-    return res.status(400).json({ error: 'No transcript provided' });
+  // Basic validation
+  if (!transcript || typeof transcript !== 'string' || transcript.trim().length < 50) {
+    return res.status(400).json({
+      error: 'Please provide a meeting transcript of at least 50 characters.',
+    });
   }
 
-  // Build the user message
-  let userMessage = `## MEETING TRANSCRIPT\n\n${transcript}`;
-  if (agenda && agenda.trim().length > 0) {
-    userMessage += `\n\n## MEETING AGENDA / CONTEXT\n\n${agenda}`;
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    console.error('ANTHROPIC_API_KEY environment variable is not set');
+    return res.status(500).json({ error: 'Server configuration error. Please contact support.' });
   }
 
   try {
+    // Build the prompt with meeting type context
+    const systemPrompt = buildPrompt(meetingType);
+
+    // Call the Anthropic Claude API
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-opus-4-6',
         max_tokens: 8000,
-        system: SYSTEM_PROMPT,
+        system: systemPrompt,
         messages: [
-          { role: 'user', content: userMessage }
-        ]
-      })
+          {
+            role: 'user',
+            content: `Please evaluate the following meeting transcript:\n\n${transcript.trim()}`,
+          },
+        ],
+      }),
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Anthropic API error:', errorData);
-      return res.status(500).json({
-        error: 'Evaluation failed',
-        detail: errorData.error?.message || 'Unknown API error'
+      const errorBody = await response.text();
+      console.error('Anthropic API error:', response.status, errorBody);
+      return res.status(502).json({
+        error: 'The AI analysis service is temporarily unavailable. Please try again in a moment.',
       });
     }
 
     const data = await response.json();
 
-    // Extract the text content from Claude's response
-    const textContent = data.content
-      .filter(block => block.type === 'text')
-      .map(block => block.text)
-      .join('');
-
-    // Parse the JSON response
-    // Try direct parse first, then try extracting JSON from text
-    let evaluation;
-    try {
-      const cleanJson = textContent
-        .replace(/```json\s*/g, '')
-        .replace(/```\s*/g, '')
-        .trim();
-      evaluation = JSON.parse(cleanJson);
-    } catch (parseError) {
-      // Fallback: extract the first complete JSON object
-      const jsonMatch = textContent.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        try {
-          evaluation = JSON.parse(jsonMatch[0]);
-        } catch (e) {
-          console.error('JSON parse error (fallback):', e);
-          console.error('Raw response:', textContent.substring(0, 500));
-          return res.status(500).json({
-            error: 'Failed to parse evaluation',
-            detail: 'The AI returned a response that could not be parsed as JSON.'
-          });
-        }
-      } else {
-        console.error('No JSON found in response');
-        console.error('Raw response:', textContent.substring(0, 500));
-        return res.status(500).json({
-          error: 'Failed to parse evaluation',
-          detail: 'The AI response did not contain valid JSON.'
-        });
-      }
+    // Extract text content from response
+    const rawText = data.content?.[0]?.text;
+    if (!rawText) {
+      console.error('Unexpected API response shape:', JSON.stringify(data));
+      return res.status(500).json({ error: 'Unexpected response from AI. Please try again.' });
     }
 
-    // Return the structured evaluation
-    return res.status(200).json(evaluation);
+    // Strip any accidental markdown fences before parsing
+    const cleaned = rawText
+      .replace(/^```json\s*/i, '')
+      .replace(/^```\s*/i, '')
+      .replace(/\s*```$/i, '')
+      .trim();
 
-  } catch (error) {
-    console.error('Server error:', error);
+    let result;
+    try {
+      result = JSON.parse(cleaned);
+    } catch (parseError) {
+      console.error('JSON parse failed. Raw text:', rawText);
+      return res.status(500).json({
+        error: 'Could not parse the AI evaluation. Please try again — this is usually a transient issue.',
+      });
+    }
+
+    // Basic structural validation before returning
+    if (!result.universalScore || !result.polarisScore) {
+      console.error('Response missing expected top-level keys:', Object.keys(result));
+      return res.status(500).json({
+        error: 'The AI returned an incomplete evaluation. Please try again.',
+      });
+    }
+
+    return res.status(200).json(result);
+
+  } catch (err) {
+    console.error('Unhandled evaluation error:', err);
     return res.status(500).json({
-      error: 'Server error',
-      detail: error.message
+      error: 'An unexpected error occurred. Please try again.',
     });
   }
 }
