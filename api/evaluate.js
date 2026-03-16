@@ -174,7 +174,7 @@ export default async function handler(req, res) {
     const client = new Anthropic();
 
     const response = await client.messages.create({
-      model: 'claude-opus-4-6',
+      model: 'claude-sonnet-4-6',
       max_tokens: 8000,
       system: buildPrompt(meetingType),
       messages: [
