@@ -1193,7 +1193,7 @@
         const evidenceData   = evidence[comp.key];
 
         const subRows = comp.behaviours.map(b => {
-          const s   = subScoreData[b.key];
+          const s   = subScoreData[b.key].score;
           const ev  = evidenceData[b.key];
           const rag = ragBandJS(s);
           return `
