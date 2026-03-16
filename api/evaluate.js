@@ -245,7 +245,16 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Periscope evaluation error:', error);
-    return res.status(500).json({ error: 'The analysis failed. Please check your transcript and try again.' });
+    console.error('Periscope evaluation error:', {
+      message: error.message,
+      name: error.name,
+      status: error.status,
+      stack: error.stack?.substring(0, 500)
+    });
+    const userMessage = error.status === 401 ? 'API key error — check Anthropic credentials.'
+      : error.status === 429 ? 'Rate limit reached — please wait a moment and try again.'
+      : error.status === 529 ? 'Anthropic API is temporarily overloaded — please try again shortly.'
+      : `Analysis failed: ${error.message || 'unknown error'}`;
+    return res.status(500).json({ error: userMessage });
   }
 }
