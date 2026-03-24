@@ -17,9 +17,12 @@ function ragBand(pct) {
   return 'green';
 }
 
-// ─── Convert raw 1–4 score to percentage ───────────────────────────────────
+// ─── Convert raw 0–4 score to percentage ───────────────────────────────────
 function pct(score) {
-  return Math.round((score / 4) * 100);
+  // Scale: 0.0 = 0%, 4.0 = 100%
+  // Clamp to valid range before conversion
+  const clamped = Math.max(0, Math.min(4, score));
+  return Math.round((clamped / 4) * 100);
 }
 
 // ─── Calculate all 7 dashboard metrics from 16 raw sub-scores ──────────────
