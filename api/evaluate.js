@@ -178,7 +178,7 @@ export default async function handler(req, res) {
 
     const response = await client.messages.create({
       model: 'claude-sonnet-4-6',
-      max_tokens: 2800,
+      max_tokens: 4500,
       system: buildPrompt(meetingType),
       messages: [
         {
@@ -234,7 +234,7 @@ export default async function handler(req, res) {
     };
 
     return res.status(200).json({
-      meetingContext:  aiScores.meetingContext || '',
+      meetingContext:       aiScores.meetingContext || '',
       meetingType,
       evidence: {
         portIn:  aiScores.portIn,
@@ -242,9 +242,10 @@ export default async function handler(req, res) {
         race:    aiScores.race,
         portOut: aiScores.portOut
       },
-      scores: ragScores,
-      redFlags:        aiScores.redFlags        || [],
-      recommendations: aiScores.recommendations || []
+      scores:               ragScores,
+      redFlags:             aiScores.redFlags             || [],
+      recommendations:      aiScores.recommendations      || [],
+      behaviourDistribution: aiScores.behaviourDistribution || null
     });
 
   } catch (error) {
