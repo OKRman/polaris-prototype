@@ -1485,8 +1485,7 @@
       const now = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
       const ragLabel2 = r => r === 'green' ? 'Effective' : r === 'amber' ? 'Developing' : 'Weak';
       const ragStyle  = r => r === 'green' ? 'background:#EAF7EF;color:#1A7F4B;' : r === 'amber' ? 'background:#FEF3C7;color:#B45309;' : 'background:#FEE8E8;color:#C53030;';
-      const logoImg = document.querySelector('.logo-mark img');
-      const logoSrc = logoImg ? logoImg.src : '';
+      const logoSrc = 'https://images.squarespace-cdn.com/content/v1/690c66c9a788d325e51c13c2/ccc5ce6d-31b4-41ea-94cd-34a6d4ea0b60/TeamUp_Artwork_Logo_Black_v2.png?format=1500w';
       const dashItems = [['effectiveStart','Effective Start'],['psychSafety','Psychological Safety'],['decisionQuality','Decision Making Quality'],['effectiveClose','Effective Close'],['oneTeam','One Team'],['clarity','Clarity']];
       const compDefs = [
         { key:'portIn',  label:'PORT In',  tagClass:'tag-port-in',  subtitle:'Purpose · Outcomes · Responsibilities · Timed Agenda', behaviours:[['purpose','P — Purpose'],['outcomes','O — Outcomes'],['responsibilities','R — Responsibilities'],['timedAgenda','T — Timed Agenda']]},
