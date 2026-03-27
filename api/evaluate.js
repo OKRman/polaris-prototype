@@ -17,8 +17,8 @@ export default async function handler(req, res) {
   }
 
   // Extract transcript and meetingType from request body
-  // meetingType: 'team' (default) | 'crossFunctional'
-  const { transcript, meetingType = 'team' } = req.body;
+  // meetingType: 'intact' (default) | 'crossfunctional'
+  const { transcript, meetingType = 'intact' } = req.body;
 
   // Basic validation
   if (!transcript || typeof transcript !== 'string' || transcript.trim().length < 50) {
@@ -92,8 +92,9 @@ export default async function handler(req, res) {
       });
     }
 
-    // Basic structural validation before returning
-    if (!result.universalScore || !result.polarisScore) {
+    // Basic structural validation before returning.
+    // Keys match the real prompt schema in lib/prompt.js.
+    if (!result.portIn || !result.safe || !result.race || !result.portOut) {
       console.error('Response missing expected top-level keys:', Object.keys(result));
       return res.status(500).json({
         error: 'The AI returned an incomplete evaluation. Please try again.',
