@@ -1232,7 +1232,20 @@
           headers: { 'Content-Type': 'application/json' },
           body:    JSON.stringify({ transcript, meetingType: currentMeetingType })
         });
-        const data = await res.json();
+
+        // Read as text first — if Vercel times out (504) the body is plain text,
+        // not JSON. Calling .json() directly on that throws the SyntaxError seen
+        // in the console. We parse safely here instead.
+        const rawText = await res.text();
+        let data;
+        try {
+          data = JSON.parse(rawText);
+        } catch (_) {
+          showError('The evaluation timed out — please try again. If this keeps happening, try a shorter transcript.');
+          setUI('form');
+          return;
+        }
+
         if (!res.ok) {
           showError(data.error || 'Something went wrong. Please try again.');
           setUI('form');
