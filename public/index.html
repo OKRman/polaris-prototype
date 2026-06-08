@@ -84,19 +84,6 @@
       gap: 14px;
     }
 
-    .logo-mark {
-      width: 72px;
-      height: 72px;
-      background: white;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .logo-mark svg { display: block; }
-
     .logo-text {
       display: flex;
       flex-direction: column;
@@ -469,7 +456,7 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
-      margin-bottom: 40px;
+      margin-bottom: 32px;
     }
 
     @media (max-width: 720px) {
@@ -716,11 +703,19 @@
     .sub-score-bar-fill.amber { background: var(--rag-amber); }
     .sub-score-bar-fill.red   { background: var(--rag-red);   }
 
-    .sub-score-evidence {
+    .sub-score-good-practice {
       font-size: 12.5px;
       color: var(--text-secondary);
       line-height: 1.55;
-      font-style: italic;
+    }
+
+    .sub-score-good-practice-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 3px;
     }
 
     /* ── Red flags ───────────────────────────────────────────────────────── */
@@ -866,22 +861,14 @@
       line-height: 1.5;
     }
 
-    /* ── Behaviour Distribution Section ─────────────────────────────────── */
+    /* ── Contribution Balance Section ────────────────────────────────────── */
     .behaviour-distribution {
       background: white;
       border-radius: var(--radius-md);
       padding: 28px;
       box-shadow: var(--shadow-sm);
       border: 1.5px solid var(--border);
-      margin-bottom: 24px;
-    }
-
-    .behaviour-distribution h2 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 6px;
+      margin-bottom: 32px;
     }
 
     .bd-section-subtitle {
@@ -935,10 +922,10 @@
       padding: 0 6px;
     }
 
-    .sr-safe    { background: #5BB974; }
-    .sr-race    { background: #E8854A; }
-    .sr-opinion { background: #9B6DD6; }
-    .sr-other   { background: #ddd; }
+    .sr-safe       { background: #5BB974; }
+    .sr-race       { background: #E8854A; }
+    .sr-whitenoise { background: #8898AA; }
+    .sr-other      { background: #ddd; }
 
     .sr-interpretation {
       font-size: 0.875rem;
@@ -956,7 +943,7 @@
     }
 
     .qb-label {
-      width: 6.5rem;
+      width: 7rem;
       font-size: 0.8rem;
       font-weight: 600;
       color: var(--text-secondary);
@@ -1100,7 +1087,7 @@
         <div style="display:flex;align-items:center;flex-shrink:0;">
           <img src="https://images.squarespace-cdn.com/content/v1/690c66c9a788d325e51c13c2/ccc5ce6d-31b4-41ea-94cd-34a6d4ea0b60/TeamUp_Artwork_Logo_Black_v2.png?format=1500w" alt="Team Up" style="height:48px;width:auto;display:block;filter:brightness(0) invert(1);" />
         </div>
-        <div style="width:1px;height:40px;background:rgba(255,255,255,0.3);flex-shrink:0;"></div>
+        <div style="width:1px;height:40px;background:rgba(255,255,255,0.3);flex-shrink:0;margin:0 14px;"></div>
         <div class="logo-text">
           <span class="product-name">Periscope</span>
           <span class="powered-by">Powered by the Polaris Formula</span>
@@ -1151,6 +1138,7 @@
         </button>
       </div>
 
+      <!-- Overall score hero -->
       <div class="overall-hero">
         <div class="overall-left">
           <div class="overall-label">Overall Meeting Effectiveness</div>
@@ -1169,14 +1157,19 @@
         </div>
       </div>
 
-      <div class="section-heading">Dashboard <span class="pill" style="background: var(--tu-blue-light); color: var(--tu-blue);">7 Metrics</span></div>
-      <p class="section-intro">The six metrics below are calculated from your 16 individual behaviour scores using the Polaris Formula weightings.</p>
+      <!-- Dashboard: 5 metrics -->
+      <div class="section-heading">Dashboard <span class="pill" style="background: var(--tu-blue-light); color: var(--tu-blue);">5 Metrics</span></div>
+      <p class="section-intro">Five metrics calculated from your 16 individual behaviour scores using the Polaris Formula weightings.</p>
       <div class="dashboard-grid" id="dashboardGrid"></div>
+
+      <!-- Contribution Balance — sits between dashboard and competency breakdown -->
+      <div id="behaviourDistributionSection"></div>
 
       <div class="divider"></div>
 
+      <!-- Competency Breakdown -->
       <div class="section-heading">Competency Breakdown</div>
-      <p class="section-intro">Individual scores for each of the 16 Polaris behaviours, with evidence from your transcript.</p>
+      <p class="section-intro">Individual scores for each of the 16 Polaris behaviours, with a definition of what good looks like for each.</p>
       <div class="competencies" id="competencies"></div>
 
       <div class="red-flags" id="redFlagsBlock" style="display:none;">
@@ -1194,9 +1187,6 @@
         </div>
         <div id="recommendationsList"></div>
       </div>
-
-      <!-- ── Behaviour Distribution (populated by JS) ── -->
-      <div id="behaviourDistributionSection"></div>
 
     </div>
   </main>
@@ -1286,7 +1276,7 @@
     }
 
     function renderReport(data) {
-      const { meetingContext, meetingType, scores, evidence, redFlags, recommendations, behaviourDistribution } = data;
+      const { meetingContext, meetingType, scores, goodPractice, redFlags, recommendations, behaviourDistribution } = data;
 
       document.getElementById('meetingTypeBadge').textContent = meetingType === 'intact' ? '🏠 Intact Team' : '🔗 Cross-Functional';
       document.getElementById('meetingContext').textContent = meetingContext || '';
@@ -1297,13 +1287,13 @@
       pill.className = `overall-rag-pill ${overall.rag}`;
       pill.textContent = ragLabel(overall.rag);
 
+      // ── Dashboard: 5 metrics, plain English labels ──
       const dashboardMetrics = [
-        { key: 'effectiveStart',  label: 'Effective Start',        icon: '▶' },
-        { key: 'psychSafety',     label: 'Psychological Safety',    icon: '🛡' },
-        { key: 'decisionQuality', label: 'Decision Making Quality', icon: '⚖' },
-        { key: 'effectiveClose',  label: 'Effective Close',         icon: '✓' },
-        { key: 'oneTeam',         label: 'One Team',                icon: '◎' },
-        { key: 'clarity',         label: 'Clarity',                 icon: '◈' }
+        { key: 'effectiveStart',  label: 'Starting Well',               icon: '▶' },
+        { key: 'psychSafety',     label: 'Psychological Safety',         icon: '🛡' },
+        { key: 'decisionQuality', label: 'Decision Making Efficiency',   icon: '⚖' },
+        { key: 'effectiveClose',  label: 'Closing Clearly',              icon: '✓' },
+        { key: 'clarity',         label: 'Clarity',                      icon: '◈' }
       ];
 
       document.getElementById('dashboardGrid').innerHTML = dashboardMetrics.map(m => {
@@ -1318,28 +1308,37 @@
         </div>`;
       }).join('');
 
+      // ── Contribution Balance section ──
+      const distSection = document.getElementById('behaviourDistributionSection');
+      if (distSection) {
+        distSection.innerHTML = renderBehaviourDistribution(behaviourDistribution);
+      }
+
+      // ── Competency Breakdown ──
+      // PORT/SAFE/RACE terminology retained here (correct — only dashboard uses plain English)
       const competencyDefs = [
         { key: 'portIn',  label: 'PORT In',  subtitle: 'Meeting Opening — Purpose, Outcomes, Responsibilities, Timed Agenda', iconClass: 'icon-port-in',
           behaviours: [['purpose','P — Purpose'],['outcomes','O — Outcomes'],['responsibilities','R — Responsibilities'],['timedAgenda','T — Timed Agenda']] },
         { key: 'safe',    label: 'SAFE',     subtitle: 'Psychological Safety — Share, Ask, Facilitate, Energise', iconClass: 'icon-safe',
           behaviours: [['share','S — Share'],['ask','A — Ask'],['facilitate','F — Facilitate'],['energise','E — Energise']] },
-        { key: 'race',    label: 'RACE',     subtitle: 'Decision Making Quality — Resolve, Actioning, Challenge, Economise', iconClass: 'icon-race',
+        { key: 'race',    label: 'RACE',     subtitle: 'Decision Making Efficiency — Resolve, Actioning, Challenge, Economise', iconClass: 'icon-race',
           behaviours: [['resolve','R — Resolve'],['actioning','A — Actioning'],['challenge','C — Challenge'],['economise','E — Economise']] },
         { key: 'portOut', label: 'PORT Out', subtitle: 'Meeting Close — Plan, Outcomes, Responsibilities, Time', iconClass: 'icon-port-out',
           behaviours: [['plan','P — Plan'],['outcomes','O — Outcomes'],['responsibilities','R — Responsibilities'],['time','T — Time']] }
       ];
 
       document.getElementById('competencies').innerHTML = competencyDefs.map((comp, idx) => {
-        const subScoreData = scores.subScores[comp.key];
-        const evidenceData = evidence[comp.key];
+        const subScoreData  = scores.subScores[comp.key];
+        const gpData        = goodPractice[comp.key];
         const subRows = comp.behaviours.map(([key, label]) => {
           const s   = subScoreData[key].score;
-          const ev  = evidenceData[key];
+          const gp  = gpData[key];
           const rag = ragBandJS(s);
           return `<div class="sub-score-item rag-${rag}">
             <div class="sub-score-top"><span class="sub-score-name">${label}</span><span class="sub-score-pct ${rag}">${s}%</span></div>
             <div class="sub-score-bar-track"><div class="sub-score-bar-fill ${rag}" style="width:${s}%"></div></div>
-            <div class="sub-score-evidence">${escHtml(ev.evidence)}</div>
+            <div class="sub-score-good-practice-label">What good looks like</div>
+            <div class="sub-score-good-practice">${escHtml(gp.goodPractice || '')}</div>
           </div>`;
         }).join('');
         const isOpen = idx === 0;
@@ -1373,40 +1372,36 @@
         recoBlock.style.display = 'none';
       }
 
-      const distSection = document.getElementById('behaviourDistributionSection');
-      if (distSection) {
-        distSection.innerHTML = renderBehaviourDistribution(behaviourDistribution);
-      }
-
       setTimeout(() => {
         document.getElementById('report').scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
     }
 
-    // ── Behaviour Distribution Renderer ────────────────────────────────────
+    // ── Contribution Balance Renderer ───────────────────────────────────────
     function renderBehaviourDistribution(dist) {
       if (!dist) return '';
 
-      const safeW    = dist.safeRaceRatio ? dist.safeRaceRatio.safePercent : 0;
-      const raceW    = dist.safeRaceRatio ? dist.safeRaceRatio.racePercent : 0;
-      const otherW   = Math.max(0, 100 - safeW - raceW);
+      const safeW  = dist.safeRaceRatio ? dist.safeRaceRatio.safePercent : 0;
+      const raceW  = dist.safeRaceRatio ? dist.safeRaceRatio.racePercent : 0;
+      const otherW = Math.max(0, 100 - safeW - raceW);
 
+      // MAP removed; WHITE_NOISE replaces OPINION
       const quadrantColours = {
-        'PORT In':  '#4A90D9',
-        'SAFE':     '#5BB974',
-        'RACE':     '#E8854A',
-        'MAP':      '#9B6DD6',
-        'PORT Out': '#4A90D9',
-        'OPINION':  '#8898AA'
+        'PORT In':    '#4A90D9',
+        'SAFE':       '#5BB974',
+        'RACE':       '#E8854A',
+        'PORT Out':   '#4A90D9',
+        'WHITE_NOISE':'#8898AA'
       };
+      const quadrantOrder = ['PORT In', 'SAFE', 'RACE', 'PORT Out', 'WHITE_NOISE'];
+      const quadrantDisplayName = q => q === 'WHITE_NOISE' ? 'White Noise' : q;
 
-      const quadrantOrder = ['PORT In', 'SAFE', 'RACE', 'MAP', 'PORT Out', 'OPINION'];
       const quadrantBars = quadrantOrder.map(q => {
         const qData = (dist.quadrantBreakdown || []).find(qb => qb.quadrant === q);
         const pct   = qData ? qData.percentOfClassified : 0;
         const count = qData ? qData.exchangeCount : 0;
         return `<div class="qb-row">
-          <div class="qb-label">${q}</div>
+          <div class="qb-label">${quadrantDisplayName(q)}</div>
           <div class="qb-bar-track"><div class="qb-bar-fill" style="width:${pct}%; background:${quadrantColours[q] || '#888'}"></div></div>
           <div class="qb-stat">${pct}% <span class="qb-count">(${count})</span></div>
         </div>`;
@@ -1426,18 +1421,14 @@
           <span class="absent-significance">${escHtml(b.significance)}</span>
         </div>`).join('') || '<p class="bd-empty">No significant absences detected</p>';
 
-      const classifiedPct = dist.totalExchanges > 0
-        ? Math.round((dist.classifiedExchanges / dist.totalExchanges) * 100) : 0;
-
       // SAFE:RACE ratio RAG band label
       const srRag = dist.safeRaceRatio ? dist.safeRaceRatio.ragBand : null;
       const srRagColour = srRag === 'Green' ? 'var(--rag-green)' : srRag === 'Amber' ? 'var(--rag-amber)' : srRag === 'Blue' ? '#3B82F6' : 'var(--rag-red)';
-      const srRagLabel = srRag ? `<span style="display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;background:${srRagColour}20;color:${srRagColour};margin-left:8px;">${srRag}</span>` : '';
+      const srRagLabel  = srRag ? `<span style="display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;background:${srRagColour}20;color:${srRagColour};margin-left:8px;">${srRag}</span>` : '';
 
       return `
-        <div class="divider"></div>
-        <div class="section-heading">
-          How the Meeting Time Was Used
+        <div class="section-heading" style="margin-top:8px;">
+          Contribution Balance
           <span class="pill" style="background: var(--tu-blue-light); color: var(--tu-blue);">Distribution</span>
         </div>
         <div class="behaviour-distribution">
@@ -1451,15 +1442,15 @@
             <h3>SAFE / RACE Balance ${srRagLabel}</h3>
             <div class="bd-subsection-desc">The balance between psychological safety (SAFE) and productive challenge (RACE) is the single most diagnostic measure of meeting quality.</div>
             <div class="sr-bar">
-              <div class="sr-segment sr-safe" style="width:${safeW}%"><span>${safeW}% SAFE</span></div>
-              <div class="sr-segment sr-race" style="width:${raceW}%"><span>${raceW}% RACE</span></div>
+              <div class="sr-segment sr-safe"  style="width:${safeW}%"><span>${safeW > 8 ? safeW + '% SAFE' : ''}</span></div>
+              <div class="sr-segment sr-race"  style="width:${raceW}%"><span>${raceW > 8 ? raceW + '% RACE' : ''}</span></div>
               ${otherW > 0 ? `<div class="sr-segment sr-other" style="width:${otherW}%"></div>` : ''}
             </div>
             ${dist.safeRaceRatio && dist.safeRaceRatio.interpretation ? `<p class="sr-interpretation">${escHtml(dist.safeRaceRatio.interpretation)}</p>` : ''}
           </div>
 
           <div class="bd-subsection">
-            <h3>Time Spent per Quadrant</h3>
+            <h3>Contribution Distribution</h3>
             <div class="quadrant-bars">${quadrantBars}</div>
           </div>
 
@@ -1476,7 +1467,7 @@
 
           ${dist.timeEffectivenessSummary ? `
           <div class="bd-subsection">
-            <h3>Time Effectiveness Summary</h3>
+            <h3>What the Balance Tells You</h3>
             <div class="bd-narrative">${escHtml(dist.timeEffectivenessSummary)}</div>
           </div>` : ''}
         </div>`;
@@ -1503,27 +1494,44 @@
         .replace(/"/g, '&quot;');
     }
 
+    // ── Download Report ─────────────────────────────────────────────────────
     function downloadReport() {
       if (!currentReportData) return;
       const d   = currentReportData;
       const now = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-      const ragLabel2 = r => r === 'green' ? 'Effective' : r === 'amber' ? 'Developing' : 'Weak';
-      const ragStyle  = r => r === 'green' ? 'background:#EAF7EF;color:#1A7F4B;' : r === 'amber' ? 'background:#FEF3C7;color:#D97706;' : 'background:#FEE8E8;color:#C53030;';
+      const ragLabel2      = r => r === 'green' ? 'Effective' : r === 'amber' ? 'Developing' : 'Weak';
+      const ragStyle       = r => r === 'green' ? 'background:#EAF7EF;color:#1A7F4B;' : r === 'amber' ? 'background:#FEF3C7;color:#D97706;' : 'background:#FEE8E8;color:#C53030;';
       const ragBorderColor = r => r === 'green' ? '#1A7F4B' : r === 'amber' ? '#D97706' : '#C53030';
       const ragScoreColor  = r => r === 'green' ? '#1A7F4B' : r === 'amber' ? '#D97706' : '#C53030';
       const logoSrc = 'https://images.squarespace-cdn.com/content/v1/690c66c9a788d325e51c13c2/ccc5ce6d-31b4-41ea-94cd-34a6d4ea0b60/TeamUp_Artwork_Logo_Black_v2.png?format=1500w';
-      const dashItems = [['effectiveStart','Effective Start'],['psychSafety','Psychological Safety'],['decisionQuality','Decision Making Quality'],['effectiveClose','Effective Close'],['oneTeam','One Team'],['clarity','Clarity']];
+
+      // Plain English labels in download report dashboard — same as live view
+      const dashItems = [
+        ['effectiveStart',  'Starting Well'],
+        ['psychSafety',     'Psychological Safety'],
+        ['decisionQuality', 'Decision Making Efficiency'],
+        ['effectiveClose',  'Closing Clearly'],
+        ['clarity',         'Clarity']
+      ];
+
+      // PORT/SAFE/RACE terminology retained in competency breakdown
       const compDefs = [
-        { key:'portIn',  label:'PORT In',  tagClass:'tag-port-in',  subtitle:'Purpose · Outcomes · Responsibilities · Timed Agenda', behaviours:[['purpose','P — Purpose'],['outcomes','O — Outcomes'],['responsibilities','R — Responsibilities'],['timedAgenda','T — Timed Agenda']]},
-        { key:'safe',    label:'SAFE',     tagClass:'tag-safe',     subtitle:'Share · Ask · Facilitate · Energise', behaviours:[['share','S — Share'],['ask','A — Ask'],['facilitate','F — Facilitate'],['energise','E — Energise']]},
-        { key:'race',    label:'RACE',     tagClass:'tag-race',     subtitle:'Resolve · Actioning · Challenge · Economise', behaviours:[['resolve','R — Resolve'],['actioning','A — Actioning'],['challenge','C — Challenge'],['economise','E — Economise']]},
-        { key:'portOut', label:'PORT Out', tagClass:'tag-port-out', subtitle:'Plan · Outcomes · Responsibilities · Time', behaviours:[['plan','P — Plan'],['outcomes','O — Outcomes'],['responsibilities','R — Responsibilities'],['time','T — Time']]}
+        { key:'portIn',  label:'PORT In',  tagClass:'tag-port-in',  subtitle:'Purpose · Outcomes · Responsibilities · Timed Agenda',
+          behaviours:[['purpose','P — Purpose'],['outcomes','O — Outcomes'],['responsibilities','R — Responsibilities'],['timedAgenda','T — Timed Agenda']]},
+        { key:'safe',    label:'SAFE',     tagClass:'tag-safe',     subtitle:'Share · Ask · Facilitate · Energise',
+          behaviours:[['share','S — Share'],['ask','A — Ask'],['facilitate','F — Facilitate'],['energise','E — Energise']]},
+        { key:'race',    label:'RACE',     tagClass:'tag-race',     subtitle:'Resolve · Actioning · Challenge · Economise',
+          behaviours:[['resolve','R — Resolve'],['actioning','A — Actioning'],['challenge','C — Challenge'],['economise','E — Economise']]},
+        { key:'portOut', label:'PORT Out', tagClass:'tag-port-out', subtitle:'Plan · Outcomes · Responsibilities · Time',
+          behaviours:[['plan','P — Plan'],['outcomes','O — Outcomes'],['responsibilities','R — Responsibilities'],['time','T — Time']]}
       ];
 
       const dist = d.behaviourDistribution;
+      const quadrantDisplayName = q => q === 'WHITE_NOISE' ? 'White Noise' : q;
+
       const distSection = dist ? `
         <div style="margin-top:20px;padding-top:14px;border-top:2px solid #1375B7;">
-          <div style="font-family:'Outfit',Arial,sans-serif;font-size:13px;font-weight:700;color:#12243A;margin-bottom:12px;">How the Meeting Time Was Used</div>
+          <div style="font-family:'Outfit',Arial,sans-serif;font-size:13px;font-weight:700;color:#12243A;margin-bottom:12px;">Contribution Balance</div>
           <div style="font-size:11px;color:#4A5568;background:#F2F5F9;padding:8px 12px;border-radius:6px;margin-bottom:12px;">
             ${dist.totalExchanges} total exchanges · ${dist.classifiedExchanges} mapped to Polaris behaviours · ${dist.unclassifiedExchanges} procedural
           </div>
@@ -1531,22 +1539,22 @@
           <div style="margin-bottom:12px;">
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#8898AA;margin-bottom:6px;">SAFE / RACE Balance</div>
             <div style="display:flex;height:28px;border-radius:4px;overflow:hidden;">
-              <div style="width:${dist.safeRaceRatio.safePercent}%;background:#5BB974;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:white;min-width:0;">${dist.safeRaceRatio.safePercent}% SAFE</div>
-              <div style="width:${dist.safeRaceRatio.racePercent}%;background:#E8854A;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:white;min-width:0;">${dist.safeRaceRatio.racePercent}% RACE</div>
+              <div style="width:${dist.safeRaceRatio.safePercent}%;background:#5BB974;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:white;min-width:0;">${dist.safeRaceRatio.safePercent > 8 ? dist.safeRaceRatio.safePercent + '% SAFE' : ''}</div>
+              <div style="width:${dist.safeRaceRatio.racePercent}%;background:#E8854A;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:white;min-width:0;">${dist.safeRaceRatio.racePercent > 8 ? dist.safeRaceRatio.racePercent + '% RACE' : ''}</div>
               <div style="flex:1;background:#ddd;"></div>
             </div>
             ${dist.safeRaceRatio.interpretation ? `<p style="font-size:10px;color:#4A5568;margin-top:4px;font-style:italic;">${dist.safeRaceRatio.interpretation}</p>` : ''}
           </div>` : ''}
           ${dist.quadrantBreakdown ? `
           <div style="margin-bottom:12px;">
-            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#8898AA;margin-bottom:8px;">Time Spent per Quadrant</div>
-            ${['PORT In','SAFE','RACE','MAP','PORT Out','OPINION'].map(q => {
-              const qData = dist.quadrantBreakdown.find(qb => qb.quadrant === q);
-              const pct2 = qData ? qData.percentOfClassified : 0;
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#8898AA;margin-bottom:8px;">Contribution Distribution</div>
+            ${['PORT In','SAFE','RACE','PORT Out','WHITE_NOISE'].map(q => {
+              const qData  = dist.quadrantBreakdown.find(qb => qb.quadrant === q);
+              const pct2   = qData ? qData.percentOfClassified : 0;
               const count2 = qData ? qData.exchangeCount : 0;
-              const colours = {'PORT In':'#4A90D9','SAFE':'#5BB974','RACE':'#E8854A','MAP':'#9B6DD6','PORT Out':'#4A90D9','OPINION':'#8898AA'};
+              const colours = {'PORT In':'#4A90D9','SAFE':'#5BB974','RACE':'#E8854A','PORT Out':'#4A90D9','WHITE_NOISE':'#8898AA'};
               return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
-                <div style="width:60px;font-size:9px;font-weight:600;color:#4A5568;flex-shrink:0;">${q}</div>
+                <div style="width:70px;font-size:9px;font-weight:600;color:#4A5568;flex-shrink:0;">${quadrantDisplayName(q)}</div>
                 <div style="flex:1;height:12px;background:#F2F5F9;border-radius:3px;overflow:hidden;">
                   <div style="width:${pct2}%;height:100%;background:${colours[q]||'#888'};border-radius:3px;"></div>
                 </div>
@@ -1595,7 +1603,8 @@
 .sub-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;}
 .sub-name{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#4A5568;}
 .sub-pct{font-family:'Outfit',Arial,sans-serif;font-size:14px;font-weight:700;}
-.sub-ev{font-size:10.5px;color:#4A5568;font-style:italic;line-height:1.5;margin-top:4px;}
+.sub-gp-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:#8898AA;margin-top:5px;margin-bottom:2px;}
+.sub-gp{font-size:10.5px;color:#4A5568;line-height:1.5;margin-top:2px;}
 .flags{border:1.5px solid #fca5a5;border-top:4px solid #C53030;border-radius:8px;padding:14px 16px;margin-bottom:14px;}
 .flags-heading{font-size:11px;font-weight:700;color:#C53030;margin-bottom:10px;}
 .flag-item{font-size:11px;color:#12243A;padding:6px 0 6px 14px;border-top:1px solid #FEE8E8;line-height:1.5;position:relative;}
@@ -1605,6 +1614,7 @@
 .reco-item{display:flex;gap:10px;padding:7px 0;border-top:1px solid #F2F5F9;font-size:11px;line-height:1.55;}
 .reco-n{width:18px;height:18px;background:#1375B7;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;}
 .report-footer{margin-top:20px;padding-top:10px;border-top:1px solid #DDE3EC;text-align:center;font-size:9px;color:#8898AA;}
+@media print{body{font-size:11px;}@page{margin:15mm;}}
 </style></head><body>
 <div class="header">
   <div class="header-left">
@@ -1623,32 +1633,32 @@
     </div>
     <div class="hero-guide"><span style="color:#7EFFC0;">●</span> Green &nbsp;Above 70%<br><span style="color:#FFD08A;">●</span> Amber &nbsp;40–70%<br><span style="color:#FCA5A5;">●</span> Red &nbsp;&nbsp;&nbsp;&nbsp;Below 40%</div>
   </div>
-  <div class="section-heading">Dashboard Metrics</div>
+  <div class="section-heading">Dashboard</div>
   <div class="dash-grid">
     ${dashItems.map(([key, label]) => {
-      const s = d.scores.dashboard[key];
+      const s  = d.scores.dashboard[key];
       const bc = ragBorderColor(s.rag);
       const sc = ragScoreColor(s.rag);
       return `<div class="dash-card" style="border-top-color:${bc};"><div class="dash-card-label">${label}</div><div class="dash-card-score" style="color:${sc};">${s.score}<span class="dash-card-pct">%</span></div><div class="bar-track"><div class="bar-fill" style="width:${s.score}%;background:${bc};"></div></div><div class="dash-badge" style="${ragStyle(s.rag)}">${ragLabel2(s.rag)}</div></div>`;
     }).join('')}
   </div>
+  ${distSection}
   <div class="section-heading">Competency Breakdown</div>
   ${compDefs.map(comp => {
     const subs = d.scores.subScores[comp.key];
-    const evs = d.evidence[comp.key];
+    const gps  = d.goodPractice[comp.key];
     return `<div class="comp-block"><div class="comp-head"><span class="comp-tag ${comp.tagClass}">${comp.label}</span>${comp.subtitle}</div><div class="sub-grid">${comp.behaviours.map(([bKey,bLabel]) => {
-      const sc = subs[bKey].score;
-      const rag = sc<40?'red':sc<=70?'amber':'green';
+      const sc  = subs[bKey].score;
+      const rag = sc < 40 ? 'red' : sc <= 70 ? 'amber' : 'green';
       const bc2 = ragBorderColor(rag);
       const sc2 = ragScoreColor(rag);
-      const ev = evs[bKey];
-      return `<div class="sub-item" style="border-left-color:${bc2};"><div class="sub-top"><span class="sub-name">${bLabel}</span><span class="sub-pct" style="color:${sc2};">${sc}%</span></div><div class="bar-track"><div class="bar-fill" style="width:${sc}%;background:${bc2};"></div></div><div class="sub-ev">${escHtml(ev.evidence)}</div></div>`;
+      const gp  = gps[bKey];
+      return `<div class="sub-item" style="border-left-color:${bc2};"><div class="sub-top"><span class="sub-name">${bLabel}</span><span class="sub-pct" style="color:${sc2};">${sc}%</span></div><div class="bar-track"><div class="bar-fill" style="width:${sc}%;background:${bc2};"></div></div><div class="sub-gp-label">What good looks like</div><div class="sub-gp">${escHtml(gp.goodPractice || '')}</div></div>`;
     }).join('')}</div></div>`;
   }).join('')}
   ${d.redFlags && d.redFlags.length > 0 ? `<div class="flags"><div class="flags-heading">⚠ Patterns to Address</div>${d.redFlags.map(rf => `<div class="flag-item">${escHtml(rf)}</div>`).join('')}</div>` : ''}
   ${d.recommendations && d.recommendations.length > 0 ? `<div class="recos"><div class="recos-heading">💡 Recommendations</div>${d.recommendations.map((r,i) => `<div class="reco-item"><div class="reco-n">${i+1}</div><div>${escHtml(r)}</div></div>`).join('')}</div>` : ''}
-  ${distSection}
-  <div class="report-footer">Periscope · Powered by Team Up · Polaris Formula · Confidential</div>
+  <div class="report-footer">Periscope · Powered by Team Up · Polaris Formula · Confidential · ${now}</div>
 </div></body></html>`;
 
       const blob = new Blob([html], { type: 'text/html' });
