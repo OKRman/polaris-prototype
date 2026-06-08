@@ -28,7 +28,25 @@ function dashMetric(rawScore) {
   return { score: pct, rag: ragBand(pct) };
 }
 
-// Average any number of raw 0–4 scores
+// Build a dashboard metric object from an already-computed 0–100 percentage
+function dashMetricFromPct(pct) {
+  const rounded = Math.round(pct);
+  return { score: rounded, rag: ragBand(rounded) };
+}
+
+// Weighted average: pass alternating [value, weight] pairs
+// e.g. weightedAvg(score1, 0.20, score2, 0.30, ...)
+function weightedAvg(...pairs) {
+  let total = 0;
+  let weightSum = 0;
+  for (let i = 0; i < pairs.length; i += 2) {
+    total     += pairs[i] * pairs[i + 1];
+    weightSum += pairs[i + 1];
+  }
+  return weightSum > 0 ? total / weightSum : 0;
+}
+
+// Simple unweighted average of any number of raw 0–4 scores
 function avg(...vals) {
   return vals.reduce((a, b) => a + b, 0) / vals.length;
 }
@@ -36,10 +54,10 @@ function avg(...vals) {
 // ─── Response transformer ─────────────────────────────────────────────────────
 //
 // Claude returns the raw Polaris schema from lib/prompt.js:
-//   { portIn: { purpose: { score, evidence }, ... }, safe: {...}, race: {...}, portOut: {...}, ... }
+//   { portIn: { purpose: { score, goodPractice }, ... }, safe: {...}, race: {...}, portOut: {...}, ... }
 //
 // index.html expects:
-//   { meetingContext, meetingType, scores: { dashboard, subScores }, evidence, redFlags,
+//   { meetingContext, meetingType, scores: { dashboard, subScores }, goodPractice, redFlags,
 //     recommendations, behaviourDistribution }
 //
 // This function performs that transformation.
@@ -47,7 +65,7 @@ function avg(...vals) {
 function transformResponse(raw, meetingType) {
   const { portIn, safe, race, portOut } = raw;
 
-  // ── Sub-scores (percent scale, evidence separated) ──────────────────────────
+  // ── Sub-scores (percent scale) ───────────────────────────────────────────────
   const subScores = {
     portIn: {
       purpose:          { score: toPercent(portIn.purpose.score) },
@@ -75,59 +93,70 @@ function transformResponse(raw, meetingType) {
     },
   };
 
-  // ── Evidence (mirrors sub-score structure, carries the text strings) ─────────
-  const evidence = {
+  // ── Good practice definitions (mirrors sub-score structure) ──────────────────
+  const goodPractice = {
     portIn: {
-      purpose:          { evidence: portIn.purpose.evidence },
-      outcomes:         { evidence: portIn.outcomes.evidence },
-      responsibilities: { evidence: portIn.responsibilities.evidence },
-      timedAgenda:      { evidence: portIn.timedAgenda.evidence },
+      purpose:          { goodPractice: portIn.purpose.goodPractice          || '' },
+      outcomes:         { goodPractice: portIn.outcomes.goodPractice         || '' },
+      responsibilities: { goodPractice: portIn.responsibilities.goodPractice || '' },
+      timedAgenda:      { goodPractice: portIn.timedAgenda.goodPractice      || '' },
     },
     safe: {
-      share:      { evidence: safe.share.evidence },
-      ask:        { evidence: safe.ask.evidence },
-      facilitate: { evidence: safe.facilitate.evidence },
-      energise:   { evidence: safe.energise.evidence },
+      share:      { goodPractice: safe.share.goodPractice      || '' },
+      ask:        { goodPractice: safe.ask.goodPractice        || '' },
+      facilitate: { goodPractice: safe.facilitate.goodPractice || '' },
+      energise:   { goodPractice: safe.energise.goodPractice   || '' },
     },
     race: {
-      resolve:   { evidence: race.resolve.evidence },
-      actioning: { evidence: race.actioning.evidence },
-      challenge: { evidence: race.challenge.evidence },
-      economise: { evidence: race.economise.evidence },
+      resolve:   { goodPractice: race.resolve.goodPractice   || '' },
+      actioning: { goodPractice: race.actioning.goodPractice || '' },
+      challenge: { goodPractice: race.challenge.goodPractice || '' },
+      economise: { goodPractice: race.economise.goodPractice || '' },
     },
     portOut: {
-      plan:             { evidence: portOut.plan.evidence },
-      outcomes:         { evidence: portOut.outcomes.evidence },
-      responsibilities: { evidence: portOut.responsibilities.evidence },
-      time:             { evidence: portOut.time.evidence },
+      plan:             { goodPractice: portOut.plan.goodPractice             || '' },
+      outcomes:         { goodPractice: portOut.outcomes.goodPractice         || '' },
+      responsibilities: { goodPractice: portOut.responsibilities.goodPractice || '' },
+      time:             { goodPractice: portOut.time.goodPractice             || '' },
     },
   };
 
-  // ── Dashboard metrics (weighted composites, raw 0–4 averages → percent) ──────
+  // ── Dashboard metrics ────────────────────────────────────────────────────────
   //
-  // Effective Start       = PORT In (all 4 behaviours)
-  // Psychological Safety  = SAFE (all 4 behaviours)
-  // Decision Making Quality = RACE (all 4 behaviours)
-  // Effective Close       = PORT Out (all 4 behaviours)
-  // One Team              = cohesion & mutual trust: SAFE share + facilitate + energise + RACE resolve
-  // Clarity               = purposeful intent & clear outcomes: PORT In purpose+outcomes + PORT Out plan+outcomes
+  // Effective Start   = PORT In (all 4, unweighted average for dashboard card)
+  // Psychological Safety = SAFE (all 4, unweighted average)
+  // Decision Making Efficiency = RACE (all 4, unweighted average)
+  // Effective Close   = PORT Out (all 4, unweighted average)
+  // Clarity           = PORT In purpose+outcomes + PORT Out plan+outcomes
+  //
+  // Overall (weighted per George's brief):
+  //   Effective Start 20% · Psychological Safety 20% · Decision Making Efficiency 20%
+  //   Clarity 10% · Effective Close 30%
+  //
+  // One Team has been removed from the dashboard (agreed George & Graham, June 2026).
 
   const effectiveStart  = avg(portIn.purpose.score, portIn.outcomes.score, portIn.responsibilities.score, portIn.timedAgenda.score);
   const psychSafety     = avg(safe.share.score, safe.ask.score, safe.facilitate.score, safe.energise.score);
   const decisionQuality = avg(race.resolve.score, race.actioning.score, race.challenge.score, race.economise.score);
   const effectiveClose  = avg(portOut.plan.score, portOut.outcomes.score, portOut.responsibilities.score, portOut.time.score);
-  const oneTeam         = avg(safe.share.score, safe.facilitate.score, safe.energise.score, race.resolve.score);
   const clarity         = avg(portIn.purpose.score, portIn.outcomes.score, portOut.plan.score, portOut.outcomes.score);
-  const overall         = avg(effectiveStart, psychSafety, decisionQuality, effectiveClose, oneTeam, clarity);
+
+  // Overall: weighted composite on 0–4 scale, then converted to percent
+  const overallRaw = weightedAvg(
+    effectiveStart,  0.20,
+    psychSafety,     0.20,
+    decisionQuality, 0.20,
+    clarity,         0.10,
+    effectiveClose,  0.30
+  );
 
   const scores = {
     dashboard: {
-      overall:         dashMetric(overall),
+      overall:         dashMetric(overallRaw),
       effectiveStart:  dashMetric(effectiveStart),
       psychSafety:     dashMetric(psychSafety),
       decisionQuality: dashMetric(decisionQuality),
       effectiveClose:  dashMetric(effectiveClose),
-      oneTeam:         dashMetric(oneTeam),
       clarity:         dashMetric(clarity),
     },
     subScores,
@@ -137,7 +166,7 @@ function transformResponse(raw, meetingType) {
     meetingContext:        raw.meetingContext        || '',
     meetingType:           meetingType,
     scores,
-    evidence,
+    goodPractice,
     redFlags:              raw.redFlags              || [],
     recommendations:       raw.recommendations       || [],
     behaviourDistribution: raw.behaviourDistribution || null,
@@ -174,7 +203,7 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-opus-4-5',
+        model: 'claude-sonnet-4-6',
         max_tokens: 8000,
         system: systemPrompt,
         messages: [
