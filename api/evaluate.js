@@ -51,6 +51,35 @@ function avg(...vals) {
   return vals.reduce((a, b) => a + b, 0) / vals.length;
 }
 
+// ─── Anonymisation ────────────────────────────────────────────────────────────
+//
+// Replaces speaker labels (e.g. "George:", "Peter:", "DR. SMITH:") with
+// generic Speaker A / B / C labels before the transcript reaches the model.
+// Preserves all content and behavioural signals — only removes identity.
+// This ensures no participant names can appear in the generated report.
+//
+function anonymiseTranscript(transcript) {
+  const speakerMap = {};
+  let speakerCount = 0;
+  const labels = [
+    'Speaker A', 'Speaker B', 'Speaker C', 'Speaker D',
+    'Speaker E', 'Speaker F', 'Speaker G', 'Speaker H',
+  ];
+
+  // Match common transcript speaker-label formats:
+  //   "George:"  "GEORGE:"  "George Karseras:"  "Dr. Smith:"  "[George]:"
+  const speakerPattern = /^(\[?[A-Z][a-zA-Z .'-]+\]?)\s*:/gm;
+
+  return transcript.replace(speakerPattern, (match, name) => {
+    const key = name.trim().toLowerCase();
+    if (!speakerMap[key]) {
+      speakerMap[key] = labels[speakerCount] || `Speaker ${speakerCount + 1}`;
+      speakerCount++;
+    }
+    return speakerMap[key] + ':';
+  });
+}
+
 // ─── Response transformer ─────────────────────────────────────────────────────
 //
 // Claude returns the raw Polaris schema from lib/prompt.js:
@@ -207,7 +236,7 @@ export default async function handler(req, res) {
         max_tokens: 3500,
         system: systemPrompt,
         messages: [
-          { role: 'user', content: `Please evaluate the following meeting transcript:\n\n${transcript.trim()}` },
+          { role: 'user', content: `Please evaluate the following meeting transcript:\n\n${anonymiseTranscript(transcript.trim())}` },
         ],
       }),
     });
