@@ -147,7 +147,6 @@
     .red-flag-icon{width:32px;height:32px;background:var(--rag-red-bg);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;}
     .red-flags h3{font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;color:var(--rag-red);}
     .red-flag-item{display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--rag-red-bg);font-size:14px;color:var(--text-primary);line-height:1.5;}
-    .red-flag-item::before{content:'⚠';color:var(--rag-red);font-size:12px;margin-top:2px;flex-shrink:0;}
     .recommendations{background:white;border-radius:var(--radius-md);padding:24px;box-shadow:var(--shadow-sm);border:1.5px solid var(--border);margin-bottom:24px;}
     .recommendations-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
     .reco-icon{width:32px;height:32px;background:var(--tu-teal-light);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;}
@@ -456,7 +455,7 @@
       const rfBlock = document.getElementById('redFlagsBlock');
       const rfList  = document.getElementById('redFlagsList');
       if (redFlags && redFlags.length > 0) {
-        rfList.innerHTML = redFlags.map(rf => `<div class="red-flag-item">${escHtml(rf)}</div>`).join('');
+        rfList.innerHTML = redFlags.map(rf => `<div class="red-flag-item"><span style="color:var(--rag-red);font-size:12px;margin-top:2px;flex-shrink:0;">&#x26A0;</span>${escHtml(rf)}</div>`).join('');
         rfBlock.style.display = 'block';
       } else {
         rfBlock.style.display = 'none';
@@ -539,7 +538,7 @@
       const redFlagsHTML = d.redFlags && d.redFlags.length > 0
         ? `<div class="red-flags" style="display:block;">
              <div class="red-flags-header"><div class="red-flag-icon">&#x26A0;&#xFE0F;</div><h3>Patterns to Address</h3></div>
-             ${d.redFlags.map(rf => `<div class="red-flag-item">${escHtml(rf)}</div>`).join('')}
+             ${d.redFlags.map(rf => `<div class="red-flag-item"><span style="color:var(--rag-red);font-size:12px;margin-top:2px;flex-shrink:0;">&#x26A0;</span>${escHtml(rf)}</div>`).join('')}
            </div>` : '';
 
       const recosHTML = d.recommendations && d.recommendations.length > 0
@@ -825,8 +824,7 @@
 .sub-gp{font-size:10.5px;color:#4A5568;line-height:1.5;margin-top:2px;}
 .flags{border:1.5px solid #fca5a5;border-top:4px solid #C53030;border-radius:8px;padding:14px 16px;margin-bottom:14px;}
 .flags-heading{font-size:11px;font-weight:700;color:#C53030;margin-bottom:10px;}
-.flag-item{font-size:11px;color:#12243A;padding:6px 0 6px 14px;border-top:1px solid #FEE8E8;line-height:1.5;position:relative;}
-.flag-item::before{content:'&#x25B8;';position:absolute;left:0;color:#C53030;font-size:10px;}
+.flag-item{font-size:11px;color:#12243A;padding:6px 0 6px 20px;border-top:1px solid #FEE8E8;line-height:1.5;position:relative;}
 .recos{border:1.5px solid #DDE3EC;border-top:4px solid #3E8888;border-radius:8px;padding:14px 16px;margin-bottom:14px;}
 .recos-heading{font-size:11px;font-weight:700;color:#3E8888;margin-bottom:10px;}
 .reco-item{display:flex;gap:10px;padding:7px 0;border-top:1px solid #F2F5F9;font-size:11px;line-height:1.55;}
