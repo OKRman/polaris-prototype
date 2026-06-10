@@ -53,31 +53,81 @@ function avg(...vals) {
 
 // ─── Anonymisation ────────────────────────────────────────────────────────────
 //
-// Replaces speaker labels (e.g. "George:", "Peter:", "DR. SMITH:") with
-// generic Speaker A / B / C labels before the transcript reaches the model.
-// Preserves all content and behavioural signals — only removes identity.
-// This ensures no participant names can appear in the generated report.
+// Replaces all speaker labels in the transcript with generic identifiers
+// (Speaker A, Speaker B, …) before sending to the API.
+// Returns { anonymisedTranscript, speakerMap } where speakerMap maps
+// original labels to generic ones (used for leader matching).
 //
+// Handles the two most common transcript formats:
+//   "Name: dialogue"
+//   "Name\n00:00:00\ndialogue"  (Otter/Fireflies timestamp style)
+
 function anonymiseTranscript(transcript) {
-  const speakerMap = {};
-  let speakerCount = 0;
-  const labels = [
-    'Speaker A', 'Speaker B', 'Speaker C', 'Speaker D',
-    'Speaker E', 'Speaker F', 'Speaker G', 'Speaker H',
-  ];
+  const speakerMap   = {};   // originalLabel -> 'Speaker A', 'Speaker B', …
+  const reverseMap   = {};   // 'Speaker A' -> originalLabel
+  const labels       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let   labelIndex   = 0;
 
-  // Match common transcript speaker-label formats:
-  //   "George:"  "GEORGE:"  "George Karseras:"  "Dr. Smith:"  "[George]:"
-  const speakerPattern = /^(\[?[A-Z][a-zA-Z .'-]+\]?)\s*:/gm;
+  // Match "Word(s) possibly with spaces/dots/hyphens:" at the start of a line
+  const speakerRegex = /^([A-Za-z][A-Za-z0-9 .'\-]{0,40}):/gm;
 
-  return transcript.replace(speakerPattern, (match, name) => {
-    const key = name.trim().toLowerCase();
+  const anonymised = transcript.replace(speakerRegex, (match, name) => {
+    const key = name.trim();
     if (!speakerMap[key]) {
-      speakerMap[key] = labels[speakerCount] || `Speaker ${speakerCount + 1}`;
-      speakerCount++;
+      const label         = `Speaker ${labels[labelIndex % 26]}`;
+      speakerMap[key]     = label;
+      reverseMap[label]   = key;
+      labelIndex++;
     }
-    return speakerMap[key] + ':';
+    return `${speakerMap[key]}:`;
   });
+
+  return { anonymisedTranscript: anonymised, speakerMap };
+}
+
+// ─── Leader extraction ────────────────────────────────────────────────────────
+//
+// Given an anonymised transcript and the speakerMap from anonymiseTranscript,
+// finds the generic label for the supplied leaderName and returns only
+// that speaker's lines as a new transcript string.
+//
+// Match is case-insensitive and trims whitespace.
+// Returns null if no match is found.
+
+function extractLeaderTranscript(anonymisedTranscript, speakerMap, leaderName) {
+  if (!leaderName) return null;
+
+  const needle = leaderName.trim().toLowerCase();
+
+  // Find the generic label for this leader in speakerMap
+  let leaderLabel = null;
+  for (const [original, generic] of Object.entries(speakerMap)) {
+    if (original.toLowerCase() === needle) {
+      leaderLabel = generic;
+      break;
+    }
+  }
+
+  if (!leaderLabel) return null;
+
+  // Extract all lines belonging to this speaker.
+  // A speaker's turn starts at "Speaker X:" and runs until the next "Speaker Y:"
+  // or end of string.
+  const escapedLabel  = leaderLabel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const turnRegex     = new RegExp(
+    `^(${escapedLabel}:.*?)(?=^[A-Za-z][A-Za-z0-9 .'\\-]{0,40}:|$(?![\s\S]))`,
+    'gms'
+  );
+
+  const turns = [];
+  let match;
+  while ((match = turnRegex.exec(anonymisedTranscript)) !== null) {
+    turns.push(match[1].trim());
+  }
+
+  if (turns.length === 0) return null;
+
+  return turns.join('\n\n');
 }
 
 // ─── Response transformer ─────────────────────────────────────────────────────
@@ -94,7 +144,7 @@ function anonymiseTranscript(transcript) {
 function transformResponse(raw, meetingType) {
   const { portIn, safe, race, portOut } = raw;
 
-  // ── Sub-scores (percent scale) ───────────────────────────────────────────────
+  // ── Sub-scores (percent scale) ──────────────────────────────────────────────
   const subScores = {
     portIn: {
       purpose:          { score: toPercent(portIn.purpose.score) },
@@ -122,7 +172,7 @@ function transformResponse(raw, meetingType) {
     },
   };
 
-  // ── Good practice definitions (mirrors sub-score structure) ──────────────────
+  // ── Good practice definitions (mirrors sub-score structure) ─────────────────
   const goodPractice = {
     portIn: {
       purpose:          { goodPractice: portIn.purpose.goodPractice          || '' },
@@ -202,6 +252,70 @@ function transformResponse(raw, meetingType) {
   };
 }
 
+// ─── Shared API call ──────────────────────────────────────────────────────────
+//
+// Sends a transcript to Claude with the Polaris prompt and returns
+// the parsed, transformed result object.
+// Throws on API error or parse failure — callers handle errors.
+
+async function callPolarisAPI(transcript, meetingType, apiKey) {
+  const systemPrompt = buildPrompt(meetingType);
+
+  const apiResponse = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type':    'application/json',
+      'x-api-key':       apiKey,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model:      'claude-sonnet-4-6',
+      max_tokens: 3500,
+      system:     systemPrompt,
+      messages: [
+        { role: 'user', content: `Please evaluate the following meeting transcript:\n\n${transcript.trim()}` },
+      ],
+    }),
+  });
+
+  if (!apiResponse.ok) {
+    const errorBody = await apiResponse.text();
+    console.error('Anthropic API error:', apiResponse.status, errorBody);
+    throw new Error(`API_ERROR:${apiResponse.status}`);
+  }
+
+  const apiData = await apiResponse.json();
+  const rawText = apiData.content?.[0]?.text;
+
+  if (!rawText) {
+    console.error('Unexpected API response shape:', JSON.stringify(apiData));
+    throw new Error('API_EMPTY_RESPONSE');
+  }
+
+  // Strip any accidental markdown fences
+  const cleaned = rawText
+    .replace(/^```json\s*/i, '')
+    .replace(/^```\s*/i,     '')
+    .replace(/\s*```$/i,     '')
+    .trim();
+
+  let raw;
+  try {
+    raw = JSON.parse(cleaned);
+  } catch (parseError) {
+    console.error('JSON parse failed. Raw text was:', rawText.slice(0, 500));
+    throw new Error('API_PARSE_FAILURE');
+  }
+
+  // Validate the expected top-level keys from lib/prompt.js schema
+  if (!raw.portIn || !raw.safe || !raw.race || !raw.portOut) {
+    console.error('Response missing expected keys. Got:', Object.keys(raw));
+    throw new Error('API_SCHEMA_FAILURE');
+  }
+
+  return transformResponse(raw, meetingType);
+}
+
 // ─── Handler ──────────────────────────────────────────────────────────────────
 
 export default async function handler(req, res) {
@@ -209,7 +323,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { transcript, meetingType = 'intact' } = req.body;
+  const { transcript, meetingType = 'intact', leaderName = null } = req.body;
 
   if (!transcript || typeof transcript !== 'string' || transcript.trim().length < 50) {
     return res.status(400).json({ error: 'Please provide a meeting transcript of at least 50 characters.' });
@@ -222,67 +336,57 @@ export default async function handler(req, res) {
   }
 
   try {
-    const systemPrompt = buildPrompt(meetingType);
+    // ── Step 1: Anonymise the transcript ──────────────────────────────────────
+    // Speaker labels are replaced with Speaker A, Speaker B, etc. before any
+    // data leaves this function. The speakerMap is retained only for leader matching.
+    const { anonymisedTranscript, speakerMap } = anonymiseTranscript(transcript);
 
-    const apiResponse = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 3500,
-        system: systemPrompt,
-        messages: [
-          { role: 'user', content: `Please evaluate the following meeting transcript:\n\n${anonymiseTranscript(transcript.trim())}` },
-        ],
-      }),
-    });
+    // ── Step 2: Attempt leader extraction (if leaderName provided) ────────────
+    let leaderTranscript = null;
+    let leaderNotFound   = false;
 
-    if (!apiResponse.ok) {
-      const errorBody = await apiResponse.text();
-      console.error('Anthropic API error:', apiResponse.status, errorBody);
-      return res.status(502).json({ error: 'The AI analysis service is temporarily unavailable. Please try again.' });
+    if (leaderName && typeof leaderName === 'string' && leaderName.trim().length > 0) {
+      leaderTranscript = extractLeaderTranscript(anonymisedTranscript, speakerMap, leaderName);
+      if (!leaderTranscript) {
+        leaderNotFound = true;
+        console.log(`Leader not found: "${leaderName}" had no match in speakerMap keys: [${Object.keys(speakerMap).join(', ')}]`);
+      }
     }
 
-    const apiData = await apiResponse.json();
-    const rawText = apiData.content?.[0]?.text;
+    // ── Step 3: Run API calls in parallel ─────────────────────────────────────
+    // Team report always runs. Leader report runs only if we have leader lines.
+    // Both use the same prompt and schema — the difference is only the input.
+    const teamPromise   = callPolarisAPI(anonymisedTranscript, meetingType, apiKey);
+    const leaderPromise = leaderTranscript
+      ? callPolarisAPI(leaderTranscript, meetingType, apiKey)
+      : Promise.resolve(null);
 
-    if (!rawText) {
-      console.error('Unexpected API response shape:', JSON.stringify(apiData));
-      return res.status(500).json({ error: 'Unexpected response from AI. Please try again.' });
+    const [teamResult, leaderResult] = await Promise.all([teamPromise, leaderPromise]);
+
+    // ── Step 4: Assemble and return response ──────────────────────────────────
+    const response = { ...teamResult };
+
+    if (leaderNotFound) {
+      response.leaderNotFound = true;
+    } else if (leaderResult) {
+      response.leaderReport = leaderResult;
     }
 
-    // Strip any accidental markdown fences
-    const cleaned = rawText
-      .replace(/^```json\s*/i, '')
-      .replace(/^```\s*/i, '')
-      .replace(/\s*```$/i, '')
-      .trim();
-
-    let raw;
-    try {
-      raw = JSON.parse(cleaned);
-    } catch (parseError) {
-      console.error('JSON parse failed. Raw text was:', rawText.slice(0, 500));
-      return res.status(500).json({ error: 'Could not parse the AI evaluation. Please try again.' });
-    }
-
-    // Validate the expected top-level keys from lib/prompt.js schema
-    if (!raw.portIn || !raw.safe || !raw.race || !raw.portOut) {
-      console.error('Response missing expected keys. Got:', Object.keys(raw));
-      return res.status(500).json({ error: 'The AI returned an incomplete evaluation. Please try again.' });
-    }
-
-    // Transform raw Claude output to the structure index.html expects
-    const result = transformResponse(raw, meetingType);
-
-    return res.status(200).json(result);
+    return res.status(200).json(response);
 
   } catch (err) {
     console.error('Unhandled error in evaluate handler:', err);
+
+    if (err.message === 'API_ERROR:502' || err.message?.startsWith('API_ERROR:')) {
+      return res.status(502).json({ error: 'The AI analysis service is temporarily unavailable. Please try again.' });
+    }
+    if (err.message === 'API_PARSE_FAILURE' || err.message === 'API_SCHEMA_FAILURE') {
+      return res.status(500).json({ error: 'Could not parse the AI evaluation. Please try again.' });
+    }
+    if (err.message === 'API_EMPTY_RESPONSE') {
+      return res.status(500).json({ error: 'Unexpected response from AI. Please try again.' });
+    }
+
     return res.status(500).json({ error: 'An unexpected error occurred. Please try again.' });
   }
 }
