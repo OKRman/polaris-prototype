@@ -542,10 +542,11 @@ async function runEvaluation(transcript, meetingType, leaderName, apiKey) {
       'x-api-key':         apiKey,
       'anthropic-version': '2023-06-01',
     },
-    body: JSON.stringify({
-      model:      'claude-sonnet-4-6',
-      max_tokens: 4000,
-      system:     systemPrompt,
+   body: JSON.stringify({
+      model:       'claude-sonnet-4-6',
+      max_tokens:  4000,
+      temperature: 0,
+      system:      systemPrompt,
       messages: [
         {
           role:    'user',
