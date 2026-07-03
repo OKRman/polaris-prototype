@@ -2,18 +2,13 @@
 // Periscope — Powered by Team Up
 // Vercel serverless function — ES module syntax (export default)
 //
-// CHANGE FROM V1:
-// This file now implements the full Polaris algorithm — normalisation, sub-score
-// weighting, RAG derivation, leader report — against the new behaviour-counting
-// schema returned by lib/prompt.js. The old transformResponse() function and its
-// toPercent() / ragBand() helpers have been removed entirely.
-//
-// CALIBRATION: Adjust TARGET_DENSITY constants at the top of this file.
-// No other logic changes are needed to tune scores after calibration sessions.
-//
-// INDEX.HTML NOTE: The output schema of this file has changed. index.html will
-// not render correctly until it is updated to consume the new output schema.
-// Test the API directly (POST to /api/evaluate) before updating the renderer.
+// V2 CHANGES FROM ORIGINAL:
+// — Behaviour-counting model replacing holistic 0–4 scoring
+// — Single API call (team + leader tracked together, not two separate calls)
+// — Contributions metric gated by speakersIdentified checkbox
+// — Leader report gated by same checkbox
+// — temperature: 0 for deterministic output
+// — TARGET_DENSITY constants isolated for calibration without logic changes
 
 import { buildPrompt } from '../lib/prompt.js';
 
@@ -21,19 +16,18 @@ export const config = { maxDuration: 60 };
 
 // ─── Calibration constants ────────────────────────────────────────────────────
 //
-// Target density = ideal weighted points per minute for each behaviour.
-// Derived from George's Green thresholds ÷ 20-minute baseline meeting.
-// Adjust these values during calibration sessions — no other code changes needed.
+// Adjust these values during calibration sessions against demo transcripts.
+// No other code changes are needed to tune scores.
 //
-// Behaviour       Candidate   Basis
-// share           1.05        Green ≥ 21 pts ÷ 20 min
-// ask             1.30        Green ≥ 26 pts ÷ 20 min
-// facilitate      0.50        Green > 10 pts ÷ 20 min
-// energise        1.30        Green ≥ 26 pts ÷ 20 min
-// resolve         0.35        Green ≥ 7 pts ÷ 20 min
-// actioning       0.80        Green ≥ 16 pts ÷ 20 min
-// challenge       0.80        Green ≥ 16 pts ÷ 20 min
-// economise       0.50        Green ≥ 10 pts ÷ 20 min
+// Derived from George's Green thresholds ÷ 20-minute baseline meeting.
+// share      1.05    Green ≥ 21 pts ÷ 20 min
+// ask        1.30    Green ≥ 26 pts ÷ 20 min
+// facilitate 0.50    Green > 10 pts ÷ 20 min
+// energise   1.30    Green ≥ 26 pts ÷ 20 min
+// resolve    0.35    Green ≥ 7 pts ÷ 20 min
+// actioning  0.80    Green ≥ 16 pts ÷ 20 min
+// challenge  0.80    Green ≥ 16 pts ÷ 20 min
+// economise  0.50    Green ≥ 10 pts ÷ 20 min
 
 const TARGET_DENSITY = {
   share:      1.05,
@@ -48,8 +42,19 @@ const TARGET_DENSITY = {
 
 // ─── Score weights ────────────────────────────────────────────────────────────
 
-// Team report overall weights (must sum to 1.0)
+// Default team weights — Contributions excluded, remaining rescaled to 100%
+// Used when speakersIdentified = false (checkbox unticked)
 const TEAM_WEIGHTS = {
+  start: 15   / 92.5,
+  safe:  25   / 92.5,
+  race:  25   / 92.5,
+  tone:  7.5  / 92.5,
+  close: 20   / 92.5,
+};
+
+// Full team weights — Contributions included at 7.5%
+// Used when speakersIdentified = true (checkbox ticked)
+const TEAM_WEIGHTS_WITH_CONTRIBUTIONS = {
   start:         0.150,
   safe:          0.250,
   race:          0.250,
@@ -58,8 +63,8 @@ const TEAM_WEIGHTS = {
   close:         0.200,
 };
 
-// Leader report overall weights — Contributions excluded, remainder rescaled to 100%
-// Rescale factor: 100 / 92.5
+// Leader overall weights — Contributions always excluded from leader overall
+// Remaining rescaled to 100% (identical to default TEAM_WEIGHTS)
 const LEADER_WEIGHTS = {
   start: 15   / 92.5,
   safe:  25   / 92.5,
@@ -69,10 +74,20 @@ const LEADER_WEIGHTS = {
 };
 
 // SAFE internal weights: A and E = 30%, S and F = 20%
-const SAFE_WEIGHTS = { share: 0.20, ask: 0.30, facilitate: 0.20, energise: 0.30 };
+const SAFE_WEIGHTS = {
+  share:      0.20,
+  ask:        0.30,
+  facilitate: 0.20,
+  energise:   0.30,
+};
 
 // RACE internal weights: A and C = 30%, R and E = 20%
-const RACE_WEIGHTS = { resolve: 0.20, actioning: 0.30, challenge: 0.30, economise: 0.20 };
+const RACE_WEIGHTS = {
+  resolve:   0.20,
+  actioning: 0.30,
+  challenge: 0.30,
+  economise: 0.20,
+};
 
 // ─── RAG helpers ──────────────────────────────────────────────────────────────
 
@@ -83,8 +98,8 @@ function safeRaceRag(score) {
 }
 
 function startRag(penaltyPoints) {
-  if (penaltyPoints === 0)  return 'green';
-  if (penaltyPoints <= 2)   return 'amber';
+  if (penaltyPoints === 0) return 'green';
+  if (penaltyPoints <= 2)  return 'amber';
   return 'red';
 }
 
@@ -95,8 +110,8 @@ function recoveryRag(points) {
 }
 
 function toneRag(ratio) {
-  if (ratio >= 0.8 && ratio <= 1.4)                         return 'green';
-  if ((ratio > 1.4 && ratio < 1.8) || (ratio > 0.5 && ratio < 0.8)) return 'amber';
+  if (ratio >= 0.8 && ratio <= 1.4)                                    return 'green';
+  if ((ratio > 1.4 && ratio < 1.8) || (ratio > 0.5 && ratio < 0.8))  return 'amber';
   return 'red';
 }
 
@@ -113,13 +128,13 @@ function tdiRag(tdiValue) {
 }
 
 function closeRag(achievedCount) {
-  if (achievedCount >= 4) return 'green';
+  if (achievedCount >= 4)  return 'green';
   if (achievedCount === 3) return 'amber';
   return 'red';
 }
 
 function clarityRag(score) {
-  if (score > 30) return 'green';
+  if (score > 30)  return 'green';
   if (score >= 20) return 'amber';
   return 'red';
 }
@@ -146,9 +161,7 @@ function leaderDescriptor(score) {
 //
 // For each actionable agenda item:
 //   normalisedScore = min(100, (rawPoints / durationMinutes) / targetDensity × 100)
-// Final score = average across all actionable items.
-//
-// Returns 0 if no actionable items found.
+// Final behaviour score = average across all actionable items.
 
 function normaliseByItem(byItemArray, agendaItems, behaviour) {
   const density = TARGET_DENSITY[behaviour];
@@ -157,7 +170,6 @@ function normaliseByItem(byItemArray, agendaItems, behaviour) {
   for (const entry of (byItemArray || [])) {
     const item = (agendaItems || []).find(a => a.id === entry.itemId);
     if (!item || item.type !== 'actionable' || item.durationMinutes <= 0) continue;
-
     const ptsPerMin = entry.rawPoints / item.durationMinutes;
     scores.push(Math.min(100, (ptsPerMin / density) * 100));
   }
@@ -166,14 +178,12 @@ function normaliseByItem(byItemArray, agendaItems, behaviour) {
   return scores.reduce((a, b) => a + b, 0) / scores.length;
 }
 
-// Economise special case: add the meeting-level completionBonus to the last
-// actionable item's rawPoints before normalising, then normalise as normal.
-// The bonus is a single binary event (finished on time or not).
+// Economise: add meeting-level completionBonus to the last item before normalising.
+// The bonus is a single binary event (+3 on time / -3 over time) not a per-minute behaviour.
 
 function normaliseEconomise(economise, agendaItems) {
-  const bonus   = economise.completionBonus || 0;
-  const byItem  = economise.byItem || [];
-
+  const bonus  = economise.completionBonus || 0;
+  const byItem = economise.byItem || [];
   if (byItem.length === 0) return 0;
 
   const withBonus = byItem.map((entry, idx) =>
@@ -242,7 +252,7 @@ function computeRaceScore(race, agendaItems) {
 // ─── Leader SAFE score ────────────────────────────────────────────────────────
 //
 // Leader score per behaviour = (leaderTotalRawPoints / teamTotalRawPoints) × 100
-// Reflects the leader's proportional contribution to the team's total.
+// Reflects the leader's proportional contribution to the team total.
 
 function leaderBehaviourScore(leaderTotal, teamTotal) {
   if (!teamTotal || teamTotal <= 0) return 0;
@@ -307,8 +317,6 @@ function computeStart(effectiveStart, startRecovery) {
   const penalty = effectiveStart?.penaltyPoints || 0;
   const rag     = startRag(penalty);
 
-  // Represent Effective Start score as a display figure
-  // Green = 100, Amber = 60 (mid-band), Red = 30 (low)
   const startDisplayScore = rag === 'green' ? 100 : rag === 'amber' ? 60 : 30;
 
   if (rag === 'green') {
@@ -319,12 +327,9 @@ function computeStart(effectiveStart, startRecovery) {
     };
   }
 
-  // Recovery scoring applies when Effective Start is amber or red
   const recoveryPoints = startRecovery?.totalPoints || 0;
   const recRag         = recoveryRag(recoveryPoints);
-
-  // Combined score fed into overall: Green recovery = 70, Amber = 50, Red = 0
-  const combinedScore = recRag === 'green' ? 70 : recRag === 'amber' ? 50 : 0;
+  const combinedScore  = recRag === 'green' ? 70 : recRag === 'amber' ? 50 : 0;
 
   return {
     effectiveStart: { score: startDisplayScore, rag, penaltyPoints: penalty },
@@ -338,10 +343,8 @@ function computeStart(effectiveStart, startRecovery) {
 function scoreFromRatio(ratio) {
   const rag = toneRag(ratio);
   if (rag === 'green') {
-    // Scale within Green (0.8–1.4): perfect balance (ratio = 1.0) = 100, edges = 80
     const distFromBalance = Math.abs(ratio - 1.0);
-    const maxDist = 0.4;
-    return Math.round(100 - (distFromBalance / maxDist) * 20);
+    return Math.round(100 - (distFromBalance / 0.4) * 20);
   }
   if (rag === 'amber') return 70;
   return 40;
@@ -349,7 +352,7 @@ function scoreFromRatio(ratio) {
 
 function computeTone(tone) {
   const safeCount = tone?.safeEventCount || 0;
-  const raceCount = tone?.raceEventCount || 1; // avoid divide-by-zero
+  const raceCount = tone?.raceEventCount || 1;
   const ratio     = safeCount / raceCount;
   return {
     score:     scoreFromRatio(ratio),
@@ -372,10 +375,6 @@ function computeLeaderTone(tone) {
 }
 
 // ─── Contributions (TDI) ─────────────────────────────────────────────────────
-//
-// Turn Distribution Index: 1 − Gini coefficient of speaker word-share proportions.
-// A perfectly even distribution → TDI 1.0.
-// Total dominance by one speaker → TDI approaching 0.
 
 function computeGini(shares) {
   if (!shares || shares.length < 2) return 0;
@@ -383,7 +382,6 @@ function computeGini(shares) {
   const sorted = [...shares].sort((a, b) => a - b);
   const mean   = sorted.reduce((a, b) => a + b, 0) / n;
   if (mean <= 0) return 0;
-
   let numerator = 0;
   for (let i = 0; i < n; i++) {
     numerator += (2 * (i + 1) - n - 1) * sorted[i];
@@ -398,11 +396,11 @@ function scoreTdi(tdiValue) {
 }
 
 function computeContributions(contributions, leaderLabel) {
-  const speakers   = contributions?.speakers || [];
-  const shares     = speakers.map(s => s.wordSharePct || 0);
-  const gini       = computeGini(shares);
-  const tdiValue   = Math.max(0, Math.min(1, 1 - gini));
-  const score      = scoreTdi(tdiValue);
+  const speakers = contributions?.speakers || [];
+  const shares   = speakers.map(s => s.wordSharePct || 0);
+  const gini     = computeGini(shares);
+  const tdiValue = Math.max(0, Math.min(1, 1 - gini));
+  const score    = scoreTdi(tdiValue);
 
   const leaderSpeaker = leaderLabel
     ? speakers.find(s => s.name?.toLowerCase() === leaderLabel.toLowerCase())
@@ -410,24 +408,22 @@ function computeContributions(contributions, leaderLabel) {
 
   return {
     score,
-    rag:               tdiRag(tdiValue),
-    tdiValue:          Math.round(tdiValue * 100) / 100,
+    rag:                tdiRag(tdiValue),
+    tdiValue:           Math.round(tdiValue * 100) / 100,
     speakers,
     leaderWordSharePct: leaderSpeaker?.wordSharePct ?? null,
   };
 }
 
 // ─── Effective Close ──────────────────────────────────────────────────────────
-//
-// Weights: planned 25%, organised 10%, responsible 25%, timeConscious 40%
 
 function computeClose(effectiveClose) {
   const { planned, organised, responsible, timeConscious } = effectiveClose;
 
   const score = Math.round(
-    (planned?.achieved      ? 25 : 0) +
-    (organised?.achieved    ? 10 : 0) +
-    (responsible?.achieved  ? 25 : 0) +
+    (planned?.achieved       ? 25 : 0) +
+    (organised?.achieved     ? 10 : 0) +
+    (responsible?.achieved   ? 25 : 0) +
     (timeConscious?.achieved ? 40 : 0)
   );
 
@@ -459,18 +455,32 @@ function computeClarity(dialogueClarity) {
 
 // ─── Overall scores ───────────────────────────────────────────────────────────
 
-function computeOverall({ start, safe, race, tone, contributions, close }) {
+// Without Contributions (default — checkbox unticked)
+function computeOverall({ start, safe, race, tone, close }) {
   const score = Math.round(
-    start         * TEAM_WEIGHTS.start         +
-    safe          * TEAM_WEIGHTS.safe          +
-    race          * TEAM_WEIGHTS.race          +
-    tone          * TEAM_WEIGHTS.tone          +
-    contributions * TEAM_WEIGHTS.contributions +
-    close         * TEAM_WEIGHTS.close
+    start * TEAM_WEIGHTS.start +
+    safe  * TEAM_WEIGHTS.safe  +
+    race  * TEAM_WEIGHTS.race  +
+    tone  * TEAM_WEIGHTS.tone  +
+    close * TEAM_WEIGHTS.close
   );
   return { score, rag: overallRag(score), descriptor: overallDescriptor(score) };
 }
 
+// With Contributions (checkbox ticked)
+function computeOverallWithContributions({ start, safe, race, tone, contributions, close }) {
+  const score = Math.round(
+    start         * TEAM_WEIGHTS_WITH_CONTRIBUTIONS.start         +
+    safe          * TEAM_WEIGHTS_WITH_CONTRIBUTIONS.safe          +
+    race          * TEAM_WEIGHTS_WITH_CONTRIBUTIONS.race          +
+    tone          * TEAM_WEIGHTS_WITH_CONTRIBUTIONS.tone          +
+    contributions * TEAM_WEIGHTS_WITH_CONTRIBUTIONS.contributions +
+    close         * TEAM_WEIGHTS_WITH_CONTRIBUTIONS.close
+  );
+  return { score, rag: overallRag(score), descriptor: overallDescriptor(score) };
+}
+
+// Leader overall — Contributions always excluded
 function computeLeaderOverall({ start, safe, race, tone, close }) {
   const score = Math.round(
     start * LEADER_WEIGHTS.start +
@@ -483,10 +493,6 @@ function computeLeaderOverall({ start, safe, race, tone, close }) {
 }
 
 // ─── Anonymisation ────────────────────────────────────────────────────────────
-//
-// Replaces speaker labels in the transcript with Speaker A, Speaker B, etc.
-// Returns { anonymisedTranscript, speakerMap } where speakerMap maps
-// original labels to generic ones.
 
 function anonymiseTranscript(transcript) {
   const speakerMap = {};
@@ -510,15 +516,16 @@ function anonymiseTranscript(transcript) {
 
 // ─── Main evaluation function ─────────────────────────────────────────────────
 
-async function runEvaluation(transcript, meetingType, leaderName, apiKey) {
+async function runEvaluation(transcript, meetingType, leaderName, speakersIdentified, apiKey) {
+
   // Step 1: anonymise
   const { anonymisedTranscript, speakerMap } = anonymiseTranscript(transcript);
 
-  // Step 2: find the leader's anonymised label
+  // Step 2: find leader's anonymised label (only relevant if speakersIdentified)
   let leaderLabel    = null;
   let leaderNotFound = false;
 
-  if (leaderName && leaderName.trim().length > 0) {
+  if (speakersIdentified && leaderName && leaderName.trim().length > 0) {
     const needle = leaderName.trim().toLowerCase();
     for (const [original, generic] of Object.entries(speakerMap)) {
       if (original.toLowerCase() === needle) {
@@ -528,11 +535,11 @@ async function runEvaluation(transcript, meetingType, leaderName, apiKey) {
     }
     if (!leaderLabel) {
       leaderNotFound = true;
-      console.log(`Leader not found: "${leaderName}" not matched in [${Object.keys(speakerMap).join(', ')}]`);
+      console.log(`Leader not found: "${leaderName}" not in [${Object.keys(speakerMap).join(', ')}]`);
     }
   }
 
-  // Step 3: build prompt and call Claude (single call — team + leader in one)
+  // Step 3: single Claude API call
   const systemPrompt = buildPrompt(meetingType, leaderLabel);
 
   const apiResponse = await fetch('https://api.anthropic.com/v1/messages', {
@@ -542,7 +549,7 @@ async function runEvaluation(transcript, meetingType, leaderName, apiKey) {
       'x-api-key':         apiKey,
       'anthropic-version': '2023-06-01',
     },
-   body: JSON.stringify({
+    body: JSON.stringify({
       model:       'claude-sonnet-4-6',
       max_tokens:  4000,
       temperature: 0,
@@ -566,7 +573,6 @@ async function runEvaluation(transcript, meetingType, leaderName, apiKey) {
   const rawText = apiData.content?.[0]?.text;
   if (!rawText) throw new Error('API_EMPTY_RESPONSE');
 
-  // Strip any accidental markdown fences
   const cleaned = rawText
     .replace(/^```json\s*/i, '')
     .replace(/^```\s*/i, '')
@@ -581,7 +587,6 @@ async function runEvaluation(transcript, meetingType, leaderName, apiKey) {
     throw new Error('API_PARSE_FAILURE');
   }
 
-  // Validate expected top-level keys
   const required = ['safe', 'race', 'effectiveStart', 'effectiveClose', 'tone', 'contributions'];
   const missing  = required.filter(k => !raw[k]);
   if (missing.length > 0) {
@@ -599,19 +604,29 @@ async function runEvaluation(transcript, meetingType, leaderName, apiKey) {
   const clarityResult = computeClarity(raw.dialogueClarity);
   const contribs      = computeContributions(raw.contributions, leaderLabel);
 
-  const overall = computeOverall({
-    start:         startResult.combinedScore,
-    safe:          safeResult.score,
-    race:          raceResult.score,
-    tone:          toneResult.score,
-    contributions: contribs.score,
-    close:         closeResult.score,
-  });
+  // Overall: include Contributions only if checkbox was ticked
+  const overall = speakersIdentified
+    ? computeOverallWithContributions({
+        start:         startResult.combinedScore,
+        safe:          safeResult.score,
+        race:          raceResult.score,
+        tone:          toneResult.score,
+        contributions: contribs.score,
+        close:         closeResult.score,
+      })
+    : computeOverall({
+        start: startResult.combinedScore,
+        safe:  safeResult.score,
+        race:  raceResult.score,
+        tone:  toneResult.score,
+        close: closeResult.score,
+      });
 
   // Step 5: assemble team result
   const result = {
     meta: {
       leaderName:           leaderLabel || null,
+      speakersIdentified,
       totalDurationMinutes: raw.meetingMeta?.totalDurationMinutes || 0,
       actionableMinutes:    raw.meetingMeta?.actionableMinutes    || 0,
     },
@@ -621,13 +636,13 @@ async function runEvaluation(transcript, meetingType, leaderName, apiKey) {
     safe:            safeResult,
     race:            raceResult,
     tone:            toneResult,
-    contributions:   contribs,
+    contributions:   speakersIdentified ? contribs : { note: 'Omitted — speaker identification not confirmed' },
     dialogueClarity: clarityResult,
     effectiveClose:  closeResult,
   };
 
-  // Step 6: leader report (only if leader was identified)
-  if (leaderLabel) {
+  // Step 6: leader report — only when checkbox ticked and leader identified
+  if (speakersIdentified && leaderLabel) {
     const leaderSafe = computeLeaderSafeScore(raw.safe);
     const leaderRace = computeLeaderRaceScore(raw.race);
     const leaderTone = computeLeaderTone(raw.tone);
@@ -649,7 +664,6 @@ async function runEvaluation(transcript, meetingType, leaderName, apiKey) {
         wordSharePct: contribs.leaderWordSharePct,
         note:         'Information only — not included in leader overall score',
       },
-      // Shared elements — identical to team report
       effectiveStart:  startResult.effectiveStart,
       startRecovery:   startResult.startRecovery,
       dialogueClarity: clarityResult,
@@ -657,7 +671,7 @@ async function runEvaluation(transcript, meetingType, leaderName, apiKey) {
     };
   }
 
-  if (leaderNotFound) {
+  if (speakersIdentified && leaderNotFound) {
     result.leaderNotFound = true;
   }
 
@@ -671,7 +685,12 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { transcript, meetingType = 'intact', leaderName = null } = req.body;
+  const {
+    transcript,
+    meetingType        = 'intact',
+    leaderName         = null,
+    speakersIdentified = false,
+  } = req.body;
 
   if (!transcript || typeof transcript !== 'string' || transcript.trim().length < 50) {
     return res.status(400).json({
@@ -686,7 +705,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    const result = await runEvaluation(transcript, meetingType, leaderName, apiKey);
+    const result = await runEvaluation(
+      transcript,
+      meetingType,
+      leaderName,
+      speakersIdentified,
+      apiKey
+    );
     return res.status(200).json(result);
   } catch (err) {
     console.error('Unhandled error in evaluate handler:', err.message);
