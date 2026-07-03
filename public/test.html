@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Periscope · API Test</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      color: #1a2035;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: #1a2035;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid #e5e7eb;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+    }
+
+    input[type="text"], select {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: #1a2035;
+      margin-bottom: 1rem;
+    }
+
+    textarea {
+      width: 100%;
+      height: 220px;
+      padding: 0.8rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-family: monospace;
+      resize: vertical;
+      color: #1a2035;
+      margin-bottom: 1rem;
+    }
+
+    button {
+      background: #1e3a5f;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.7rem 1.8rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    #status {
+      font-size: 0.85rem;
+      margin-top: 0.75rem;
+      min-height: 1.2rem;
+      color: #6b7280;
+    }
+
+    #status.ok  { color: #16a34a; font-weight: 600; }
+    #status.err { color: #dc2626; font-weight: 600; }
+
+    #output {
+      display: none;
+    }
+
+    #output h2 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #1a2035;
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .score-card {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 0.8rem 1rem;
+    }
+
+    .score-card .label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6b7280;
+      margin-bottom: 0.3rem;
+    }
+
+    .score-card .value {
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .score-card .rag-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 0.2rem;
+    }
+
+    .green { color: #16a34a; }
+    .amber { color: #d97706; }
+    .red   { color: #dc2626; }
+
+    details {
+      margin-bottom: 0.75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    summary {
+      padding: 0.7rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: #f8fafc;
+      user-select: none;
+    }
+
+    pre {
+      background: #1a2035;
+      color: #a8d8a8;
+      font-family: monospace;
+      font-size: 0.78rem;
+      padding: 1rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Periscope · API Test Page</h1>
+  <p class="subtitle">Development tool — not for client use. Paste a transcript, submit, and inspect the raw API response.</p>
+
+  <div class="card">
+    <label>Leader name (optional — as it appears in the transcript)</label>
+    <input type="text" id="leaderName" placeholder="e.g. Sarah Johnson">
+
+    <label>Meeting type</label>
+    <select id="meetingType">
+      <option value="intact">Intact team</option>
+      <option value="cross-functional">Cross-functional</option>
+    </select>
+
+    <label>Transcript</label>
+    <textarea id="transcript" placeholder="Paste the full meeting transcript here…"></textarea>
+
+    <button id="submitBtn" onclick="runTest()">Run evaluation</button>
+    <div id="status"></div>
+  </div>
+
+  <div class="card" id="output">
+    <h2>Results</h2>
+
+    <div class="score-grid" id="scoreGrid"></div>
+
+    <details open>
+      <summary>Full JSON response</summary>
+      <pre id="jsonOutput"></pre>
+    </details>
+  </div>
+
+  <script>
+    async function runTest() {
+      const transcript  = document.getElementById('transcript').value.trim();
+      const leaderName  = document.getElementById('leaderName').value.trim();
+      const meetingType = document.getElementById('meetingType').value;
+      const btn         = document.getElementById('submitBtn');
+      const status      = document.getElementById('status');
+      const output      = document.getElementById('output');
+
+      if (!transcript) {
+        status.textContent = 'Please paste a transcript first.';
+        status.className   = 'err';
+        return;
+      }
+
+      btn.disabled       = true;
+      status.textContent = 'Sending to API…';
+      status.className   = '';
+      output.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/evaluate', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({
+            transcript,
+            meetingType,
+            leaderName: leaderName || null,
+          }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          status.textContent = `API returned ${res.status}: ${data.error || 'Unknown error'}`;
+          status.className   = 'err';
+          document.getElementById('jsonOutput').textContent = JSON.stringify(data, null, 2);
+          output.style.display = 'block';
+          document.getElementById('scoreGrid').innerHTML = '';
+          return;
+        }
+
+        status.textContent = `Success (HTTP ${res.status}) — schema is valid.`;
+        status.className   = 'ok';
+
+        // Build score summary cards
+        const grid   = document.getElementById('scoreGrid');
+        grid.innerHTML = '';
+
+        const items = [
+          { label: 'Overall',          key: 'overall'        },
+          { label: 'Effective Start',  key: 'effectiveStart' },
+          { label: 'Start Recovery',   key: 'startRecovery'  },
+          { label: 'Psych Safety',     key: 'safe'           },
+          { label: 'Decision Effic.',  key: 'race'           },
+          { label: 'Tone',             key: 'tone'           },
+          { label: 'Contributions',    key: 'contributions'  },
+          { label: 'Dialogue Clarity', key: 'dialogueClarity'},
+          { label: 'Effective Close',  key: 'effectiveClose' },
+        ];
+
+        for (const item of items) {
+          const d     = data[item.key];
+          if (!d)     continue;
+          const score = d.score ?? '—';
+          const rag   = d.rag   ?? '';
+          const card  = document.createElement('div');
+          card.className = 'score-card';
+          card.innerHTML = `
+            <div class="label">${item.label}</div>
+            <div class="value ${rag}">${score !== null ? score + '%' : '—'}</div>
+            <div class="rag-label ${rag}">${rag.toUpperCase()}</div>
+          `;
+          grid.appendChild(card);
+        }
+
+        // Full JSON
+        document.getElementById('jsonOutput').textContent = JSON.stringify(data, null, 2);
+        output.style.display = 'block';
+
+      } catch (err) {
+        status.textContent = `Network or parse error: ${err.message}`;
+        status.className   = 'err';
+      } finally {
+        btn.disabled = false;
+      }
+    }
+  </script>
+
+</body>
+</html>
