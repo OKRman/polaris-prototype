@@ -176,7 +176,7 @@ function normaliseByItem(byItemArray, agendaItems, behaviour) {
     const item = (agendaItems || []).find(a => a.id === entry.itemId);
     if (!item || item.type !== 'actionable' || item.durationMinutes <= 0) continue;
     const ptsPerMin = entry.rawPoints / item.durationMinutes;
-    scores.push(Math.min(100, (ptsPerMin / density) * 100));
+    scores.push(Math.max(0, Math.min(100, (ptsPerMin / density) * 100)));
   }
 
   if (scores.length === 0) return 0;
