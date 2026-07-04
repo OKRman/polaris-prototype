@@ -9,6 +9,8 @@
 // — Leader report gated by same checkbox
 // — temperature: 0 for deterministic output
 // — TARGET_DENSITY constants isolated for calibration without logic changes
+// — Tone returns N/A when combined SAFE + RACE event count is below 10
+// — Tone N/A redistributes 7.5% weight proportionally across remaining items
 
 import { buildPrompt } from '../lib/prompt.js';
 
@@ -89,6 +91,9 @@ const RACE_WEIGHTS = {
   economise: 0.20,
 };
 
+// Minimum combined SAFE + RACE event count for Tone to be reported
+const TONE_MIN_EVENTS = 10;
+
 // ─── RAG helpers ──────────────────────────────────────────────────────────────
 
 function safeRaceRag(score) {
@@ -110,8 +115,8 @@ function recoveryRag(points) {
 }
 
 function toneRag(ratio) {
-  if (ratio >= 0.8 && ratio <= 1.4)                                    return 'green';
-  if ((ratio > 1.4 && ratio < 1.8) || (ratio > 0.5 && ratio < 0.8))  return 'amber';
+  if (ratio >= 0.8 && ratio <= 1.4)                                   return 'green';
+  if ((ratio > 1.4 && ratio < 1.8) || (ratio > 0.5 && ratio < 0.8)) return 'amber';
   return 'red';
 }
 
@@ -339,6 +344,10 @@ function computeStart(effectiveStart, startRecovery) {
 }
 
 // ─── Tone ─────────────────────────────────────────────────────────────────────
+//
+// Returns null score when combined SAFE + RACE event count is below TONE_MIN_EVENTS.
+// A ratio derived from very few events is not statistically meaningful.
+// When null, the 7.5% weight is redistributed across remaining scored items.
 
 function scoreFromRatio(ratio) {
   const rag = toneRag(ratio);
@@ -346,14 +355,27 @@ function scoreFromRatio(ratio) {
     const distFromBalance = Math.abs(ratio - 1.0);
     return Math.round(100 - (distFromBalance / 0.4) * 20);
   }
-  if (rag === 'amber') return 70;
-  return 40;
+  if (rag === 'amber') return 50;
+  return 25;
 }
 
 function computeTone(tone) {
-  const safeCount = tone?.safeEventCount || 0;
-  const raceCount = tone?.raceEventCount || 1;
-  const ratio     = safeCount / raceCount;
+  const safeCount  = tone?.safeEventCount || 0;
+  const raceCount  = tone?.raceEventCount || 0;
+  const totalCount = safeCount + raceCount;
+
+  if (totalCount < TONE_MIN_EVENTS) {
+    return {
+      score:            null,
+      rag:              'n/a',
+      ratio:            null,
+      direction:        null,
+      insufficientData: true,
+      note:             'Insufficient behavioural data to assess tone reliably',
+    };
+  }
+
+  const ratio = safeCount / (raceCount || 1);
   return {
     score:     scoreFromRatio(ratio),
     rag:       toneRag(ratio),
@@ -363,9 +385,22 @@ function computeTone(tone) {
 }
 
 function computeLeaderTone(tone) {
-  const safeCount = tone?.leaderSafeEventCount || 0;
-  const raceCount = tone?.leaderRaceEventCount || 1;
-  const ratio     = safeCount / raceCount;
+  const safeCount  = tone?.leaderSafeEventCount || 0;
+  const raceCount  = tone?.leaderRaceEventCount || 0;
+  const totalCount = safeCount + raceCount;
+
+  if (totalCount < TONE_MIN_EVENTS) {
+    return {
+      score:            null,
+      rag:              'n/a',
+      ratio:            null,
+      direction:        null,
+      insufficientData: true,
+      note:             'Insufficient behavioural data to assess tone reliably',
+    };
+  }
+
+  const ratio = safeCount / (raceCount || 1);
   return {
     score:     scoreFromRatio(ratio),
     rag:       toneRag(ratio),
@@ -454,8 +489,23 @@ function computeClarity(dialogueClarity) {
 }
 
 // ─── Overall scores ───────────────────────────────────────────────────────────
+//
+// When Tone score is null (insufficient data), its 7.5% weight is redistributed
+// proportionally across the remaining scored items.
 
-// Without Contributions (default — checkbox unticked)
+// Without Contributions, without Tone
+// Remaining items: Start 15, SAFE 25, RACE 25, Close 20 = 85
+function computeOverallNoTone({ start, safe, race, close }) {
+  const score = Math.round(
+    start * (15 / 85) +
+    safe  * (25 / 85) +
+    race  * (25 / 85) +
+    close * (20 / 85)
+  );
+  return { score, rag: overallRag(score), descriptor: overallDescriptor(score) };
+}
+
+// Without Contributions, with Tone
 function computeOverall({ start, safe, race, tone, close }) {
   const score = Math.round(
     start * TEAM_WEIGHTS.start +
@@ -467,7 +517,21 @@ function computeOverall({ start, safe, race, tone, close }) {
   return { score, rag: overallRag(score), descriptor: overallDescriptor(score) };
 }
 
-// With Contributions (checkbox ticked)
+// With Contributions, without Tone
+// Remaining items: Start 15, SAFE 25, RACE 25, Contributions 7.5, Close 20 = 92.5
+// Redistribute Tone 7.5 across these proportionally — same as TEAM_WEIGHTS
+function computeOverallWithContributionsNoTone({ start, safe, race, contributions, close }) {
+  const score = Math.round(
+    start         * TEAM_WEIGHTS.start +
+    safe          * TEAM_WEIGHTS.safe  +
+    race          * TEAM_WEIGHTS.race  +
+    contributions * TEAM_WEIGHTS.tone  +
+    close         * TEAM_WEIGHTS.close
+  );
+  return { score, rag: overallRag(score), descriptor: overallDescriptor(score) };
+}
+
+// With Contributions, with Tone
 function computeOverallWithContributions({ start, safe, race, tone, contributions, close }) {
   const score = Math.round(
     start         * TEAM_WEIGHTS_WITH_CONTRIBUTIONS.start         +
@@ -482,6 +546,15 @@ function computeOverallWithContributions({ start, safe, race, tone, contribution
 
 // Leader overall — Contributions always excluded
 function computeLeaderOverall({ start, safe, race, tone, close }) {
+  if (tone === null) {
+    const score = Math.round(
+      start * (15 / 85) +
+      safe  * (25 / 85) +
+      race  * (25 / 85) +
+      close * (20 / 85)
+    );
+    return { score, rag: overallRag(score), descriptor: leaderDescriptor(score) };
+  }
   const score = Math.round(
     start * LEADER_WEIGHTS.start +
     safe  * LEADER_WEIGHTS.safe  +
@@ -604,25 +677,45 @@ async function runEvaluation(transcript, meetingType, leaderName, speakersIdenti
   const clarityResult = computeClarity(raw.dialogueClarity);
   const contribs      = computeContributions(raw.contributions, leaderLabel);
 
-  // Overall: include Contributions only if checkbox was ticked
-  const overall = speakersIdentified
-    ? computeOverallWithContributions({
-        start:         startResult.combinedScore,
-        safe:          safeResult.score,
-        race:          raceResult.score,
-        tone:          toneResult.score,
-        contributions: contribs.score,
-        close:         closeResult.score,
-      })
-    : computeOverall({
-        start: startResult.combinedScore,
-        safe:  safeResult.score,
-        race:  raceResult.score,
-        tone:  toneResult.score,
-        close: closeResult.score,
-      });
+  const toneScore = toneResult.score; // null if insufficient data
 
-  // Step 5: assemble team result
+  // Step 5: compute overall — four paths depending on checkbox and Tone availability
+  let overall;
+  if (speakersIdentified) {
+    overall = toneScore !== null
+      ? computeOverallWithContributions({
+          start:         startResult.combinedScore,
+          safe:          safeResult.score,
+          race:          raceResult.score,
+          tone:          toneScore,
+          contributions: contribs.score,
+          close:         closeResult.score,
+        })
+      : computeOverallWithContributionsNoTone({
+          start:         startResult.combinedScore,
+          safe:          safeResult.score,
+          race:          raceResult.score,
+          contributions: contribs.score,
+          close:         closeResult.score,
+        });
+  } else {
+    overall = toneScore !== null
+      ? computeOverall({
+          start: startResult.combinedScore,
+          safe:  safeResult.score,
+          race:  raceResult.score,
+          tone:  toneScore,
+          close: closeResult.score,
+        })
+      : computeOverallNoTone({
+          start: startResult.combinedScore,
+          safe:  safeResult.score,
+          race:  raceResult.score,
+          close: closeResult.score,
+        });
+  }
+
+  // Step 6: assemble team result
   const result = {
     meta: {
       leaderName:           leaderLabel || null,
@@ -636,12 +729,14 @@ async function runEvaluation(transcript, meetingType, leaderName, speakersIdenti
     safe:            safeResult,
     race:            raceResult,
     tone:            toneResult,
-    contributions:   speakersIdentified ? contribs : { note: 'Omitted — speaker identification not confirmed' },
+    contributions:   speakersIdentified
+      ? contribs
+      : { note: 'Omitted — speaker identification not confirmed' },
     dialogueClarity: clarityResult,
     effectiveClose:  closeResult,
   };
 
-  // Step 6: leader report — only when checkbox ticked and leader identified
+  // Step 7: leader report — only when checkbox ticked and leader identified
   if (speakersIdentified && leaderLabel) {
     const leaderSafe = computeLeaderSafeScore(raw.safe);
     const leaderRace = computeLeaderRaceScore(raw.race);
