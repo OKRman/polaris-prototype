@@ -11,6 +11,10 @@
 // — TARGET_DENSITY constants isolated for calibration without logic changes
 // — Tone returns N/A when combined SAFE + RACE event count is below 10
 // — Tone N/A redistributes 7.5% weight proportionally across remaining items
+// — Tone quality cap: Tone cannot exceed average of SAFE and RACE scores
+//   A meeting where both dimensions are weak cannot claim a healthy tone
+//   regardless of how balanced the ratio appears. Agreed by George 04/07/2026.
+// — Score floor fixed at 0 — negative scores no longer possible
 
 import { buildPrompt } from '../lib/prompt.js';
 
@@ -42,6 +46,10 @@ const TARGET_DENSITY = {
   economise:  0.50,
 };
 
+// Minimum combined SAFE + RACE event count for Tone to be reported.
+// Below this threshold Tone returns N/A — the ratio is not statistically meaningful.
+const TONE_MIN_EVENTS = 10;
+
 // ─── Score weights ────────────────────────────────────────────────────────────
 
 // Default team weights — Contributions excluded, remaining rescaled to 100%
@@ -66,7 +74,7 @@ const TEAM_WEIGHTS_WITH_CONTRIBUTIONS = {
 };
 
 // Leader overall weights — Contributions always excluded from leader overall
-// Remaining rescaled to 100% (identical to default TEAM_WEIGHTS)
+// Identical to default TEAM_WEIGHTS
 const LEADER_WEIGHTS = {
   start: 15   / 92.5,
   safe:  25   / 92.5,
@@ -91,9 +99,6 @@ const RACE_WEIGHTS = {
   economise: 0.20,
 };
 
-// Minimum combined SAFE + RACE event count for Tone to be reported
-const TONE_MIN_EVENTS = 10;
-
 // ─── RAG helpers ──────────────────────────────────────────────────────────────
 
 function safeRaceRag(score) {
@@ -115,8 +120,8 @@ function recoveryRag(points) {
 }
 
 function toneRag(ratio) {
-  if (ratio >= 0.8 && ratio <= 1.4)                                   return 'green';
-  if ((ratio > 1.4 && ratio < 1.8) || (ratio > 0.5 && ratio < 0.8)) return 'amber';
+  if (ratio >= 0.8 && ratio <= 1.4)                                    return 'green';
+  if ((ratio > 1.4 && ratio < 1.8) || (ratio > 0.5 && ratio < 0.8))  return 'amber';
   return 'red';
 }
 
@@ -165,8 +170,9 @@ function leaderDescriptor(score) {
 // ─── Per-behaviour normalisation ──────────────────────────────────────────────
 //
 // For each actionable agenda item:
-//   normalisedScore = min(100, (rawPoints / durationMinutes) / targetDensity × 100)
+//   normalisedScore = max(0, min(100, (rawPoints / durationMinutes) / targetDensity × 100))
 // Final behaviour score = average across all actionable items.
+// Floor of 0 prevents negative scores when negative events outweigh positive ones.
 
 function normaliseByItem(byItemArray, agendaItems, behaviour) {
   const density = TARGET_DENSITY[behaviour];
@@ -316,6 +322,30 @@ function computeLeaderRaceScore(race) {
   };
 }
 
+// ─── Tone quality cap ─────────────────────────────────────────────────────────
+//
+// Tone cannot exceed the average of SAFE and RACE scores.
+// A meeting where both dimensions are weak cannot claim a healthy tone
+// regardless of how balanced the SAFE:RACE ratio appears.
+// Agreed by George Karseras 04/07/2026.
+
+function applyToneQualityCap(toneResult, safeScore, raceScore) {
+  if (toneResult.score === null) return toneResult;
+
+  const qualityCap = Math.round((safeScore + raceScore) / 2);
+
+  if (toneResult.score > qualityCap) {
+    return {
+      ...toneResult,
+      score:          qualityCap,
+      rag:            safeRaceRag(qualityCap),
+      cappedByQuality: true,
+    };
+  }
+
+  return toneResult;
+}
+
 // ─── Effective Start + Start Recovery ────────────────────────────────────────
 
 function computeStart(effectiveStart, startRecovery) {
@@ -346,8 +376,8 @@ function computeStart(effectiveStart, startRecovery) {
 // ─── Tone ─────────────────────────────────────────────────────────────────────
 //
 // Returns null score when combined SAFE + RACE event count is below TONE_MIN_EVENTS.
-// A ratio derived from very few events is not statistically meaningful.
 // When null, the 7.5% weight is redistributed across remaining scored items.
+// Quality cap applied separately after SAFE and RACE scores are available.
 
 function scoreFromRatio(ratio) {
   const rag = toneRag(ratio);
@@ -490,11 +520,10 @@ function computeClarity(dialogueClarity) {
 
 // ─── Overall scores ───────────────────────────────────────────────────────────
 //
-// When Tone score is null (insufficient data), its 7.5% weight is redistributed
-// proportionally across the remaining scored items.
+// Four paths depending on whether Contributions and Tone are available.
+// When Tone is null, its 7.5% is redistributed proportionally.
 
-// Without Contributions, without Tone
-// Remaining items: Start 15, SAFE 25, RACE 25, Close 20 = 85
+// Without Contributions, without Tone (Start 15 + SAFE 25 + RACE 25 + Close 20 = 85)
 function computeOverallNoTone({ start, safe, race, close }) {
   const score = Math.round(
     start * (15 / 85) +
@@ -518,8 +547,7 @@ function computeOverall({ start, safe, race, tone, close }) {
 }
 
 // With Contributions, without Tone
-// Remaining items: Start 15, SAFE 25, RACE 25, Contributions 7.5, Close 20 = 92.5
-// Redistribute Tone 7.5 across these proportionally — same as TEAM_WEIGHTS
+// Tone 7.5% redistributed — same proportions as TEAM_WEIGHTS
 function computeOverallWithContributionsNoTone({ start, safe, race, contributions, close }) {
   const score = Math.round(
     start         * TEAM_WEIGHTS.start +
@@ -672,10 +700,16 @@ async function runEvaluation(transcript, meetingType, leaderName, speakersIdenti
   const startResult   = computeStart(raw.effectiveStart, raw.startRecovery);
   const safeResult    = computeSafeScore(raw.safe,  agendaItems);
   const raceResult    = computeRaceScore(raw.race,  agendaItems);
-  const toneResult    = computeTone(raw.tone);
   const closeResult   = computeClose(raw.effectiveClose);
   const clarityResult = computeClarity(raw.dialogueClarity);
   const contribs      = computeContributions(raw.contributions, leaderLabel);
+
+  // Compute Tone then apply quality cap (Tone ≤ average of SAFE and RACE)
+  const toneResult = applyToneQualityCap(
+    computeTone(raw.tone),
+    safeResult.score,
+    raceResult.score
+  );
 
   const toneScore = toneResult.score; // null if insufficient data
 
@@ -740,7 +774,13 @@ async function runEvaluation(transcript, meetingType, leaderName, speakersIdenti
   if (speakersIdentified && leaderLabel) {
     const leaderSafe = computeLeaderSafeScore(raw.safe);
     const leaderRace = computeLeaderRaceScore(raw.race);
-    const leaderTone = computeLeaderTone(raw.tone);
+
+    // Apply quality cap to leader Tone as well
+    const leaderTone = applyToneQualityCap(
+      computeLeaderTone(raw.tone),
+      leaderSafe.score,
+      leaderRace.score
+    );
 
     const leaderOverall = computeLeaderOverall({
       start: startResult.combinedScore,
