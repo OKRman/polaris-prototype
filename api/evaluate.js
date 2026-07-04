@@ -2,7 +2,7 @@
 // Periscope — Powered by Team Up
 // Vercel serverless function — ES module syntax (export default)
 //
-// V2 CHANGES FROM ORIGINAL:
+// CHANGE LOG:
 // — Behaviour-counting model replacing holistic 0–4 scoring
 // — Single API call (team + leader tracked together, not two separate calls)
 // — Contributions metric gated by speakersIdentified checkbox
@@ -12,9 +12,9 @@
 // — Tone returns N/A when combined SAFE + RACE event count is below 10
 // — Tone N/A redistributes 7.5% weight proportionally across remaining items
 // — Tone quality cap: Tone cannot exceed average of SAFE and RACE scores
-//   A meeting where both dimensions are weak cannot claim a healthy tone
-//   regardless of how balanced the ratio appears. Agreed by George 04/07/2026.
+//   Agreed by George Karseras 04/07/2026
 // — Score floor fixed at 0 — negative scores no longer possible
+//   Applied to both per-item normalisation AND leader behaviour scores
 
 import { buildPrompt } from '../lib/prompt.js';
 
@@ -264,10 +264,12 @@ function computeRaceScore(race, agendaItems) {
 //
 // Leader score per behaviour = (leaderTotalRawPoints / teamTotalRawPoints) × 100
 // Reflects the leader's proportional contribution to the team total.
+// Floor of 0 applied — leader raw points can be negative if they had many
+// negative behaviours, but the reported score cannot go below zero.
 
 function leaderBehaviourScore(leaderTotal, teamTotal) {
   if (!teamTotal || teamTotal <= 0) return 0;
-  return Math.min(100, (leaderTotal / teamTotal) * 100);
+  return Math.max(0, Math.min(100, (leaderTotal / teamTotal) * 100));
 }
 
 function computeLeaderSafeScore(safe) {
@@ -337,8 +339,8 @@ function applyToneQualityCap(toneResult, safeScore, raceScore) {
   if (toneResult.score > qualityCap) {
     return {
       ...toneResult,
-      score:          qualityCap,
-      rag:            safeRaceRag(qualityCap),
+      score:           qualityCap,
+      rag:             safeRaceRag(qualityCap),
       cappedByQuality: true,
     };
   }
@@ -440,6 +442,12 @@ function computeLeaderTone(tone) {
 }
 
 // ─── Contributions (TDI) ─────────────────────────────────────────────────────
+//
+// NOTE FOR CALIBRATION: Contributions measures speaking time distribution only,
+// not meeting quality. A bad meeting can legitimately score well here if
+// speakers happened to share time evenly. Whether this should be subject to
+// a quality cap (similar to Tone) is a decision for George to make once
+// real client transcripts have been analysed.
 
 function computeGini(shares) {
   if (!shares || shares.length < 2) return 0;
