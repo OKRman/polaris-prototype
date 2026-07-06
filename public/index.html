@@ -13,14 +13,20 @@
       --tu-orange:#EA682B;--tu-orange-dk:#c94f18;--tu-teal:#3E8888;--tu-teal-light:#e8f4f4;
       --tu-yellow:#FFB512;--tu-purple:#6D69A4;--bg:#F2F5F9;--bg-card:#FFFFFF;
       --text-primary:#12243A;--text-secondary:#4A5568;--text-muted:#8898AA;--border:#DDE3EC;
-      --rag-green:#1A7F4B;--rag-green-bg:#EAF7EF;--rag-amber:#D97706;--rag-amber-bg:#FEF3C7;
+      --rag-green:#1A7F4B;--rag-green-bg:#EAF7EF;
+      --rag-amber:#D97706;--rag-amber-bg:#FEF3C7;
       --rag-red:#C53030;--rag-red-bg:#FEE8E8;
+      --rag-na:#8898AA;--rag-na-bg:#F2F5F9;
       --radius-sm:6px;--radius-md:12px;--radius-lg:16px;
-      --shadow-sm:0 1px 4px rgba(18,36,58,0.08);--shadow-md:0 4px 16px rgba(18,36,58,0.10);--shadow-lg:0 8px 32px rgba(18,36,58,0.12);
+      --shadow-sm:0 1px 4px rgba(18,36,58,0.08);
+      --shadow-md:0 4px 16px rgba(18,36,58,0.10);
+      --shadow-lg:0 8px 32px rgba(18,36,58,0.12);
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;line-height:1.6;font-size:20px;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;line-height:1.6;font-size:16px;}
     h1,h2,h3,h4,h5{font-family:'Outfit',sans-serif;line-height:1.25;}
+
+    /* ── Header ── */
     .header{background:linear-gradient(135deg,var(--tu-blue-dark) 0%,var(--tu-blue) 60%,#1b8fd4 100%);color:white;padding:0 32px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,0.18);}
     .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px;gap:16px;}
     .logo-group{display:flex;align-items:center;gap:14px;}
@@ -28,24 +34,45 @@
     .logo-text .product-name{font-family:'Outfit',sans-serif;font-weight:700;font-size:28px;letter-spacing:-0.3px;color:white;}
     .logo-text .powered-by{font-size:14px;font-weight:400;color:rgba(255,255,255,0.70);letter-spacing:0.3px;margin-top:2px;}
     .header-tagline{font-size:16px;font-weight:400;color:rgba(255,255,255,0.65);text-align:right;}
+
+    /* ── Layout ── */
     .main{max-width:1100px;margin:0 auto;padding:40px 32px 80px;}
+    @media(max-width:720px){.main{padding:24px 16px 60px;}}
+
+    /* ── Intro ── */
     .intro{text-align:center;margin-bottom:40px;}
     .intro h1{font-size:32px;font-weight:700;color:var(--text-primary);margin-bottom:10px;}
     .intro h1 span{color:var(--tu-blue);}
     .intro p{font-size:16px;color:var(--text-secondary);max-width:580px;margin:0 auto;}
+
+    /* ── Form card ── */
     .form-card{background:var(--bg-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);padding:36px;margin-bottom:40px;}
+    @media(max-width:720px){.form-card{padding:24px;}}
     .form-section-label{font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;}
     .toggle-group{display:flex;gap:0;border:1.5px solid var(--border);border-radius:var(--radius-md);overflow:hidden;width:fit-content;margin-bottom:28px;}
     .toggle-btn{padding:10px 22px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;border:none;background:white;color:var(--text-secondary);cursor:pointer;transition:all 0.18s ease;white-space:nowrap;}
     .toggle-btn:first-child{border-right:1.5px solid var(--border);}
     .toggle-btn.active{background:var(--tu-blue);color:white;font-weight:600;}
     .toggle-btn:hover:not(.active){background:var(--bg);}
+
+    /* ── Checkbox row ── */
+    .checkbox-row{display:flex;align-items:flex-start;gap:12px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-md);padding:16px;margin-bottom:20px;}
+    .checkbox-row input[type="checkbox"]{width:18px;height:18px;flex-shrink:0;margin-top:2px;cursor:pointer;accent-color:var(--tu-blue);}
+    .checkbox-row-text{}
+    .checkbox-row-label{font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;color:var(--text-primary);display:block;margin-bottom:4px;}
+    .checkbox-row-hint{font-size:12px;color:var(--text-muted);line-height:1.55;}
+
+    /* ── Leader field ── */
+    .leader-section{margin-bottom:24px;transition:opacity 0.2s;}
+    .leader-section.dimmed{opacity:0.4;pointer-events:none;}
     .leader-label{display:block;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:8px;}
-    .leader-input{width:100%;max-width:360px;border:1.5px solid var(--border);border-radius:var(--radius-md);padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text-primary);outline:none;transition:border-color 0.15s;margin-bottom:10px;}
+    .leader-input{width:100%;max-width:360px;border:1.5px solid var(--border);border-radius:var(--radius-md);padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text-primary);outline:none;transition:border-color 0.15s;margin-bottom:6px;}
     .leader-input::placeholder{color:var(--text-muted);}
     .leader-input:focus{border-color:var(--tu-blue);box-shadow:0 0 0 3px var(--tu-blue-light);}
-    .leader-hint{font-size:12px;color:var(--text-muted);line-height:1.55;max-width:560px;margin-bottom:24px;}
-    .transcript-label{display:block;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:10px;}
+    .leader-hint{font-size:12px;color:var(--text-muted);line-height:1.55;max-width:560px;}
+
+    /* ── Transcript ── */
+    .transcript-label{display:block;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:10px;margin-top:4px;}
     .transcript-area{width:100%;min-height:220px;border:1.5px solid var(--border);border-radius:var(--radius-md);padding:16px;font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.65;color:var(--text-primary);resize:vertical;transition:border-color 0.15s;outline:none;}
     .transcript-area::placeholder{color:var(--text-muted);}
     .transcript-area:focus{border-color:var(--tu-blue);box-shadow:0 0 0 3px var(--tu-blue-light);}
@@ -55,24 +82,30 @@
     .evaluate-btn{display:inline-flex;align-items:center;gap:10px;margin-top:24px;padding:14px 32px;background:var(--tu-orange);color:white;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;border:none;border-radius:var(--radius-md);cursor:pointer;transition:all 0.18s ease;letter-spacing:0.2px;}
     .evaluate-btn:hover:not(:disabled){background:var(--tu-orange-dk);transform:translateY(-1px);box-shadow:0 4px 14px rgba(234,104,43,0.35);}
     .evaluate-btn:disabled{background:var(--text-muted);cursor:not-allowed;transform:none;box-shadow:none;}
+    .error-box{display:none;background:var(--rag-red-bg);border:1.5px solid #fca5a5;border-radius:var(--radius-md);padding:16px 20px;color:var(--rag-red);font-size:14px;margin-top:16px;}
+    .error-box.visible{display:block;}
+
+    /* ── Loading ── */
     .loading{display:none;text-align:center;padding:48px 24px;}
     .loading.visible{display:block;}
     .spinner{width:48px;height:48px;border:3px solid var(--tu-blue-light);border-top-color:var(--tu-blue);border-radius:50%;animation:spin 0.85s linear infinite;margin:0 auto 20px;}
     @keyframes spin{to{transform:rotate(360deg);}}
     .loading p{font-size:15px;color:var(--text-secondary);}
     .loading .loading-sub{font-size:13px;color:var(--text-muted);margin-top:6px;}
-    .error-box{display:none;background:var(--rag-red-bg);border:1.5px solid #fca5a5;border-radius:var(--radius-md);padding:16px 20px;color:var(--rag-red);font-size:14px;margin-top:16px;}
-    .error-box.visible{display:block;}
+
+    /* ── Report ── */
     .report{display:none;}
     .report.visible{display:block;}
     .report-header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:32px;flex-wrap:wrap;}
     .report-title-block h2{font-size:26px;font-weight:700;color:var(--text-primary);margin-bottom:6px;}
-    .meeting-context{font-size:14px;color:var(--text-secondary);max-width:680px;line-height:1.6;}
     .meeting-type-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;background:var(--tu-blue-light);color:var(--tu-blue);margin-bottom:8px;}
     .download-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:white;color:var(--tu-blue);border:1.5px solid var(--tu-blue);border-radius:var(--radius-md);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;white-space:nowrap;flex-shrink:0;}
     .download-btn:hover{background:var(--tu-blue);color:white;}
+
+    /* ── Overall hero ── */
     .overall-hero{background:linear-gradient(135deg,var(--tu-blue-dark) 0%,var(--tu-blue) 100%);border-radius:var(--radius-lg);padding:32px 36px;color:white;display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:24px;flex-wrap:wrap;}
-    .overall-label{font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:rgba(255,255,255,0.70);margin-bottom:8px;}
+    .overall-label{font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:rgba(255,255,255,0.70);margin-bottom:4px;}
+    .overall-descriptor{font-family:'Outfit',sans-serif;font-size:18px;font-weight:600;color:rgba(255,255,255,0.90);margin-bottom:6px;}
     .overall-score-display{display:flex;align-items:baseline;gap:6px;}
     .overall-number{font-family:'Outfit',sans-serif;font-size:64px;font-weight:800;line-height:1;color:white;}
     .overall-percent{font-size:26px;font-weight:400;color:rgba(255,255,255,0.7);}
@@ -81,121 +114,144 @@
     .overall-rag-pill.amber{background:rgba(234,104,43,0.25);color:#FFD08A;}
     .overall-rag-pill.red{background:rgba(220,38,38,0.25);color:#FCA5A5;}
     .overall-rag-pill::before{content:'';width:8px;height:8px;border-radius:50%;background:currentColor;display:block;}
-    .overall-right{text-align:right;flex-shrink:0;}
-    .score-guide{font-size:12px;color:rgba(255,255,255,0.60);line-height:1.8;}
+    .score-guide{font-size:12px;color:rgba(255,255,255,0.60);line-height:2;}
     .score-guide span{color:rgba(255,255,255,0.85);font-weight:600;}
-    .dashboard-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px;}
-    @media(max-width:720px){.dashboard-grid{grid-template-columns:1fr 1fr;}.main{padding:24px 16px 60px;}.form-card{padding:24px;}}
+
+    /* ── Dashboard grid ── */
+    .section-heading{font-family:'Outfit',sans-serif;font-size:18px;font-weight:700;color:var(--text-primary);margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+    .section-heading .pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:0.8px;text-transform:uppercase;}
+    .section-intro{font-size:13px;color:var(--text-muted);margin-bottom:20px;line-height:1.5;}
+    .dashboard-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px;}
+    @media(max-width:900px){.dashboard-grid{grid-template-columns:repeat(2,1fr);}}
     @media(max-width:480px){.dashboard-grid{grid-template-columns:1fr;}}
-    .metric-card{background:white;border-radius:var(--radius-md);padding:22px 20px;box-shadow:var(--shadow-sm);border:1.5px solid var(--border);border-top:4px solid var(--border);transition:box-shadow 0.15s;}
+    .metric-card{background:white;border-radius:var(--radius-md);padding:20px;box-shadow:var(--shadow-sm);border:1.5px solid var(--border);border-top:4px solid var(--border);transition:box-shadow 0.15s;}
     .metric-card:hover{box-shadow:var(--shadow-md);}
     .metric-card.rag-green{border-top-color:var(--rag-green);}
     .metric-card.rag-amber{border-top-color:var(--rag-amber);}
     .metric-card.rag-red{border-top-color:var(--rag-red);}
-    .metric-label{font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;}
+    .metric-card.rag-na{border-top-color:var(--rag-na);}
+    .metric-card.info-only{border-top-color:var(--tu-purple);border-style:dashed;}
+    .metric-label{font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;}
     .metric-score-row{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;}
-    .metric-number{font-family:'Outfit',sans-serif;font-size:38px;font-weight:800;line-height:1;}
-    .metric-pct{font-size:18px;font-weight:400;color:var(--text-muted);}
-    .rag-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:0.4px;text-transform:uppercase;flex-shrink:0;}
+    .metric-number{font-family:'Outfit',sans-serif;font-size:34px;font-weight:800;line-height:1;}
+    .metric-pct{font-size:16px;font-weight:400;color:var(--text-muted);}
+    .metric-na{font-family:'Outfit',sans-serif;font-size:22px;font-weight:700;color:var(--rag-na);}
+    .rag-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:0.4px;text-transform:uppercase;flex-shrink:0;}
     .rag-badge.green{background:var(--rag-green-bg);color:var(--rag-green);}
     .rag-badge.amber{background:var(--rag-amber-bg);color:var(--rag-amber);}
     .rag-badge.red{background:var(--rag-red-bg);color:var(--rag-red);}
-    .metric-bar-track{height:8px;background:var(--border);border-radius:4px;margin-top:14px;overflow:hidden;}
-    .metric-bar-fill{height:100%;border-radius:4px;transition:width 0.8s cubic-bezier(0.34,1.56,0.64,1);}
+    .rag-badge.na{background:var(--rag-na-bg);color:var(--rag-na);}
+    .rag-badge.info{background:#F3F0FF;color:var(--tu-purple);}
+    .metric-bar-track{height:6px;background:var(--border);border-radius:3px;margin-top:12px;overflow:hidden;}
+    .metric-bar-fill{height:100%;border-radius:3px;transition:width 0.8s cubic-bezier(0.34,1.56,0.64,1);}
     .metric-bar-fill.green{background:var(--rag-green);}
     .metric-bar-fill.amber{background:var(--rag-amber);}
     .metric-bar-fill.red{background:var(--rag-red);}
-    .section-heading{font-family:'Outfit',sans-serif;font-size:18px;font-weight:700;color:var(--text-primary);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
-    .section-heading .pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:0.8px;text-transform:uppercase;}
-    .competencies{margin-bottom:40px;}
-    .competency-card{background:white;border-radius:var(--radius-md);box-shadow:var(--shadow-sm);border:1.5px solid var(--border);margin-bottom:16px;overflow:hidden;}
-    .competency-header{display:flex;align-items:center;gap:14px;padding:18px 24px;cursor:pointer;border-bottom:1.5px solid transparent;transition:background 0.15s;user-select:none;}
-    .competency-header:hover{background:var(--bg);}
-    .competency-header.open{border-bottom-color:var(--border);}
-    .competency-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-size:13px;font-weight:800;flex-shrink:0;letter-spacing:0.2px;}
-    .icon-port-in{background:var(--tu-blue-light);color:var(--tu-blue);}
+    .metric-bar-fill.na{background:var(--rag-na);}
+
+    /* ── Detailed breakdown sections ── */
+    .breakdown-section{background:white;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1.5px solid var(--border);margin-bottom:20px;overflow:hidden;}
+    .breakdown-header{display:flex;align-items:center;gap:16px;padding:22px 28px;border-bottom:1.5px solid var(--bg);}
+    .breakdown-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-size:13px;font-weight:800;flex-shrink:0;}
+    .icon-start{background:var(--tu-blue-light);color:var(--tu-blue);}
     .icon-safe{background:#EFF8F1;color:#1A7F4B;}
     .icon-race{background:#FEF3C7;color:#92400E;}
-    .icon-port-out{background:#F3F0FF;color:var(--tu-purple);}
-    .competency-name{font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;color:var(--text-primary);}
-    .competency-subtitle{font-size:12px;color:var(--text-muted);margin-top:1px;}
-    .competency-chevron{margin-left:auto;color:var(--text-muted);transition:transform 0.2s;flex-shrink:0;}
-    .competency-header.open .competency-chevron{transform:rotate(180deg);}
-    .competency-body{display:none;padding:24px;}
-    .competency-body.open{display:block;}
-    .sub-scores-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-    @media(max-width:600px){.sub-scores-grid{grid-template-columns:1fr;}}
-    .sub-score-item{background:var(--bg);border-radius:var(--radius-sm);padding:14px 16px;border-left:4px solid var(--border);}
-    .sub-score-item.rag-green{border-left-color:var(--rag-green);background:#f6fdf9;}
-    .sub-score-item.rag-amber{border-left-color:var(--rag-amber);background:#fffbf0;}
-    .sub-score-item.rag-red{border-left-color:var(--rag-red);background:#fff8f8;}
-    .sub-score-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-    .sub-score-name{font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-secondary);}
-    .sub-score-pct{font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;}
-    .sub-score-pct.green{color:var(--rag-green);}
-    .sub-score-pct.amber{color:var(--rag-amber);}
-    .sub-score-pct.red{color:var(--rag-red);}
-    .sub-score-bar-track{height:7px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:8px;}
-    .sub-score-bar-fill{height:100%;border-radius:4px;}
-    .sub-score-bar-fill.green{background:var(--rag-green);}
-    .sub-score-bar-fill.amber{background:var(--rag-amber);}
-    .sub-score-bar-fill.red{background:var(--rag-red);}
-    .sub-score-good-practice{font-size:12.5px;color:var(--text-secondary);line-height:1.55;}
-    .sub-score-good-practice-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:3px;}
-    .red-flags{background:white;border-radius:var(--radius-md);padding:24px;box-shadow:var(--shadow-sm);border:1.5px solid #fca5a5;margin-bottom:24px;}
-    .red-flags-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
-    .red-flag-icon{width:32px;height:32px;background:var(--rag-red-bg);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;}
-    .red-flags h3{font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;color:var(--rag-red);}
-    .red-flag-item{display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--rag-red-bg);font-size:14px;color:var(--text-primary);line-height:1.5;}
-    .recommendations{background:white;border-radius:var(--radius-md);padding:24px;box-shadow:var(--shadow-sm);border:1.5px solid var(--border);margin-bottom:24px;}
-    .recommendations-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
-    .reco-icon{width:32px;height:32px;background:var(--tu-teal-light);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;}
-    .recommendations h3{font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;color:var(--tu-teal);}
-    .reco-item{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--bg);}
-    .reco-number{width:22px;height:22px;border-radius:50%;background:var(--tu-blue);color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-family:'Outfit',sans-serif;}
-    .reco-text{font-size:14px;color:var(--text-primary);line-height:1.55;}
-    /* Leader report */
+    .icon-tone{background:#F0F4FF;color:var(--tu-purple);}
+    .icon-contrib{background:var(--rag-na-bg);color:var(--rag-na);}
+    .icon-clarity{background:#F3F0FF;color:var(--tu-purple);}
+    .icon-close{background:#FFF0E8;color:var(--tu-orange-dk);}
+    .breakdown-meta{flex:1;}
+    .breakdown-name{font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;color:var(--text-primary);}
+    .breakdown-subtitle{font-size:12px;color:var(--text-muted);margin-top:2px;}
+    .breakdown-score-block{text-align:right;flex-shrink:0;}
+    .breakdown-score{font-family:'Outfit',sans-serif;font-size:28px;font-weight:800;line-height:1;}
+    .breakdown-score .pct{font-size:14px;font-weight:400;color:var(--text-muted);}
+    .breakdown-score.green{color:var(--rag-green);}
+    .breakdown-score.amber{color:var(--rag-amber);}
+    .breakdown-score.red{color:var(--rag-red);}
+    .breakdown-score.na{color:var(--rag-na);}
+    .breakdown-body{padding:24px 28px;}
+    .breakdown-description{font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.65;}
+
+    /* ── Sub-scores grid ── */
+    .sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    @media(max-width:600px){.sub-grid{grid-template-columns:1fr;}}
+    .sub-card{border-radius:var(--radius-sm);padding:16px;border-left:4px solid var(--border);}
+    .sub-card.green{border-left-color:var(--rag-green);background:#f6fdf9;}
+    .sub-card.amber{border-left-color:var(--rag-amber);background:#fffbf0;}
+    .sub-card.red{border-left-color:var(--rag-red);background:#fff8f8;}
+    .sub-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+    .sub-card-name{font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-secondary);}
+    .sub-card-score{font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;}
+    .sub-card-score.green{color:var(--rag-green);}
+    .sub-card-score.amber{color:var(--rag-amber);}
+    .sub-card-score.red{color:var(--rag-red);}
+    .sub-bar-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:10px;}
+    .sub-bar-fill{height:100%;border-radius:3px;}
+    .sub-bar-fill.green{background:var(--rag-green);}
+    .sub-bar-fill.amber{background:var(--rag-amber);}
+    .sub-bar-fill.red{background:var(--rag-red);}
+    .good-practice-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:4px;}
+    .good-practice-text{font-size:12.5px;color:var(--text-secondary);line-height:1.55;}
+
+    /* ── Tone section ── */
+    .tone-ratio-block{display:flex;align-items:center;gap:20px;background:var(--bg);border-radius:var(--radius-md);padding:18px 20px;margin-bottom:16px;flex-wrap:wrap;}
+    .tone-ratio-value{font-family:'Outfit',sans-serif;font-size:36px;font-weight:800;}
+    .tone-ratio-value.green{color:var(--rag-green);}
+    .tone-ratio-value.amber{color:var(--rag-amber);}
+    .tone-ratio-value.red{color:var(--rag-red);}
+    .tone-ratio-label{font-size:13px;color:var(--text-secondary);}
+    .tone-direction-badge{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;}
+    .tone-direction-badge.balanced{background:var(--rag-green-bg);color:var(--rag-green);}
+    .tone-direction-badge.safety-heavy{background:var(--tu-blue-light);color:var(--tu-blue);}
+    .tone-direction-badge.efficiency-heavy{background:var(--rag-amber-bg);color:var(--rag-amber);}
+    .na-notice{background:var(--rag-na-bg);border-radius:var(--radius-md);padding:16px 18px;font-size:13px;color:var(--text-secondary);line-height:1.6;border-left:4px solid var(--rag-na);}
+    .capped-notice{background:var(--rag-amber-bg);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:var(--rag-amber);margin-top:12px;border-left:3px solid var(--rag-amber);}
+
+    /* ── Close elements grid ── */
+    .close-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    @media(max-width:600px){.close-grid{grid-template-columns:1fr;}}
+    .close-element{border-radius:var(--radius-sm);padding:16px;border-left:4px solid var(--border);}
+    .close-element.achieved{border-left-color:var(--rag-green);background:#f6fdf9;}
+    .close-element.not-achieved{border-left-color:var(--rag-red);background:#fff8f8;}
+    .close-element-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+    .close-element-name{font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-secondary);}
+    .close-element-status{font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;}
+    .close-element-status.yes{background:var(--rag-green-bg);color:var(--rag-green);}
+    .close-element-status.no{background:var(--rag-red-bg);color:var(--rag-red);}
+    .close-element-weight{font-size:11px;color:var(--text-muted);margin-bottom:6px;}
+    .close-element-evidence{font-size:12px;color:var(--text-secondary);line-height:1.5;}
+    .close-element-good{font-size:12px;color:var(--text-muted);margin-top:6px;font-style:italic;line-height:1.5;}
+
+    /* ── Contributions section ── */
+    .contrib-omitted{background:var(--rag-na-bg);border-radius:var(--radius-md);padding:18px;font-size:13px;color:var(--text-secondary);border-left:4px solid var(--rag-na);}
+    .speaker-bars{margin-top:16px;}
+    .speaker-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+    .speaker-name{width:100px;font-size:12px;font-weight:600;color:var(--text-secondary);flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .speaker-bar-track{flex:1;height:12px;background:var(--bg);border-radius:4px;overflow:hidden;}
+    .speaker-bar-fill{height:100%;border-radius:4px;background:var(--tu-blue);transition:width 0.6s ease;}
+    .speaker-pct{width:40px;font-size:12px;font-weight:700;color:var(--tu-blue);text-align:right;flex-shrink:0;}
+
+    /* ── Dialogue Clarity info badge ── */
+    .info-only-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#F3F0FF;color:var(--tu-purple);margin-bottom:14px;}
+
+    /* ── Divider ── */
+    .divider{height:1px;background:var(--border);margin:32px 0;}
+
+    /* ── Leader report ── */
     .leader-report-section{margin-top:48px;padding-top:40px;border-top:3px solid var(--tu-orange);}
     .leader-report-heading{display:flex;align-items:center;gap:14px;margin-bottom:8px;flex-wrap:wrap;}
-    .leader-report-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:20px;font-size:12px;font-weight:700;background:var(--tu-orange);color:white;letter-spacing:0.3px;}
+    .leader-report-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:20px;font-size:12px;font-weight:700;background:var(--tu-orange);color:white;}
     .leader-report-title{font-family:'Outfit',sans-serif;font-size:24px;font-weight:700;color:var(--text-primary);}
-    .leader-report-intro{font-size:14px;color:var(--text-secondary);margin-bottom:28px;line-height:1.6;}
+    .leader-report-intro{font-size:13px;color:var(--text-secondary);margin-bottom:28px;line-height:1.65;max-width:700px;}
+    .leader-contrib-info{background:var(--bg);border-radius:var(--radius-md);padding:16px 20px;font-size:13px;color:var(--text-secondary);border-left:4px solid var(--tu-orange);}
+    .leader-contrib-pct{font-family:'Outfit',sans-serif;font-size:28px;font-weight:800;color:var(--tu-orange);display:block;margin-bottom:4px;}
     .leader-not-found{background:var(--rag-amber-bg);border:1.5px solid var(--rag-amber);border-left:4px solid var(--rag-amber);border-radius:var(--radius-md);padding:20px 24px;font-size:14px;color:var(--text-primary);line-height:1.65;}
     .leader-not-found strong{color:var(--rag-amber);}
+
+    /* ── Footer ── */
     .footer{text-align:center;padding:24px 32px;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted);background:white;}
     .footer a{color:var(--tu-blue);text-decoration:none;}
-    .divider{height:1px;background:var(--border);margin:32px 0;}
-    .section-intro{font-size:13px;color:var(--text-muted);margin-bottom:20px;line-height:1.5;}
-    /* Contribution Balance */
-    .behaviour-distribution{background:white;border-radius:var(--radius-md);padding:28px;box-shadow:var(--shadow-sm);border:1.5px solid var(--border);margin-bottom:32px;}
-    .bd-subsection{margin-bottom:28px;}
-    .bd-subsection h3{font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.6px;}
-    .bd-subsection-desc{font-size:12.5px;color:var(--text-muted);margin-bottom:12px;line-height:1.5;}
-    .sr-bar{display:flex;height:2.5rem;border-radius:6px;overflow:hidden;}
-    .sr-segment{display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:600;color:#fff;transition:width 0.4s ease;min-width:0;}
-    .sr-segment span{overflow:hidden;white-space:nowrap;padding:0 6px;}
-    .sr-safe{background:#5BB974;}.sr-race{background:#E8854A;}.sr-whitenoise{background:#8898AA;}.sr-other{background:#ddd;}
-    .sr-interpretation{font-size:0.875rem;color:var(--text-secondary);margin-top:8px;font-style:italic;}
-    .qb-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
-    .qb-label{width:7rem;font-size:0.8rem;font-weight:600;color:var(--text-secondary);flex-shrink:0;}
-    .qb-bar-track{flex:1;height:1.1rem;background:var(--bg);border-radius:4px;overflow:hidden;}
-    .qb-bar-fill{height:100%;border-radius:4px;transition:width 0.4s ease;}
-    .qb-stat{width:7rem;font-size:0.8rem;color:var(--text-secondary);flex-shrink:0;}
-    .qb-count{color:var(--text-muted);}
-    .bd-two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-    @media(max-width:600px){.bd-two-col{grid-template-columns:1fr;}.qb-label{width:4.5rem;}}
-    .bd-col h3{font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.6px;}
-    .top-behaviour{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bg);font-size:14px;}
-    .top-rank{font-family:'Outfit',sans-serif;font-weight:700;color:var(--tu-blue);width:1.2rem;flex-shrink:0;}
-    .top-name{flex:1;color:var(--text-primary);}
-    .top-pct{font-family:'Outfit',sans-serif;font-weight:700;color:var(--tu-blue);}
-    .absent-behaviour{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--bg);font-size:13px;}
-    .absent-quadrant{font-size:10px;font-weight:600;padding:2px 6px;border-radius:3px;background:var(--bg);color:var(--text-secondary);flex-shrink:0;align-self:flex-start;margin-top:1px;white-space:nowrap;}
-    .absent-name{font-weight:600;color:var(--text-primary);min-width:6rem;}
-    .absent-significance{color:var(--text-secondary);font-size:12px;flex:1;line-height:1.4;}
-    .bd-narrative{background:var(--bg);border-left:3px solid var(--tu-blue);padding:14px 18px;border-radius:0 6px 6px 0;font-size:14px;color:var(--text-secondary);line-height:1.6;}
-    .bd-stats-strip{font-size:13px;color:var(--text-secondary);background:var(--bg);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:20px;}
-    .bd-empty{color:var(--text-muted);font-style:italic;font-size:13px;}
   </style>
 </head>
 <body>
@@ -225,18 +281,29 @@
     <div class="form-card">
       <div class="form-section-label">Meeting Type</div>
       <div class="toggle-group">
-        <button class="toggle-btn active" data-type="intact" onclick="setMeetingType('intact', this)">Intact Team</button>
-        <button class="toggle-btn" data-type="crossfunctional" onclick="setMeetingType('crossfunctional', this)">Cross-Functional</button>
+        <button class="toggle-btn active" onclick="setMeetingType('intact', this)">Intact Team</button>
+        <button class="toggle-btn" onclick="setMeetingType('cross-functional', this)">Cross-Functional</button>
       </div>
 
-      <div class="form-section-label" style="margin-top:4px;">Leader Report <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--text-muted);">(optional)</span></div>
-      <label class="leader-label" for="leaderName">Leader's name</label>
-      <input type="text" id="leaderName" class="leader-input" placeholder="e.g. Sarah, or Speaker 1" autocomplete="off" />
-      <p class="leader-hint">Before entering a name, open your transcript and find a line where the leader is speaking. Copy the speaker label exactly as it appears — including any abbreviations or shortened display names — and paste it here. If your transcript uses labels like "Speaker 1", enter that instead.</p>
+      <div class="form-section-label">Speaker Identification</div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="speakersIdentified" onchange="toggleSpeakers(this)" />
+        <div class="checkbox-row-text">
+          <span class="checkbox-row-label">My transcript identifies individual speakers by name throughout</span>
+          <span class="checkbox-row-hint">Tick this to enable the Contributions metric and generate a leader report. Leave unticked if your transcript uses generic labels, shared conference room audio, or does not reliably attribute each line to a named individual.</span>
+        </div>
+      </div>
+
+      <div class="leader-section dimmed" id="leaderSection">
+        <div class="form-section-label">Leader Report <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--text-muted);">(optional)</span></div>
+        <label class="leader-label" for="leaderName">Leader's name</label>
+        <input type="text" id="leaderName" class="leader-input" placeholder="e.g. Sarah, or Speaker A" autocomplete="off" disabled />
+        <p class="leader-hint">Enter the name exactly as it appears in the transcript. If your transcript uses labels like "Speaker A", enter that.</p>
+      </div>
 
       <label class="transcript-label" for="transcript">Meeting Transcript</label>
       <textarea id="transcript" class="transcript-area" placeholder="Paste your meeting transcript here. For best results, use a transcript from Otter.ai, Fireflies, Zoom AI, or similar — with speaker names and dialogue clearly formatted." rows="12"></textarea>
-      <p class="gdpr-notice">&#x1F512; <strong>Privacy:</strong> Your transcript is processed in real time and is not stored, saved, or retained at any point — on our servers, in any database, or by the AI provider. The report you receive exists only in your browser. By submitting, you confirm you have appropriate authorisation to share this transcript for analysis. See <a href="https://anthropic.com/policies/privacy" target="_blank" rel="noopener">Anthropic's privacy policy</a>.</p>
+      <p class="gdpr-notice">&#x1F512; <strong>Privacy:</strong> Your transcript is processed in real time and is not stored, saved, or retained at any point. The report exists only in your browser. By submitting, you confirm you have appropriate authorisation to share this transcript for analysis. See <a href="https://anthropic.com/policies/privacy" target="_blank" rel="noopener">Anthropic's privacy policy</a>.</p>
       <button class="evaluate-btn" id="evaluateBtn" onclick="runEvaluation()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l14 9-14 9V3z"/></svg>
         Evaluate This Meeting
@@ -255,7 +322,6 @@
         <div class="report-title-block">
           <div class="meeting-type-badge" id="meetingTypeBadge"></div>
           <h2>Meeting Effectiveness Report</h2>
-          <p class="meeting-context" id="meetingContext"></p>
         </div>
         <button class="download-btn" onclick="downloadReport()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -263,54 +329,19 @@
         </button>
       </div>
 
-      <div class="overall-hero">
-        <div class="overall-left">
-          <div class="overall-label">Overall Meeting Effectiveness</div>
-          <div class="overall-score-display">
-            <span class="overall-number" id="overallNumber">&#x2014;</span>
-            <span class="overall-percent">%</span>
-          </div>
-          <div id="overallRagPill" class="overall-rag-pill"></div>
-        </div>
-        <div class="overall-right">
-          <div class="score-guide">
-            <span style="color:#7EFFC0;">&#x25CF; Green</span> &nbsp;Above 70% &#x2014; Effective<br>
-            <span style="color:#FFD08A;">&#x25CF; Amber</span> &nbsp;40&#x2013;70% &#x2014; Developing<br>
-            <span style="color:#FCA5A5;">&#x25CF; Red</span> &nbsp;&nbsp;&nbsp;Below 40% &#x2014; Weak
-          </div>
-        </div>
-      </div>
+      <div class="overall-hero" id="overallHero"></div>
 
-      <div class="section-heading">Dashboard <span class="pill" style="background:var(--tu-blue-light);color:var(--tu-blue);">5 Metrics</span></div>
-      <p class="section-intro">Five metrics calculated from your 16 individual behaviour scores using the Polaris Formula weightings.</p>
+      <div class="section-heading" style="margin-bottom:6px;">Dashboard <span class="pill" style="background:var(--tu-blue-light);color:var(--tu-blue);" id="dashPill"></span></div>
+      <p class="section-intro">Scores across all measured dimensions of the Polaris Formula.</p>
       <div class="dashboard-grid" id="dashboardGrid"></div>
-
-      <div id="behaviourDistributionSection"></div>
 
       <div class="divider"></div>
 
-      <div class="section-heading">Competency Breakdown</div>
-      <p class="section-intro">Individual scores for each of the 16 Polaris behaviours, with a definition of what good looks like for each.</p>
-      <div class="competencies" id="competencies"></div>
-
-      <div class="red-flags" id="redFlagsBlock" style="display:none;">
-        <div class="red-flags-header">
-          <div class="red-flag-icon">&#x26A0;&#xFE0F;</div>
-          <h3>Patterns to Address</h3>
-        </div>
-        <div id="redFlagsList"></div>
-      </div>
-
-      <div class="recommendations" id="recommendationsBlock" style="display:none;">
-        <div class="recommendations-header">
-          <div class="reco-icon">&#x1F4A1;</div>
-          <h3>Recommendations</h3>
-        </div>
-        <div id="recommendationsList"></div>
-      </div>
+      <div class="section-heading">Detailed Breakdown</div>
+      <p class="section-intro">Scores, sub-scores, and a definition of what good looks like for each dimension.</p>
+      <div id="breakdownSections"></div>
 
       <div id="leaderReportSection" style="display:none;"></div>
-
     </div>
   </main>
 
@@ -321,29 +352,70 @@
   </footer>
 
   <script>
-    let currentMeetingType = 'intact';
-    let currentReportData  = null;
+    // ── State ─────────────────────────────────────────────────────────────────
+    let currentMeetingType  = 'intact';
+    let currentReportData   = null;
 
+    // ── Static content ────────────────────────────────────────────────────────
+    // "What Good Looks Like" text per behaviour — static content from Polaris Framework.
+    const GOOD_PRACTICE = {
+      share:     "Participants openly share knowledge, opinions, feelings and vulnerabilities. Admitting imperfections, asking for help and showing uncertainty are treated as strengths. Contributions are acknowledged and validated.",
+      ask:       "Questions are genuinely curious and non-directive, seeking to understand rather than prove a point. Clarifying questions are welcomed and answered fully, establishing shared meaning before the discussion moves on.",
+      facilitate:"Participants actively summarise, confirm shared understanding and bring quieter voices into the conversation. No single voice dominates. What has been said is accurately restated and confirmed.",
+      energise:  "The meeting has a respectful, positive tone throughout. Appreciation is expressed directly. Requests are framed courteously. Any feedback is constructive. Humour is appropriate and inclusive.",
+      resolve:   "Participants voice what matters to them and hold their positions constructively. The customer or end user is referenced in decisions. Minority views are heard and maintained without unnecessary concession.",
+      actioning: "Discussion moves towards collective solutions. Suggestions are framed using 'we' and 'us'. Problems are followed directly by proposed actions. Ownership is shared rather than assigned.",
+      challenge: "Ideas are constructively scrutinised and tested. Creative alternatives are proposed. Challenge is assertive and purposeful — it interrogates ideas without attacking the people who hold them.",
+      economise: "Time is actively managed. Discussions stay on topic and are redirected when they drift. Decisions are made once and cleanly. The meeting closes on time or close to it."
+    };
+
+    const CLOSE_GOOD_PRACTICE = {
+      planned:       "Decisions and agreed next steps are clearly stated at the close. There is no ambiguity about what was agreed.",
+      organised:     "Actions are framed around outcomes — what will each action actually deliver, not just what activity will take place.",
+      responsible:   "Named individuals have explicitly accepted ownership of each action. Ownership is genuine, not nominal.",
+      timeConscious: "Specific deadlines are confirmed by the action owner. Vague commitments like 'soon' or 'shortly' are absent."
+    };
+
+    const CLOSE_ELEMENT_LABELS = {
+      planned:       "P — Planned",
+      organised:     "O — Organised",
+      responsible:   "R — Responsible",
+      timeConscious: "T — Time-Conscious"
+    };
+
+    const CLOSE_ELEMENT_WEIGHTS = {
+      planned:       "25% of close score",
+      organised:     "10% of close score",
+      responsible:   "25% of close score",
+      timeConscious: "40% of close score"
+    };
+
+    // ── Form controls ─────────────────────────────────────────────────────────
     function setMeetingType(type, btn) {
       currentMeetingType = type;
       document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
     }
 
-    function ragLabel(rag) {
-      if (rag === 'green') return 'Effective';
-      if (rag === 'amber') return 'Developing';
-      return 'Weak';
+    function toggleSpeakers(checkbox) {
+      const section = document.getElementById('leaderSection');
+      const input   = document.getElementById('leaderName');
+      if (checkbox.checked) {
+        section.classList.remove('dimmed');
+        input.disabled = false;
+      } else {
+        section.classList.add('dimmed');
+        input.disabled = true;
+        input.value = '';
+      }
     }
 
-    function metricColor(rag) {
-      if (rag === 'green') return 'var(--rag-green)';
-      if (rag === 'amber') return 'var(--rag-amber)';
-      return 'var(--rag-red)';
-    }
-
+    // ── API call ──────────────────────────────────────────────────────────────
     async function runEvaluation() {
-      const transcript = document.getElementById('transcript').value.trim();
+      const transcript         = document.getElementById('transcript').value.trim();
+      const leaderName         = document.getElementById('leaderName').value.trim();
+      const speakersIdentified = document.getElementById('speakersIdentified').checked;
+
       if (!transcript || transcript.length < 50) {
         showError('Please paste a meeting transcript before evaluating.');
         return;
@@ -355,30 +427,26 @@
           headers: { 'Content-Type': 'application/json' },
           body:    JSON.stringify({
             transcript,
-            meetingType: currentMeetingType,
-            leaderName:  document.getElementById('leaderName').value.trim() || null
+            meetingType:        currentMeetingType,
+            leaderName:         leaderName || null,
+            speakersIdentified
           })
         });
-
         const rawText = await res.text();
         let data;
-        try {
-          data = JSON.parse(rawText);
-        } catch (_) {
+        try { data = JSON.parse(rawText); }
+        catch (_) {
           showError('The evaluation timed out — please try again. If this keeps happening, try a shorter transcript.');
-          setUI('form');
-          return;
+          setUI('form'); return;
         }
-
         if (!res.ok) {
           showError(data.error || 'Something went wrong. Please try again.');
-          setUI('form');
-          return;
+          setUI('form'); return;
         }
         currentReportData = data;
         renderReport(data);
-        renderLeaderReport(data);
         setUI('report');
+        setTimeout(() => document.getElementById('report').scrollIntoView({ behavior:'smooth', block:'start' }), 100);
       } catch (err) {
         console.error(err);
         showError('A network error occurred. Please check your connection and try again.');
@@ -387,9 +455,9 @@
     }
 
     function setUI(state) {
-      document.getElementById('loading').classList.toggle('visible', state === 'loading');
-      document.getElementById('report').classList.toggle('visible',  state === 'report');
-      document.getElementById('evaluateBtn').disabled = state === 'loading';
+      document.getElementById('loading').classList.toggle('visible',   state === 'loading');
+      document.getElementById('report').classList.toggle('visible',    state === 'report');
+      document.getElementById('evaluateBtn').disabled =               (state === 'loading');
       if (state !== 'form') hideError();
     }
 
@@ -398,456 +466,588 @@
       el.textContent = msg;
       el.classList.add('visible');
     }
-
     function hideError() {
       document.getElementById('errorBox').classList.remove('visible');
     }
 
-    // ── Competency definitions (shared) ─────────────────────────────────────
-    const competencyDefs = [
-      { key:'portIn',  label:'PORT In',  subtitle:'Meeting Opening — Purpose, Outcomes, Responsibilities, Timed Agenda', iconClass:'icon-port-in',
-        behaviours:[['purpose','P — Purpose'],['outcomes','O — Outcomes'],['responsibilities','R — Responsibilities'],['timedAgenda','T — Timed Agenda']] },
-      { key:'safe',    label:'SAFE',     subtitle:'Psychological Safety — Share, Ask, Facilitate, Energise', iconClass:'icon-safe',
-        behaviours:[['share','S — Share'],['ask','A — Ask'],['facilitate','F — Facilitate'],['energise','E — Energise']] },
-      { key:'race',    label:'RACE',     subtitle:'Decision Making Efficiency — Resolve, Actioning, Challenge, Economise', iconClass:'icon-race',
-        behaviours:[['resolve','R — Resolve'],['actioning','A — Actioning'],['challenge','C — Challenge'],['economise','E — Economise']] },
-      { key:'portOut', label:'PORT Out', subtitle:'Meeting Close — Plan, Outcomes, Responsibilities, Time', iconClass:'icon-port-out',
-        behaviours:[['plan','P — Plan'],['outcomes','O — Outcomes'],['responsibilities','R — Responsibilities'],['time','T — Time']] }
-    ];
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    function esc(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
 
-    const dashboardMetrics = [
-      { key:'effectiveStart',  label:'Starting Well',               icon:'&#x25B6;' },
-      { key:'psychSafety',     label:'Psychological Safety',         icon:'&#x1F6E1;' },
-      { key:'decisionQuality', label:'Decision Making Efficiency',   icon:'&#x2696;' },
-      { key:'effectiveClose',  label:'Closing Clearly',              icon:'&#x2713;' },
-      { key:'clarity',         label:'Clarity',                      icon:'&#x25C8;' }
-    ];
+    function ragColor(rag) {
+      if (rag === 'green') return 'var(--rag-green)';
+      if (rag === 'amber') return 'var(--rag-amber)';
+      if (rag === 'red')   return 'var(--rag-red)';
+      return 'var(--rag-na)';
+    }
 
+    function ragLabel(rag) {
+      if (rag === 'green') return 'Effective';
+      if (rag === 'amber') return 'Developing';
+      if (rag === 'red')   return 'Weak';
+      return 'N/A';
+    }
+
+    function metricCard(label, metric, opts) {
+      opts = opts || {};
+      const isNA        = !metric || metric.score === null || metric.rag === 'n/a';
+      const isOmitted   = metric && metric.note && typeof metric.score === 'undefined';
+      const isInfoOnly  = opts.infoOnly || false;
+      const rag         = isNA || isOmitted ? 'na' : (metric.rag || 'na');
+      const cardClass   = isInfoOnly ? 'metric-card info-only' : `metric-card rag-${rag}`;
+
+      let scoreHTML, badgeHTML;
+      if (isOmitted) {
+        scoreHTML = `<div class="metric-na">N/A</div>`;
+        badgeHTML = `<span class="rag-badge na">Not measured</span>`;
+      } else if (isNA) {
+        scoreHTML = `<div class="metric-na">N/A</div>`;
+        badgeHTML = `<span class="rag-badge na">N/A</span>`;
+      } else if (isInfoOnly) {
+        scoreHTML = `<div><span class="metric-number" style="color:var(--tu-purple)">${metric.score}</span><span class="metric-pct">%</span></div>`;
+        badgeHTML = `<span class="rag-badge info">Info only</span>`;
+      } else {
+        scoreHTML = `<div><span class="metric-number" style="color:${ragColor(rag)}">${metric.score}</span><span class="metric-pct">%</span></div>`;
+        badgeHTML = `<span class="rag-badge ${rag}">${ragLabel(rag)}</span>`;
+      }
+
+      const barWidth = (isNA || isOmitted) ? 0 : (metric.score || 0);
+
+      return `<div class="${cardClass}">
+        <div class="metric-label">${esc(label)}</div>
+        <div class="metric-score-row">${scoreHTML}${badgeHTML}</div>
+        <div class="metric-bar-track"><div class="metric-bar-fill ${rag}" style="width:${barWidth}%"></div></div>
+      </div>`;
+    }
+
+    // ── Main renderer ─────────────────────────────────────────────────────────
     function renderReport(data) {
-      const { meetingContext, meetingType, scores, goodPractice, redFlags, recommendations, behaviourDistribution } = data;
+      // Meeting type badge
+      document.getElementById('meetingTypeBadge').textContent =
+        data.meta.speakersIdentified ? '&#x1F4CB; Named Speakers' : '&#x1F4DD; Meeting Report';
 
-      document.getElementById('meetingTypeBadge').textContent = meetingType === 'intact' ? '🏠 Intact Team' : '🔗 Cross-Functional';
-      document.getElementById('meetingContext').textContent = meetingContext || '';
-
-      const overall = scores.dashboard.overall;
-      document.getElementById('overallNumber').textContent = overall.score;
-      const pill = document.getElementById('overallRagPill');
-      pill.className = `overall-rag-pill ${overall.rag}`;
-      pill.textContent = ragLabel(overall.rag);
-
-      document.getElementById('dashboardGrid').innerHTML = dashboardMetrics.map(m => {
-        const s = scores.dashboard[m.key];
-        return `<div class="metric-card rag-${s.rag}">
-          <div class="metric-label">${m.icon} &nbsp;${m.label}</div>
-          <div class="metric-score-row">
-            <div><span class="metric-number" style="color:${metricColor(s.rag)}">${s.score}</span><span class="metric-pct">%</span></div>
-            <span class="rag-badge ${s.rag}">${ragLabel(s.rag)}</span>
+      // Overall hero
+      const o = data.overall;
+      document.getElementById('overallHero').innerHTML = `
+        <div>
+          <div class="overall-label">Overall Meeting Effectiveness</div>
+          <div class="overall-descriptor">${esc(o.descriptor)}</div>
+          <div class="overall-score-display">
+            <span class="overall-number">${o.score}</span>
+            <span class="overall-percent">%</span>
           </div>
-          <div class="metric-bar-track"><div class="metric-bar-fill ${s.rag}" style="width:${s.score}%"></div></div>
+          <div class="overall-rag-pill ${o.rag}">${ragLabel(o.rag)}</div>
+        </div>
+        <div>
+          <div class="score-guide">
+            <span style="color:#7EFFC0;">&#x25CF; Great Meeting</span> &nbsp;80% and above<br>
+            <span style="color:#FFD08A;">&#x25CF; Average Meeting</span> &nbsp;61&#x2013;79%<br>
+            <span style="color:#FCA5A5;">&#x25CF; Poor Meeting</span> &nbsp;60% and below
+          </div>
+        </div>`;
+
+      // Dashboard
+      const speakersIdentified = data.meta.speakersIdentified;
+      const dashItems = [
+        ['Effective Start',       data.effectiveStart,  {}],
+        ['Start Recovery',        data.startRecovery,   {}],
+        ['Psychological Safety',  data.safe,            {}],
+        ['Decision Efficiency',   data.race,            {}],
+        ['Tone',                  data.tone,            {}],
+        ['Contributions',         data.contributions,   {}],
+        ['Dialogue Clarity',      data.dialogueClarity, {infoOnly: true}],
+        ['Effective Close',       data.effectiveClose,  {}],
+      ];
+      const totalScored = dashItems.filter(([,m,o]) => m && m.score !== null && m.score !== undefined && !o.infoOnly && !m.note).length;
+      document.getElementById('dashPill').textContent = totalScored + ' Scored';
+      document.getElementById('dashboardGrid').innerHTML = dashItems.map(([label, metric, opts]) =>
+        metricCard(label, metric, opts)
+      ).join('');
+
+      // Detailed breakdown sections
+      document.getElementById('breakdownSections').innerHTML =
+        buildStartSection(data) +
+        buildSafeSection(data.safe) +
+        buildRaceSection(data.race) +
+        buildToneSection(data.tone) +
+        buildContributionsSection(data.contributions, speakersIdentified) +
+        buildClaritySection(data.dialogueClarity) +
+        buildCloseSection(data.effectiveClose);
+
+      // Leader report
+      renderLeaderReport(data);
+    }
+
+    // ── Section builders ──────────────────────────────────────────────────────
+
+    function buildStartSection(data) {
+      const es  = data.effectiveStart;
+      const sr  = data.startRecovery;
+      const rag = es.rag || 'na';
+
+      let penaltiesHTML = '';
+      if (es.penaltyPoints > 0 && es.penalties && es.penalties.length > 0) {
+        penaltiesHTML = `<div style="margin-top:16px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:10px;">Penalty signals identified</div>
+          ${es.penalties.map(p => `<div style="display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--bg);font-size:13px;color:var(--text-primary);">
+            <span style="color:var(--rag-red);font-weight:700;flex-shrink:0;">&#x2212;${p.points}</span>
+            <span style="color:var(--text-secondary);">${esc(p.type)}</span>
+          </div>`).join('')}
+        </div>`;
+      }
+
+      let recoveryHTML = '';
+      if (sr) {
+        if (!sr.applicable) {
+          recoveryHTML = `<div style="margin-top:20px;">
+            <div style="font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:8px;">Start Recovery</div>
+            <div class="na-notice">No recovery needed. The meeting opened effectively.</div>
+          </div>`;
+        } else {
+          const recRag = sr.rag || 'red';
+          recoveryHTML = `<div style="margin-top:20px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <div style="font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;color:var(--text-primary);">Start Recovery</div>
+              <div style="display:flex;align-items:baseline;gap:4px;">
+                <span style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;color:${ragColor(recRag)}">${sr.score !== null ? sr.score + '%' : 'N/A'}</span>
+                <span class="rag-badge ${recRag}">${ragLabel(recRag)}</span>
+              </div>
+            </div>
+            <div class="breakdown-description">How effectively the meeting recovered its direction after a poor opening. Green recovery (5+ points) = 70% combined start score; Amber (2–4 points) = 50%; Red (0–1 points) = 0%.</div>
+          </div>`;
+        }
+      }
+
+      return `<div class="breakdown-section">
+        <div class="breakdown-header">
+          <div class="breakdown-icon icon-start">ES</div>
+          <div class="breakdown-meta">
+            <div class="breakdown-name">Effective Start</div>
+            <div class="breakdown-subtitle">How well the meeting was opened — purpose, outcomes, structure, and preparation</div>
+          </div>
+          <div class="breakdown-score-block">
+            <div class="breakdown-score ${rag}">${es.score}<span class="pct">%</span></div>
+            <div style="margin-top:4px;text-align:right;"><span class="rag-badge ${rag}">${ragLabel(rag)}</span></div>
+          </div>
+        </div>
+        <div class="breakdown-body">
+          <p class="breakdown-description">Scored on a penalty model — starts at 100 and deducts for each opening failure: missing purpose, missing outcomes, no timed agenda, unprepared participants, or key stakeholders absent. Green = no penalties. Amber = 1–2 penalty points. Red = 3 or more.</p>
+          ${penaltiesHTML}
+          ${recoveryHTML}
+        </div>
+      </div>`;
+    }
+
+    function buildSubCard(key, label, sub) {
+      const rag = sub.rag || 'red';
+      return `<div class="sub-card ${rag}">
+        <div class="sub-card-top">
+          <span class="sub-card-name">${esc(label)}</span>
+          <span class="sub-card-score ${rag}">${sub.score}%</span>
+        </div>
+        <div class="sub-bar-track"><div class="sub-bar-fill ${rag}" style="width:${sub.score}%"></div></div>
+        <div class="good-practice-label">What good looks like</div>
+        <div class="good-practice-text">${esc(GOOD_PRACTICE[key] || '')}</div>
+      </div>`;
+    }
+
+    function buildSafeSection(safe) {
+      const rag = safe.rag || 'red';
+      const subs = safe.subScores;
+      return `<div class="breakdown-section">
+        <div class="breakdown-header">
+          <div class="breakdown-icon icon-safe">SAFE</div>
+          <div class="breakdown-meta">
+            <div class="breakdown-name">Psychological Safety</div>
+            <div class="breakdown-subtitle">Share &nbsp;&#x00B7;&nbsp; Ask &nbsp;&#x00B7;&nbsp; Facilitate &nbsp;&#x00B7;&nbsp; Energise</div>
+          </div>
+          <div class="breakdown-score-block">
+            <div class="breakdown-score ${rag}">${safe.score}<span class="pct">%</span></div>
+            <div style="margin-top:4px;text-align:right;"><span class="rag-badge ${rag}">${ragLabel(rag)}</span></div>
+          </div>
+        </div>
+        <div class="breakdown-body">
+          <p class="breakdown-description">Psychological safety is the foundation of effective team meetings. It reflects the degree to which participants feel able to speak honestly, share openly, and engage without fear. Weighted: Ask and Energise 30% each; Share and Facilitate 20% each.</p>
+          <div class="sub-grid">
+            ${buildSubCard('share',     'S — Share',     subs.share)}
+            ${buildSubCard('ask',       'A — Ask',       subs.ask)}
+            ${buildSubCard('facilitate','F — Facilitate',subs.facilitate)}
+            ${buildSubCard('energise',  'E — Energise',  subs.energise)}
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function buildRaceSection(race) {
+      const rag = race.rag || 'red';
+      const subs = race.subScores;
+      return `<div class="breakdown-section">
+        <div class="breakdown-header">
+          <div class="breakdown-icon icon-race">RACE</div>
+          <div class="breakdown-meta">
+            <div class="breakdown-name">Decision Efficiency</div>
+            <div class="breakdown-subtitle">Resolve &nbsp;&#x00B7;&nbsp; Actioning &nbsp;&#x00B7;&nbsp; Challenge &nbsp;&#x00B7;&nbsp; Economise</div>
+          </div>
+          <div class="breakdown-score-block">
+            <div class="breakdown-score ${rag}">${race.score}<span class="pct">%</span></div>
+            <div style="margin-top:4px;text-align:right;"><span class="rag-badge ${rag}">${ragLabel(rag)}</span></div>
+          </div>
+        </div>
+        <div class="breakdown-body">
+          <p class="breakdown-description">Decision efficiency reflects how well the meeting converted discussion into clear, collectively-owned decisions and actions. It measures whether participants resolved differences, challenged ideas constructively, moved towards solutions, and used time wisely. Weighted: Actioning and Challenge 30% each; Resolve and Economise 20% each.</p>
+          <div class="sub-grid">
+            ${buildSubCard('resolve',   'R — Resolve',   subs.resolve)}
+            ${buildSubCard('actioning', 'A — Actioning', subs.actioning)}
+            ${buildSubCard('challenge', 'C — Challenge', subs.challenge)}
+            ${buildSubCard('economise', 'E — Economise', subs.economise)}
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function buildToneSection(tone) {
+      const isNA = !tone || tone.score === null || tone.rag === 'n/a';
+      const rag  = isNA ? 'na' : (tone.rag || 'na');
+
+      let bodyHTML;
+      if (isNA) {
+        bodyHTML = `<div class="na-notice">${esc(tone && tone.note ? tone.note : 'Insufficient behavioural data to assess tone reliably. Tone requires a combined count of at least 10 SAFE and RACE events to produce a statistically meaningful result.')}</div>`;
+      } else {
+        const direction = tone.direction || 'balanced';
+        const dirLabel  = direction === 'balanced' ? 'Balanced' : direction === 'safety-heavy' ? 'Safety-heavy' : 'Efficiency-heavy';
+        const cappedNote = tone.cappedByQuality
+          ? `<div class="capped-notice">&#x26A0; Score capped: Tone cannot exceed the average of Psychological Safety and Decision Efficiency. A meeting where both dimensions are weak cannot claim a healthy tone regardless of ratio balance.</div>`
+          : '';
+        bodyHTML = `<p class="breakdown-description">Tone measures the balance between safety-building behaviours (SAFE) and decision-driving behaviours (RACE). A balanced meeting has roughly equal evidence of both. Heavily weighted in either direction may indicate a meeting that was either too comfortable to make decisions or too pressured to build trust. Score capped at the average of SAFE and RACE to ensure tone reflects actual quality.</p>
+          <div class="tone-ratio-block">
+            <div>
+              <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:4px;">SAFE : RACE ratio</div>
+              <div class="tone-ratio-value ${rag}">${tone.ratio}</div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:6px;">Balance</div>
+              <div class="tone-direction-badge ${direction}">${esc(dirLabel)}</div>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:4px;">Green range</div>
+              <div style="font-size:13px;color:var(--text-secondary);">0.8 to 1.4</div>
+            </div>
+          </div>
+          ${cappedNote}`;
+      }
+
+      return `<div class="breakdown-section">
+        <div class="breakdown-header">
+          <div class="breakdown-icon icon-tone">T</div>
+          <div class="breakdown-meta">
+            <div class="breakdown-name">Tone</div>
+            <div class="breakdown-subtitle">The balance between psychological safety and decision efficiency across the meeting</div>
+          </div>
+          <div class="breakdown-score-block">
+            ${isNA
+              ? `<div class="metric-na" style="font-size:22px;">N/A</div><div style="margin-top:4px;text-align:right;"><span class="rag-badge na">N/A</span></div>`
+              : `<div class="breakdown-score ${rag}">${tone.score}<span class="pct">%</span></div><div style="margin-top:4px;text-align:right;"><span class="rag-badge ${rag}">${ragLabel(rag)}</span></div>`
+            }
+          </div>
+        </div>
+        <div class="breakdown-body">${bodyHTML}</div>
+      </div>`;
+    }
+
+    function buildContributionsSection(contributions, speakersIdentified) {
+      const isOmitted = !speakersIdentified || (contributions && contributions.note && !contributions.score);
+      const rag = isOmitted ? 'na' : (contributions.rag || 'na');
+
+      let bodyHTML;
+      if (isOmitted) {
+        bodyHTML = `<div class="contrib-omitted">Contributions is not measured in this report because the transcript speaker identification checkbox was not ticked. To include this metric, ensure your transcript clearly identifies each speaker by name throughout, then tick the checkbox before submitting.</div>`;
+      } else {
+        const speakers = contributions.speakers || [];
+        const speakerBars = speakers.length > 0
+          ? `<div class="speaker-bars" style="margin-top:20px;">
+              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:12px;">Speaking time distribution</div>
+              ${speakers.map(s => `
+                <div class="speaker-row">
+                  <div class="speaker-name">${esc(s.name)}</div>
+                  <div class="speaker-bar-track"><div class="speaker-bar-fill" style="width:${s.wordSharePct}%"></div></div>
+                  <div class="speaker-pct">${s.wordSharePct}%</div>
+                </div>`).join('')}
+            </div>` : '';
+
+        bodyHTML = `<p class="breakdown-description">Contributions measures how evenly speaking time is distributed across all participants. A high score indicates that multiple voices contributed meaningfully. A low score suggests one or two participants dominated. Measured using a Turn Distribution Index (TDI) derived from estimated word-share proportions.</p>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);">TDI value</span>
+            <span style="font-family:'Outfit',sans-serif;font-size:24px;font-weight:800;color:${ragColor(rag)}">${contributions.tdiValue}</span>
+            <span style="font-size:12px;color:var(--text-muted);">(Green &gt; 0.75 &nbsp; Amber 0.55&#x2013;0.75 &nbsp; Red &lt; 0.55)</span>
+          </div>
+          ${speakerBars}`;
+      }
+
+      return `<div class="breakdown-section">
+        <div class="breakdown-header">
+          <div class="breakdown-icon icon-contrib" style="background:var(--rag-na-bg);color:var(--rag-na);">TDI</div>
+          <div class="breakdown-meta">
+            <div class="breakdown-name">Contributions</div>
+            <div class="breakdown-subtitle">Distribution of speaking time across participants</div>
+          </div>
+          <div class="breakdown-score-block">
+            ${isOmitted
+              ? `<div class="metric-na" style="font-size:22px;">N/A</div><div style="margin-top:4px;text-align:right;"><span class="rag-badge na">Not measured</span></div>`
+              : `<div class="breakdown-score ${rag}">${contributions.score}<span class="pct">%</span></div><div style="margin-top:4px;text-align:right;"><span class="rag-badge ${rag}">${ragLabel(rag)}</span></div>`
+            }
+          </div>
+        </div>
+        <div class="breakdown-body">${bodyHTML}</div>
+      </div>`;
+    }
+
+    function buildClaritySection(clarity) {
+      const rag = clarity ? (clarity.rag || 'red') : 'na';
+      return `<div class="breakdown-section">
+        <div class="breakdown-header">
+          <div class="breakdown-icon icon-clarity">DC</div>
+          <div class="breakdown-meta">
+            <div class="breakdown-name">Dialogue Clarity</div>
+            <div class="breakdown-subtitle">Summarising, paraphrasing, and clarity-seeking behaviours</div>
+          </div>
+          <div class="breakdown-score-block">
+            <div class="breakdown-score" style="color:var(--tu-purple)">${clarity ? clarity.score : 0}<span class="pct" style="color:var(--text-muted);">%</span></div>
+            <div style="margin-top:4px;text-align:right;"><span class="rag-badge info">Info only</span></div>
+          </div>
+        </div>
+        <div class="breakdown-body">
+          <div class="info-only-badge">&#x2139;&#xFE0F; &nbsp;Informational — this metric does not contribute to the overall meeting score</div>
+          <p class="breakdown-description">Dialogue Clarity tracks how often participants summarised, paraphrased, or asked clarifying questions specifically to establish shared understanding. These behaviours contribute to SAFE and RACE scores where they appear, and are shown here separately as an indicator of communication precision.</p>
+        </div>
+      </div>`;
+    }
+
+    function buildCloseSection(close) {
+      const rag = close.rag || 'red';
+      const elements = close.elements || {};
+      const elOrder  = ['planned','organised','responsible','timeConscious'];
+
+      const elementsHTML = elOrder.map(key => {
+        const el       = elements[key] || {};
+        const achieved = el.achieved || false;
+        return `<div class="close-element ${achieved ? 'achieved' : 'not-achieved'}">
+          <div class="close-element-top">
+            <span class="close-element-name">${esc(CLOSE_ELEMENT_LABELS[key])}</span>
+            <span class="close-element-status ${achieved ? 'yes' : 'no'}">${achieved ? '&#x2713; Yes' : '&#x2715; No'}</span>
+          </div>
+          <div class="close-element-weight">${CLOSE_ELEMENT_WEIGHTS[key]}</div>
+          ${el.evidence ? `<div class="close-element-evidence">${esc(el.evidence)}</div>` : ''}
+          <div class="close-element-good">${esc(CLOSE_GOOD_PRACTICE[key] || '')}</div>
         </div>`;
       }).join('');
 
-      const distSection = document.getElementById('behaviourDistributionSection');
-      if (distSection) distSection.innerHTML = renderBehaviourDistribution(behaviourDistribution);
-
-      document.getElementById('competencies').innerHTML = buildCompetencyHTML(scores.subScores, goodPractice);
-
-      const rfBlock = document.getElementById('redFlagsBlock');
-      const rfList  = document.getElementById('redFlagsList');
-      if (redFlags && redFlags.length > 0) {
-        rfList.innerHTML = redFlags.map(rf => `<div class="red-flag-item"><span style="color:var(--rag-red);font-size:12px;margin-top:2px;flex-shrink:0;">&#x26A0;</span>${escHtml(rf)}</div>`).join('');
-        rfBlock.style.display = 'block';
-      } else {
-        rfBlock.style.display = 'none';
-      }
-
-      const recoBlock = document.getElementById('recommendationsBlock');
-      const recoList  = document.getElementById('recommendationsList');
-      if (recommendations && recommendations.length > 0) {
-        recoList.innerHTML = recommendations.map((r, i) =>
-          `<div class="reco-item"><div class="reco-number">${i+1}</div><div class="reco-text">${escHtml(r)}</div></div>`
-        ).join('');
-        recoBlock.style.display = 'block';
-      } else {
-        recoBlock.style.display = 'none';
-      }
-
-      setTimeout(() => {
-        document.getElementById('report').scrollIntoView({ behavior:'smooth', block:'start' });
-      }, 100);
+      return `<div class="breakdown-section">
+        <div class="breakdown-header">
+          <div class="breakdown-icon icon-close">EC</div>
+          <div class="breakdown-meta">
+            <div class="breakdown-name">Effective Close</div>
+            <div class="breakdown-subtitle">Planned &nbsp;&#x00B7;&nbsp; Organised &nbsp;&#x00B7;&nbsp; Responsible &nbsp;&#x00B7;&nbsp; Time-Conscious</div>
+          </div>
+          <div class="breakdown-score-block">
+            <div class="breakdown-score ${rag}">${close.score}<span class="pct">%</span></div>
+            <div style="margin-top:4px;text-align:right;"><span class="rag-badge ${rag}">${ragLabel(rag)}</span></div>
+          </div>
+        </div>
+        <div class="breakdown-body">
+          <p class="breakdown-description">The Effective Close measures the quality of meeting commitments. A good close produces decisions that are clearly stated, framed around outcomes not just activities, owned by named individuals, and committed to specific deadlines. Time-Consciousness carries the highest weight (40%) because vague deadlines are the single most common cause of agreed actions not being followed through. Green = all 4 elements evidenced. Amber = 3 of 4. Red = 2 or fewer.</p>
+          <div class="close-grid">${elementsHTML}</div>
+        </div>
+      </div>`;
     }
 
-    // ── Leader Report Renderer ───────────────────────────────────────────────
+    // ── Leader Report ─────────────────────────────────────────────────────────
     function renderLeaderReport(data) {
       const section = document.getElementById('leaderReportSection');
       if (!section) return;
 
-      // No leader name submitted — hide section entirely (no-op, backend ignored leaderName)
       if (!data.leaderReport && !data.leaderNotFound) {
-        section.style.display = 'none';
-        return;
+        section.style.display = 'none'; return;
       }
 
       section.style.display = 'block';
 
       if (data.leaderNotFound) {
-        const enteredName = document.getElementById('leaderName').value.trim();
-        section.innerHTML = `
-          <div class="leader-report-section">
-            <div class="leader-report-heading">
-              <div class="leader-report-badge">&#x1F464; Leader Report</div>
-              <div class="leader-report-title">Your Individual Mirror</div>
-            </div>
-            <div class="leader-not-found">
-              <strong>Leader Report not generated.</strong> The name "${escHtml(enteredName)}" wasn't found as a speaker label in this transcript.
-              Open your transcript, find a line where you're speaking, and copy the speaker label exactly as it appears — then run the evaluation again.
-            </div>
-          </div>`;
-        return;
-      }
-
-      section.innerHTML = `
-        <div class="leader-report-section">
+        const entered = document.getElementById('leaderName').value.trim();
+        section.innerHTML = `<div class="leader-report-section">
           <div class="leader-report-heading">
             <div class="leader-report-badge">&#x1F464; Leader Report</div>
             <div class="leader-report-title">Your Individual Mirror</div>
           </div>
-          <p class="leader-report-intro">The scores below reflect only your individual contributions, evaluated against the same Polaris Formula used for the team report. Use this alongside the team report to understand your personal impact on the meeting.</p>
-          ${buildFullReportHTML(data.leaderReport)}
+          <div class="leader-not-found">
+            <strong>Leader Report not generated.</strong> The name &ldquo;${esc(entered)}&rdquo; was not found as a speaker label in this transcript. Open your transcript, find a line where you are speaking, and copy the speaker label exactly as it appears &mdash; then run the evaluation again.
+          </div>
         </div>`;
-    }
-
-    // ── Builds the score blocks (hero + dashboard + competencies + flags/recos)
-    // Used by both the leader report renderer and, in the download, for both sections.
-    function buildFullReportHTML(d, overallLabel) {
-      overallLabel = overallLabel || 'Overall — Leader Contribution';
-      const overall = d.scores.dashboard.overall;
-
-      const dashHTML = dashboardMetrics.map(m => {
-        const s = d.scores.dashboard[m.key];
-        return `<div class="metric-card rag-${s.rag}">
-          <div class="metric-label">${m.icon} &nbsp;${m.label}</div>
-          <div class="metric-score-row">
-            <div><span class="metric-number" style="color:${metricColor(s.rag)}">${s.score}</span><span class="metric-pct">%</span></div>
-            <span class="rag-badge ${s.rag}">${ragLabel(s.rag)}</span>
-          </div>
-          <div class="metric-bar-track"><div class="metric-bar-fill ${s.rag}" style="width:${s.score}%"></div></div>
-        </div>`;
-      }).join('');
-
-      const redFlagsHTML = d.redFlags && d.redFlags.length > 0
-        ? `<div class="red-flags" style="display:block;">
-             <div class="red-flags-header"><div class="red-flag-icon">&#x26A0;&#xFE0F;</div><h3>Patterns to Address</h3></div>
-             ${d.redFlags.map(rf => `<div class="red-flag-item"><span style="color:var(--rag-red);font-size:12px;margin-top:2px;flex-shrink:0;">&#x26A0;</span>${escHtml(rf)}</div>`).join('')}
-           </div>` : '';
-
-      const recosHTML = d.recommendations && d.recommendations.length > 0
-        ? `<div class="recommendations" style="display:block;">
-             <div class="recommendations-header"><div class="reco-icon">&#x1F4A1;</div><h3>Recommendations</h3></div>
-             ${d.recommendations.map((r,i) => `<div class="reco-item"><div class="reco-number">${i+1}</div><div class="reco-text">${escHtml(r)}</div></div>`).join('')}
-           </div>` : '';
-
-      return `
-        <div class="overall-hero">
-          <div class="overall-left">
-            <div class="overall-label">${overallLabel}</div>
-            <div class="overall-score-display">
-              <span class="overall-number">${overall.score}</span>
-              <span class="overall-percent">%</span>
-            </div>
-            <div class="overall-rag-pill ${overall.rag}">${ragLabel(overall.rag)}</div>
-          </div>
-          <div class="overall-right">
-            <div class="score-guide">
-              <span style="color:#7EFFC0;">&#x25CF; Green</span> &nbsp;Above 70% &#x2014; Effective<br>
-              <span style="color:#FFD08A;">&#x25CF; Amber</span> &nbsp;40&#x2013;70% &#x2014; Developing<br>
-              <span style="color:#FCA5A5;">&#x25CF; Red</span> &nbsp;&nbsp;&nbsp;Below 40% &#x2014; Weak
-            </div>
-          </div>
-        </div>
-        <div class="section-heading">Dashboard <span class="pill" style="background:var(--tu-blue-light);color:var(--tu-blue);">5 Metrics</span></div>
-        <p class="section-intro">Five metrics calculated from your individual contributions using the same Polaris Formula weightings.</p>
-        <div class="dashboard-grid">${dashHTML}</div>
-        <div class="divider"></div>
-        <div class="section-heading">Competency Breakdown</div>
-        <p class="section-intro">Individual scores for each of the 16 Polaris behaviours, based solely on your contributions.</p>
-        <div class="competencies">${buildCompetencyHTML(d.scores.subScores, d.goodPractice)}</div>
-        ${redFlagsHTML}
-        ${recosHTML}`;
-    }
-
-    // ── Builds competency accordion HTML from subScores + goodPractice objects ──
-    function buildCompetencyHTML(subScores, goodPractice) {
-      return competencyDefs.map((comp, idx) => {
-        const subScoreData = subScores[comp.key];
-        const gpData       = goodPractice[comp.key];
-        const subRows = comp.behaviours.map(([key, label]) => {
-          const s   = subScoreData[key].score;
-          const gp  = gpData[key];
-          const rag = ragBandJS(s);
-          return `<div class="sub-score-item rag-${rag}">
-            <div class="sub-score-top"><span class="sub-score-name">${label}</span><span class="sub-score-pct ${rag}">${s}%</span></div>
-            <div class="sub-score-bar-track"><div class="sub-score-bar-fill ${rag}" style="width:${s}%"></div></div>
-            <div class="sub-score-good-practice-label">What good looks like</div>
-            <div class="sub-score-good-practice">${escHtml(gp.goodPractice || '')}</div>
-          </div>`;
-        }).join('');
-        const isOpen = idx === 0;
-        return `<div class="competency-card">
-          <div class="competency-header ${isOpen ? 'open' : ''}" onclick="toggleComp(this)">
-            <div class="competency-icon ${comp.iconClass}">${comp.label}</div>
-            <div><div class="competency-name">${comp.label}</div><div class="competency-subtitle">${comp.subtitle}</div></div>
-            <svg class="competency-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"/></svg>
-          </div>
-          <div class="competency-body ${isOpen ? 'open' : ''}"><div class="sub-scores-grid">${subRows}</div></div>
-        </div>`;
-      }).join('');
-    }
-
-    // ── Contribution Balance Renderer ────────────────────────────────────────
-    function renderBehaviourDistribution(dist) {
-      if (!dist) return '';
-
-      const safeW  = dist.safeRaceRatio ? dist.safeRaceRatio.safePercent : 0;
-      const raceW  = dist.safeRaceRatio ? dist.safeRaceRatio.racePercent : 0;
-      const otherW = Math.max(0, 100 - safeW - raceW);
-
-      const quadrantColours = {'PORT In':'#4A90D9','SAFE':'#5BB974','RACE':'#E8854A','PORT Out':'#4A90D9','WHITE_NOISE':'#8898AA'};
-      const quadrantOrder   = ['PORT In','SAFE','RACE','PORT Out','WHITE_NOISE'];
-      const qdName          = q => q === 'WHITE_NOISE' ? 'White Noise' : q;
-
-      const quadrantBars = quadrantOrder.map(q => {
-        const qData = (dist.quadrantBreakdown || []).find(qb => qb.quadrant === q);
-        const pct   = qData ? qData.percentOfClassified : 0;
-        const count = qData ? qData.exchangeCount : 0;
-        return `<div class="qb-row">
-          <div class="qb-label">${qdName(q)}</div>
-          <div class="qb-bar-track"><div class="qb-bar-fill" style="width:${pct}%;background:${quadrantColours[q]||'#888'}"></div></div>
-          <div class="qb-stat">${pct}% <span class="qb-count">(${count})</span></div>
-        </div>`;
-      }).join('');
-
-      const topThree = (dist.topThreeBehaviours || []).map((b, i) =>
-        `<div class="top-behaviour"><span class="top-rank">${i+1}</span><span class="top-name">${b.behaviourName}</span><span class="top-pct">${b.percent}%</span></div>`
-      ).join('') || '<p class="bd-empty">No data available</p>';
-
-      const absent = (dist.absentBehaviours || []).map(b =>
-        `<div class="absent-behaviour"><span class="absent-quadrant">${b.quadrant}</span><span class="absent-name">${b.behaviourName}</span><span class="absent-significance">${escHtml(b.significance)}</span></div>`
-      ).join('') || '<p class="bd-empty">No significant absences detected</p>';
-
-      const srRag       = dist.safeRaceRatio ? dist.safeRaceRatio.ragBand : null;
-      const srRagColour = srRag === 'Green' ? 'var(--rag-green)' : srRag === 'Amber' ? 'var(--rag-amber)' : srRag === 'Blue' ? '#3B82F6' : 'var(--rag-red)';
-      const srRagLabel  = srRag ? `<span style="display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;background:${srRagColour}20;color:${srRagColour};margin-left:8px;">${srRag}</span>` : '';
-
-      return `
-        <div class="section-heading" style="margin-top:8px;">
-          Contribution Balance
-          <span class="pill" style="background:var(--tu-blue-light);color:var(--tu-blue);">Distribution</span>
-        </div>
-        <div class="behaviour-distribution">
-          <div class="bd-stats-strip">
-            <strong>${dist.totalExchanges}</strong> total exchanges &nbsp;&middot;&nbsp;
-            <strong>${dist.classifiedExchanges}</strong> mapped to Polaris behaviours &nbsp;&middot;&nbsp;
-            <strong>${dist.unclassifiedExchanges}</strong> procedural/logistical
-          </div>
-          <div class="bd-subsection">
-            <h3>SAFE / RACE Balance ${srRagLabel}</h3>
-            <div class="bd-subsection-desc">The balance between psychological safety (SAFE) and productive challenge (RACE) is the single most diagnostic measure of meeting quality.</div>
-            <div class="sr-bar">
-              <div class="sr-segment sr-safe"  style="width:${safeW}%"><span>${safeW > 8 ? safeW + '% SAFE' : ''}</span></div>
-              <div class="sr-segment sr-race"  style="width:${raceW}%"><span>${raceW > 8 ? raceW + '% RACE' : ''}</span></div>
-              ${otherW > 0 ? `<div class="sr-segment sr-other" style="width:${otherW}%"></div>` : ''}
-            </div>
-            ${dist.safeRaceRatio && dist.safeRaceRatio.interpretation ? `<p class="sr-interpretation">${escHtml(dist.safeRaceRatio.interpretation)}</p>` : ''}
-          </div>
-          <div class="bd-subsection">
-            <h3>Contribution Distribution</h3>
-            <div class="quadrant-bars">${quadrantBars}</div>
-          </div>
-          <div class="bd-two-col bd-subsection">
-            <div class="bd-col"><h3>Most-Used Behaviours</h3>${topThree}</div>
-            <div class="bd-col"><h3>Notable Absences</h3>${absent}</div>
-          </div>
-          ${dist.timeEffectivenessSummary ? `
-          <div class="bd-subsection">
-            <h3>What the Balance Tells You</h3>
-            <div class="bd-narrative">${escHtml(dist.timeEffectivenessSummary)}</div>
-          </div>` : ''}
-        </div>`;
-    }
-
-    function toggleComp(header) {
-      const isOpen = header.classList.contains('open');
-      header.classList.toggle('open', !isOpen);
-      header.nextElementSibling.classList.toggle('open', !isOpen);
-    }
-
-    function ragBandJS(pct) {
-      if (pct < 40)  return 'red';
-      if (pct <= 70) return 'amber';
-      return 'green';
-    }
-
-    function escHtml(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
-
-    // ── Download Report ──────────────────────────────────────────────────────
-    function downloadReport() {
-      if (!currentReportData) return;
-      const d   = currentReportData;
-      const now = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
-      const ragLabel2      = r => r === 'green' ? 'Effective' : r === 'amber' ? 'Developing' : 'Weak';
-      const ragStyle       = r => r === 'green' ? 'background:#EAF7EF;color:#1A7F4B;' : r === 'amber' ? 'background:#FEF3C7;color:#D97706;' : 'background:#FEE8E8;color:#C53030;';
-      const ragBorderColor = r => r === 'green' ? '#1A7F4B' : r === 'amber' ? '#D97706' : '#C53030';
-      const ragScoreColor  = r => r === 'green' ? '#1A7F4B' : r === 'amber' ? '#D97706' : '#C53030';
-      const logoSrc = 'https://images.squarespace-cdn.com/content/v1/690c66c9a788d325e51c13c2/ccc5ce6d-31b4-41ea-94cd-34a6d4ea0b60/TeamUp_Artwork_Logo_Black_v2.png?format=1500w';
-
-      const dlDashItems = [
-        ['effectiveStart','Starting Well'],['psychSafety','Psychological Safety'],
-        ['decisionQuality','Decision Making Efficiency'],['effectiveClose','Closing Clearly'],['clarity','Clarity']
-      ];
-      const dlCompDefs = [
-        {key:'portIn', label:'PORT In', tagClass:'tag-port-in', subtitle:'Purpose · Outcomes · Responsibilities · Timed Agenda',
-          behaviours:[['purpose','P — Purpose'],['outcomes','O — Outcomes'],['responsibilities','R — Responsibilities'],['timedAgenda','T — Timed Agenda']]},
-        {key:'safe',   label:'SAFE',    tagClass:'tag-safe',    subtitle:'Share · Ask · Facilitate · Energise',
-          behaviours:[['share','S — Share'],['ask','A — Ask'],['facilitate','F — Facilitate'],['energise','E — Energise']]},
-        {key:'race',   label:'RACE',    tagClass:'tag-race',    subtitle:'Resolve · Actioning · Challenge · Economise',
-          behaviours:[['resolve','R — Resolve'],['actioning','A — Actioning'],['challenge','C — Challenge'],['economise','E — Economise']]},
-        {key:'portOut',label:'PORT Out',tagClass:'tag-port-out',subtitle:'Plan · Outcomes · Responsibilities · Time',
-          behaviours:[['plan','P — Plan'],['outcomes','O — Outcomes'],['responsibilities','R — Responsibilities'],['time','T — Time']]}
-      ];
-
-      function dlBuildSection(sd, heroLabel) {
-        const dashHtml = dlDashItems.map(([key, label]) => {
-          const s  = sd.scores.dashboard[key];
-          const bc = ragBorderColor(s.rag);
-          const sc = ragScoreColor(s.rag);
-          return `<div class="dash-card" style="border-top-color:${bc};"><div class="dash-card-label">${label}</div><div class="dash-card-score" style="color:${sc};">${s.score}<span class="dash-card-pct">%</span></div><div class="bar-track"><div class="bar-fill" style="width:${s.score}%;background:${bc};"></div></div><div class="dash-badge" style="${ragStyle(s.rag)}">${ragLabel2(s.rag)}</div></div>`;
-        }).join('');
-        const compHtml = dlCompDefs.map(comp => {
-          const subs = sd.scores.subScores[comp.key];
-          const gps  = sd.goodPractice[comp.key];
-          return `<div class="comp-block"><div class="comp-head"><span class="comp-tag ${comp.tagClass}">${comp.label}</span>${comp.subtitle}</div><div class="sub-grid">${comp.behaviours.map(([bKey,bLabel]) => {
-            const sc  = subs[bKey].score;
-            const rag = sc < 40 ? 'red' : sc <= 70 ? 'amber' : 'green';
-            const bc2 = ragBorderColor(rag);
-            const sc2 = ragScoreColor(rag);
-            const gp  = gps[bKey];
-            return `<div class="sub-item" style="border-left-color:${bc2};"><div class="sub-top"><span class="sub-name">${bLabel}</span><span class="sub-pct" style="color:${sc2};">${sc}%</span></div><div class="bar-track"><div class="bar-fill" style="width:${sc}%;background:${bc2};"></div></div><div class="sub-gp-label">What good looks like</div><div class="sub-gp">${escHtml(gp.goodPractice || '')}</div></div>`;
-          }).join('')}</div></div>`;
-        }).join('');
-        const flagsHtml = sd.redFlags && sd.redFlags.length > 0
-          ? `<div class="flags"><div class="flags-heading">&#x26A0; Patterns to Address</div>${sd.redFlags.map(rf => `<div class="flag-item">${escHtml(rf)}</div>`).join('')}</div>` : '';
-        const recosHtml = sd.recommendations && sd.recommendations.length > 0
-          ? `<div class="recos"><div class="recos-heading">&#x1F4A1; Recommendations</div>${sd.recommendations.map((r,i) => `<div class="reco-item"><div class="reco-n">${i+1}</div><div>${escHtml(r)}</div></div>`).join('')}</div>` : '';
-        return `
-          <div class="hero">
-            <div>
-              <div class="hero-label">${heroLabel}</div>
-              <div class="hero-score">${sd.scores.dashboard.overall.score}<span class="hero-pct">%</span></div>
-              <div class="hero-pill ${sd.scores.dashboard.overall.rag}">${ragLabel2(sd.scores.dashboard.overall.rag)}</div>
-            </div>
-            <div class="hero-guide"><span style="color:#7EFFC0;">&#x25CF;</span> Green &nbsp;Above 70%<br><span style="color:#FFD08A;">&#x25CF;</span> Amber &nbsp;40&#x2013;70%<br><span style="color:#FCA5A5;">&#x25CF;</span> Red &nbsp;&nbsp;&nbsp;&nbsp;Below 40%</div>
-          </div>
-          <div class="section-heading">Dashboard</div>
-          <div class="dash-grid">${dashHtml}</div>
-          <div class="section-heading">Competency Breakdown</div>
-          ${compHtml}
-          ${flagsHtml}
-          ${recosHtml}`;
+        return;
       }
 
-      const dist = d.behaviourDistribution;
-      const qdName = q => q === 'WHITE_NOISE' ? 'White Noise' : q;
-      const distSection = dist ? `
-        <div style="margin-top:20px;padding-top:14px;border-top:2px solid #1375B7;">
-          <div style="font-family:'Outfit',Arial,sans-serif;font-size:13px;font-weight:700;color:#12243A;margin-bottom:12px;">Contribution Balance</div>
-          <div style="font-size:11px;color:#4A5568;background:#F2F5F9;padding:8px 12px;border-radius:6px;margin-bottom:12px;">${dist.totalExchanges} total exchanges · ${dist.classifiedExchanges} mapped to Polaris behaviours · ${dist.unclassifiedExchanges} procedural</div>
-          ${dist.safeRaceRatio ? `<div style="margin-bottom:12px;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#8898AA;margin-bottom:6px;">SAFE / RACE Balance</div><div style="display:flex;height:28px;border-radius:4px;overflow:hidden;"><div style="width:${dist.safeRaceRatio.safePercent}%;background:#5BB974;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:white;min-width:0;">${dist.safeRaceRatio.safePercent > 8 ? dist.safeRaceRatio.safePercent + '% SAFE' : ''}</div><div style="width:${dist.safeRaceRatio.racePercent}%;background:#E8854A;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:white;min-width:0;">${dist.safeRaceRatio.racePercent > 8 ? dist.safeRaceRatio.racePercent + '% RACE' : ''}</div><div style="flex:1;background:#ddd;"></div></div>${dist.safeRaceRatio.interpretation ? `<p style="font-size:10px;color:#4A5568;margin-top:4px;font-style:italic;">${dist.safeRaceRatio.interpretation}</p>` : ''}</div>` : ''}
-          ${dist.quadrantBreakdown ? `<div style="margin-bottom:12px;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#8898AA;margin-bottom:8px;">Contribution Distribution</div>${['PORT In','SAFE','RACE','PORT Out','WHITE_NOISE'].map(q => { const qData=dist.quadrantBreakdown.find(qb=>qb.quadrant===q); const pct2=qData?qData.percentOfClassified:0; const count2=qData?qData.exchangeCount:0; const colours={'PORT In':'#4A90D9','SAFE':'#5BB974','RACE':'#E8854A','PORT Out':'#4A90D9','WHITE_NOISE':'#8898AA'}; return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;"><div style="width:70px;font-size:9px;font-weight:600;color:#4A5568;flex-shrink:0;">${qdName(q)}</div><div style="flex:1;height:12px;background:#F2F5F9;border-radius:3px;overflow:hidden;"><div style="width:${pct2}%;height:100%;background:${colours[q]||'#888'};border-radius:3px;"></div></div><div style="width:70px;font-size:9px;color:#4A5568;flex-shrink:0;">${pct2}% (${count2})</div></div>`; }).join('')}</div>` : ''}
-          ${dist.timeEffectivenessSummary ? `<div style="background:#F2F5F9;border-left:3px solid #1375B7;padding:10px 14px;border-radius:0 4px 4px 0;font-size:11px;color:#4A5568;line-height:1.5;">${dist.timeEffectivenessSummary}</div>` : ''}
-        </div>` : '';
+      const lr = data.leaderReport;
+      const lo = lr.overall;
 
-      const leaderSection = d.leaderReport ? `
-        <div style="margin-top:28px;padding-top:20px;border-top:3px solid #EA682B;">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-            <div style="background:#EA682B;color:white;padding:4px 12px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.3px;">&#x1F464; LEADER REPORT</div>
-            <div style="font-family:'Outfit',Arial,sans-serif;font-size:16px;font-weight:700;color:#12243A;">Your Individual Mirror</div>
+      // Leader contributions info
+      const contribHTML = lr.contributions && lr.contributions.wordSharePct !== null
+        ? `<div class="leader-contrib-info" style="margin-bottom:24px;">
+            <span class="leader-contrib-pct">${lr.contributions.wordSharePct}%</span>
+            <span style="font-size:13px;color:var(--text-secondary);">of meeting speaking time &nbsp;&middot;&nbsp; ${esc(lr.contributions.note)}</span>
+          </div>` : '';
+
+      section.innerHTML = `<div class="leader-report-section">
+        <div class="leader-report-heading">
+          <div class="leader-report-badge">&#x1F464; Leader Report</div>
+          <div class="leader-report-title">Your Individual Mirror</div>
+        </div>
+        <p class="leader-report-intro">The scores below reflect your individual contributions only, evaluated against the same Polaris Formula used for the team report. SAFE and RACE scores reflect your proportional contribution to the team total for each behaviour. Effective Start, Effective Close, and Dialogue Clarity are the same as the team report — these reflect the meeting as a whole. Use this alongside the team report to understand your personal impact.</p>
+        ${contribHTML}
+        <div class="overall-hero" style="margin-bottom:24px;">
+          <div>
+            <div class="overall-label">Leader Contribution</div>
+            <div class="overall-descriptor">${esc(lo.descriptor)}</div>
+            <div class="overall-score-display">
+              <span class="overall-number">${lo.score}</span>
+              <span class="overall-percent">%</span>
+            </div>
+            <div class="overall-rag-pill ${lo.rag}">${ragLabel(lo.rag)}</div>
           </div>
-          ${dlBuildSection(d.leaderReport, 'Overall — Leader Contribution')}
-        </div>` : '';
+          <div>
+            <div class="score-guide">
+              <span style="color:#7EFFC0;">&#x25CF; Strong Contribution</span> &nbsp;80% and above<br>
+              <span style="color:#FFD08A;">&#x25CF; Average Contribution</span> &nbsp;61&#x2013;79%<br>
+              <span style="color:#FCA5A5;">&#x25CF; Negative Contribution</span> &nbsp;60% and below
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-grid" style="margin-bottom:28px;">
+          ${metricCard('Effective Start',      lr.effectiveStart,  {})}
+          ${metricCard('Start Recovery',       lr.startRecovery,   {})}
+          ${metricCard('Psychological Safety', lr.safe,            {})}
+          ${metricCard('Decision Efficiency',  lr.race,            {})}
+          ${metricCard('Tone',                 lr.tone,            {})}
+          ${metricCard('Contributions',        {score:null,rag:'na'}, {})}
+          ${metricCard('Dialogue Clarity',     lr.dialogueClarity, {infoOnly:true})}
+          ${metricCard('Effective Close',      lr.effectiveClose,  {})}
+        </div>
+        ${buildSafeSection(lr.safe)}
+        ${buildRaceSection(lr.race)}
+        ${buildToneSection(lr.tone)}
+      </div>`;
+    }
 
-      const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Periscope · Meeting Report · ${now}</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    // ── Download ──────────────────────────────────────────────────────────────
+    function downloadReport() {
+      if (!currentReportData) return;
+      const d    = currentReportData;
+      const now  = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+
+      const makeHero = (overall, label) => `
+        <div style="background:linear-gradient(135deg,#0d5a91 0%,#1375B7 100%);border-radius:10px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+          <div>
+            <div style="font-size:9px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,0.65);">${label}</div>
+            <div style="font-family:'Outfit',Arial,sans-serif;font-size:14px;font-weight:600;color:rgba(255,255,255,0.9);margin-bottom:4px;">${esc(overall.descriptor)}</div>
+            <div style="font-family:'Outfit',Arial,sans-serif;font-size:52px;font-weight:800;line-height:1;color:white;">${overall.score}<span style="font-size:22px;font-weight:400;">%</span></div>
+          </div>
+          <div style="text-align:right;font-size:10px;color:rgba(255,255,255,0.55);line-height:1.9;">
+            <span style="color:#7EFFC0;">&#x25CF; Great Meeting</span> &nbsp;80%+<br>
+            <span style="color:#FFD08A;">&#x25CF; Average Meeting</span> &nbsp;61&#x2013;79%<br>
+            <span style="color:#FCA5A5;">&#x25CF; Poor Meeting</span> &nbsp;60% and below
+          </div>
+        </div>`;
+
+      const rc = r => r==='green'?'#1A7F4B':r==='amber'?'#D97706':r==='red'?'#C53030':'#8898AA';
+      const rb = r => r==='green'?'background:#EAF7EF;color:#1A7F4B;':r==='amber'?'background:#FEF3C7;color:#D97706;':r==='red'?'background:#FEE8E8;color:#C53030;':'background:#F2F5F9;color:#8898AA;';
+      const rl = r => r==='green'?'Effective':r==='amber'?'Developing':r==='red'?'Weak':'N/A';
+
+      const makeDash = data => {
+        const items = [
+          ['Effective Start',      data.effectiveStart],
+          ['Start Recovery',       data.startRecovery],
+          ['Psych Safety',         data.safe],
+          ['Decision Efficiency',  data.race],
+          ['Tone',                 data.tone],
+          ['Dialogue Clarity',     data.dialogueClarity],
+          ['Effective Close',      data.effectiveClose],
+        ];
+        return `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px;">
+          ${items.map(([label,m]) => {
+            const isNA = !m || m.score === null || m.rag === 'n/a';
+            const rag  = isNA ? 'na' : (m.rag||'na');
+            return `<div style="border:1.5px solid #DDE3EC;border-top:4px solid ${rc(rag)};border-radius:8px;padding:10px 12px;background:white;">
+              <div style="font-size:8px;font-weight:600;letter-spacing:0.7px;text-transform:uppercase;color:#8898AA;margin-bottom:5px;">${label}</div>
+              <div style="font-family:'Outfit',Arial,sans-serif;font-size:26px;font-weight:800;color:${rc(rag)};">${isNA?'N/A':(m.score+'<span style="font-size:12px;color:#8898AA;">%</span>')}</div>
+              <div style="display:inline-block;padding:2px 7px;border-radius:20px;font-size:8px;font-weight:700;text-transform:uppercase;margin-top:4px;${rb(rag)}">${rl(rag)}</div>
+            </div>`;
+          }).join('')}
+        </div>`;
+      };
+
+      const makeSubs = (metric, behaviours) => `
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+          ${behaviours.map(([key,label]) => {
+            const sub = metric.subScores[key];
+            const rag = sub.rag || 'red';
+            return `<div style="border-left:3px solid ${rc(rag)};padding:10px 12px;border-radius:0 6px 6px 0;background:${rag==='green'?'#f6fdf9':rag==='amber'?'#fffbf0':'#fff8f8'};">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                <span style="font-size:9px;font-weight:700;text-transform:uppercase;color:#4A5568;">${label}</span>
+                <span style="font-family:'Outfit',Arial,sans-serif;font-size:14px;font-weight:700;color:${rc(rag)};">${sub.score}%</span>
+              </div>
+              <div style="height:5px;background:#DDE3EC;border-radius:3px;overflow:hidden;margin-bottom:6px;">
+                <div style="width:${sub.score}%;height:100%;background:${rc(rag)};"></div>
+              </div>
+              <div style="font-size:8px;font-weight:700;text-transform:uppercase;color:#8898AA;margin-bottom:2px;">What good looks like</div>
+              <div style="font-size:9.5px;color:#4A5568;line-height:1.5;">${esc(GOOD_PRACTICE[key]||'')}</div>
+            </div>`;
+          }).join('')}
+        </div>`;
+
+      const logoSrc = 'https://images.squarespace-cdn.com/content/v1/690c66c9a788d325e51c13c2/ccc5ce6d-31b4-41ea-94cd-34a6d4ea0b60/TeamUp_Artwork_Logo_Black_v2.png?format=1500w';
+
+      let leaderSection = '';
+      if (d.leaderReport) {
+        const lr = d.leaderReport;
+        leaderSection = `
+          <div style="margin-top:24px;padding-top:18px;border-top:3px solid #EA682B;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+              <div style="background:#EA682B;color:white;padding:4px 12px;border-radius:20px;font-size:9px;font-weight:700;">&#x1F464; LEADER REPORT</div>
+              <div style="font-family:'Outfit',Arial,sans-serif;font-size:14px;font-weight:700;color:#12243A;">Individual Mirror</div>
+            </div>
+            ${makeHero(lr.overall,'Leader Contribution')}
+            ${makeDash(lr)}
+            <div style="font-family:'Outfit',Arial,sans-serif;font-size:11px;font-weight:700;color:#12243A;margin:14px 0 8px;padding-bottom:4px;border-bottom:2px solid #1375B7;">Psychological Safety</div>
+            ${makeSubs(lr.safe,[['share','S — Share'],['ask','A — Ask'],['facilitate','F — Facilitate'],['energise','E — Energise']])}
+            <div style="font-family:'Outfit',Arial,sans-serif;font-size:11px;font-weight:700;color:#12243A;margin:14px 0 8px;padding-bottom:4px;border-bottom:2px solid #1375B7;">Decision Efficiency</div>
+            ${makeSubs(lr.race,[['resolve','R — Resolve'],['actioning','A — Actioning'],['challenge','C — Challenge'],['economise','E — Economise']])}
+          </div>`;
+      }
+
+      const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>Periscope Report ${now}</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'DM Sans',Arial,sans-serif;background:#fff;color:#12243A;font-size:13px;line-height:1.6;}
-.header{background:linear-gradient(135deg,#0d5a91 0%,#1375B7 100%);padding:20px 28px 18px;display:flex;align-items:center;justify-content:space-between;}
-.header-left{display:flex;align-items:center;gap:16px;}.header-logo{height:40px;width:auto;filter:brightness(0) invert(1);}
-.header-product-name{font-family:'Outfit',Arial,sans-serif;font-size:18px;font-weight:700;color:white;}
-.header-product-sub{font-size:10px;color:rgba(255,255,255,0.65);}
-.header-right{text-align:right;color:rgba(255,255,255,0.65);font-size:10px;line-height:1.7;}
-.content{padding:20px 28px 28px;}
-.context-strip{background:#F2F5F9;border-left:4px solid #1375B7;border-radius:0 6px 6px 0;padding:10px 14px;margin-bottom:18px;font-size:12px;color:#4A5568;}
-.hero{background:linear-gradient(135deg,#0d5a91 0%,#1375B7 100%);border-radius:10px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
-.hero-label{font-size:9px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,0.65);}
-.hero-score{font-family:'Outfit',Arial,sans-serif;font-size:52px;font-weight:800;line-height:1;color:white;}
-.hero-pct{font-size:22px;font-weight:400;}
-.hero-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;margin-top:6px;}
-.hero-pill.green{background:rgba(26,127,75,0.3);color:#7EFFC0;}.hero-pill.amber{background:rgba(217,119,6,0.3);color:#FFD08A;}.hero-pill.red{background:rgba(220,38,38,0.3);color:#FCA5A5;}
-.hero-guide{text-align:right;font-size:10px;color:rgba(255,255,255,0.55);line-height:1.9;}
-.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
-.dash-card{border:1.5px solid #DDE3EC;border-radius:8px;padding:12px 14px;background:white;border-top-width:4px;}
-.dash-card-label{font-size:9px;font-weight:600;letter-spacing:0.7px;text-transform:uppercase;color:#8898AA;margin-bottom:6px;}
-.dash-card-score{font-family:'Outfit',Arial,sans-serif;font-size:30px;font-weight:800;line-height:1;}
-.dash-card-pct{font-size:14px;font-weight:400;color:#8898AA;}
-.dash-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:9px;font-weight:700;text-transform:uppercase;margin-top:5px;}
-.bar-track{height:6px;background:#DDE3EC;border-radius:3px;margin-top:8px;overflow:hidden;}
-.bar-fill{height:100%;border-radius:3px;}
-.section-heading{font-family:'Outfit',Arial,sans-serif;font-size:13px;font-weight:700;color:#12243A;margin:20px 0 10px;padding-bottom:6px;border-bottom:2px solid #1375B7;}
-.comp-block{margin-bottom:14px;border:1.5px solid #DDE3EC;border-radius:8px;overflow:hidden;}
-.comp-head{background:#F2F5F9;padding:9px 14px;font-size:11px;font-weight:700;color:#12243A;border-bottom:1px solid #DDE3EC;display:flex;align-items:center;gap:8px;}
-.comp-tag{padding:2px 8px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:0.4px;}
-.tag-port-in{background:#E8F3FB;color:#1375B7;}.tag-safe{background:#EAF7EF;color:#1A7F4B;}.tag-race{background:#FEF3C7;color:#92400E;}.tag-port-out{background:#F3F0FF;color:#6D69A4;}
-.sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#DDE3EC;}
-.sub-item{background:white;padding:10px 14px;border-left:3px solid transparent;}
-.sub-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;}
-.sub-name{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#4A5568;}
-.sub-pct{font-family:'Outfit',Arial,sans-serif;font-size:14px;font-weight:700;}
-.sub-gp-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:#8898AA;margin-top:5px;margin-bottom:2px;}
-.sub-gp{font-size:10.5px;color:#4A5568;line-height:1.5;margin-top:2px;}
-.flags{border:1.5px solid #fca5a5;border-top:4px solid #C53030;border-radius:8px;padding:14px 16px;margin-bottom:14px;}
-.flags-heading{font-size:11px;font-weight:700;color:#C53030;margin-bottom:10px;}
-.flag-item{font-size:11px;color:#12243A;padding:6px 0 6px 20px;border-top:1px solid #FEE8E8;line-height:1.5;position:relative;}
-.recos{border:1.5px solid #DDE3EC;border-top:4px solid #3E8888;border-radius:8px;padding:14px 16px;margin-bottom:14px;}
-.recos-heading{font-size:11px;font-weight:700;color:#3E8888;margin-bottom:10px;}
-.reco-item{display:flex;gap:10px;padding:7px 0;border-top:1px solid #F2F5F9;font-size:11px;line-height:1.55;}
-.reco-n{width:18px;height:18px;background:#1375B7;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;}
-.report-footer{margin-top:20px;padding-top:10px;border-top:1px solid #DDE3EC;text-align:center;font-size:9px;color:#8898AA;}
-@media print{body{font-size:11px;}@page{margin:15mm;}}
-</style></head><body>
-<div class="header">
-  <div class="header-left">
-    <img class="header-logo" src="${logoSrc}" alt="Team Up" />
-    <div><div class="header-product-name">Periscope</div><div class="header-product-sub">Meeting Effectiveness &middot; Polaris Formula</div></div>
+<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'DM Sans',Arial,sans-serif;background:#fff;color:#12243A;font-size:13px;line-height:1.6;}@media print{body{font-size:11px;}@page{margin:12mm;}}</style>
+</head><body>
+<div style="background:linear-gradient(135deg,#0d5a91 0%,#1375B7 100%);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+  <div style="display:flex;align-items:center;gap:14px;">
+    <img src="${logoSrc}" style="height:36px;filter:brightness(0) invert(1);" alt="Team Up"/>
+    <div><div style="font-family:'Outfit',Arial,sans-serif;font-size:16px;font-weight:700;color:white;">Periscope</div><div style="font-size:10px;color:rgba(255,255,255,0.65);">Powered by the Polaris Formula</div></div>
   </div>
-  <div class="header-right">Generated ${now}<br>${d.meetingType === 'intact' ? 'Intact Team' : 'Cross-Functional'} Meeting<br>Confidential</div>
+  <div style="text-align:right;color:rgba(255,255,255,0.65);font-size:10px;line-height:1.7;">Generated ${now}<br>${d.meta && d.meta.speakersIdentified ? 'Named Speakers' : 'Meeting Report'}<br>Confidential</div>
 </div>
-<div class="content">
-  <div class="context-strip"><strong>Meeting:</strong> ${escHtml(d.meetingContext)}</div>
-  ${dlBuildSection(d, 'Overall Meeting Effectiveness')}
-  ${distSection}
+<div style="padding:0 24px 24px;">
+  ${makeHero(d.overall,'Overall Meeting Effectiveness')}
+  ${makeDash(d)}
+  <div style="font-family:'Outfit',Arial,sans-serif;font-size:11px;font-weight:700;color:#12243A;margin:14px 0 8px;padding-bottom:4px;border-bottom:2px solid #1375B7;">Psychological Safety</div>
+  ${makeSubs(d.safe,[['share','S — Share'],['ask','A — Ask'],['facilitate','F — Facilitate'],['energise','E — Energise']])}
+  <div style="font-family:'Outfit',Arial,sans-serif;font-size:11px;font-weight:700;color:#12243A;margin:14px 0 8px;padding-bottom:4px;border-bottom:2px solid #1375B7;">Decision Efficiency</div>
+  ${makeSubs(d.race,[['resolve','R — Resolve'],['actioning','A — Actioning'],['challenge','C — Challenge'],['economise','E — Economise']])}
   ${leaderSection}
-  <div class="report-footer">Periscope &middot; Powered by Team Up &middot; Polaris Formula &middot; Confidential &middot; ${now}</div>
+  <div style="margin-top:18px;padding-top:10px;border-top:1px solid #DDE3EC;text-align:center;font-size:9px;color:#8898AA;">Periscope &middot; Team Up &middot; Polaris Formula &middot; Confidential &middot; ${now}</div>
 </div></body></html>`;
 
-      const blob = new Blob([html], { type:'text/html' });
+      const blob = new Blob([html],{type:'text/html'});
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');
       a.href     = url;
@@ -856,6 +1056,5 @@
       URL.revokeObjectURL(url);
     }
   </script>
-
 </body>
 </html>
