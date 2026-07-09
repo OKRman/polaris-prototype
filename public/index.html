@@ -24,26 +24,17 @@
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;line-height:1.6;font-size:16px;}
     h1,h2,h3,h4,h5{font-family:'Outfit',sans-serif;line-height:1.25;}
-
-    /* ── Header ── */
     .header{background:linear-gradient(135deg,var(--tu-blue-dark) 0%,var(--tu-blue) 60%,#1b8fd4 100%);color:white;padding:0 32px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,0.18);}
     .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px;gap:16px;}
-    .logo-group{display:flex;align-items:center;gap:14px;}
     .logo-text .product-name{font-family:'Outfit',sans-serif;font-weight:700;font-size:28px;color:white;}
     .logo-text .powered-by{font-size:13px;color:rgba(255,255,255,0.70);margin-top:2px;display:block;}
     .header-tagline{font-size:15px;color:rgba(255,255,255,0.65);}
-
-    /* ── Layout ── */
     .main{max-width:1100px;margin:0 auto;padding:40px 32px 80px;}
     @media(max-width:720px){.main{padding:24px 16px 60px;}}
-
-    /* ── Intro ── */
     .intro{text-align:center;margin-bottom:40px;}
     .intro h1{font-size:32px;font-weight:700;margin-bottom:10px;}
     .intro h1 span{color:var(--tu-blue);}
     .intro p{font-size:15px;color:var(--text-secondary);max-width:580px;margin:0 auto;}
-
-    /* ── Form ── */
     .form-card{background:var(--bg-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);padding:36px;margin-bottom:40px;}
     @media(max-width:720px){.form-card{padding:24px;}}
     .form-section-label{font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;display:block;}
@@ -74,30 +65,20 @@
     .evaluate-btn:disabled{background:var(--text-muted);cursor:not-allowed;transform:none;box-shadow:none;}
     .error-box{display:none;background:var(--rag-red-bg);border:1.5px solid #fca5a5;border-radius:var(--radius-md);padding:16px 20px;color:var(--rag-red);font-size:14px;margin-top:16px;}
     .error-box.visible{display:block;}
-
-    /* ── Loading ── */
     .loading{display:none;text-align:center;padding:48px 24px;}
     .loading.visible{display:block;}
     .spinner{width:48px;height:48px;border:3px solid var(--tu-blue-light);border-top-color:var(--tu-blue);border-radius:50%;animation:spin 0.85s linear infinite;margin:0 auto 20px;}
     @keyframes spin{to{transform:rotate(360deg);}}
-
-    /* ── Report ── */
     .report{display:none;}
     .report.visible{display:block;}
-
-    /* Report top bar */
     .report-topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap;}
     .report-title-area h2{font-size:24px;font-weight:700;}
     .download-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:white;color:var(--tu-blue);border:1.5px solid var(--tu-blue);border-radius:var(--radius-md);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;white-space:nowrap;}
     .download-btn:hover{background:var(--tu-blue);color:white;}
-
-    /* Periscope report header */
     .report-identity{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:8px;flex-wrap:wrap;}
     .report-product-name{font-family:'Outfit',sans-serif;font-size:22px;font-weight:700;color:var(--text-primary);}
     .report-product-sub{font-size:13px;color:var(--text-muted);}
     .report-logo{height:40px;width:auto;opacity:0.85;}
-
-    /* Overall score banner */
     .overall-hero{background:linear-gradient(135deg,var(--tu-blue-dark) 0%,var(--tu-blue) 100%);border-radius:var(--radius-lg);padding:28px 32px;color:white;display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:28px;flex-wrap:wrap;}
     .overall-left .hero-label{font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:rgba(255,255,255,0.70);margin-bottom:4px;}
     .overall-left .hero-descriptor{font-family:'Outfit',sans-serif;font-size:17px;font-weight:600;color:rgba(255,255,255,0.9);margin-bottom:6px;}
@@ -109,14 +90,9 @@
     .hero-rag-pill.amber{background:rgba(234,104,43,0.25);color:#FFD08A;}
     .hero-rag-pill.red{background:rgba(220,38,38,0.25);color:#FCA5A5;}
     .hero-rag-pill::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor;display:block;}
-    .overall-right{text-align:right;}
     .meeting-meta{font-size:13px;color:rgba(255,255,255,0.80);line-height:2;text-align:right;}
     .meeting-meta strong{color:white;}
-
-    /* Intro paragraph */
     .report-intro{background:white;border-radius:var(--radius-md);padding:22px 26px;border:1.5px solid var(--border);font-size:14px;color:var(--text-secondary);line-height:1.75;margin-bottom:28px;box-shadow:var(--shadow-sm);}
-
-    /* ── Level 1: Dashboard table ── */
     .section-heading{font-family:'Outfit',sans-serif;font-size:17px;font-weight:700;color:var(--text-primary);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
     .section-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:0.8px;text-transform:uppercase;background:var(--tu-blue-light);color:var(--tu-blue);}
     .dashboard-table{width:100%;border-collapse:collapse;background:white;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm);border:1.5px solid var(--border);margin-bottom:32px;font-size:14px;}
@@ -143,8 +119,6 @@
     .dt-rating.overall{background:var(--tu-blue-dark);color:white;}
     .dashboard-table tbody tr.overall-row td{background:var(--tu-blue-light);border-top:2px solid var(--tu-blue);}
     .dashboard-table tbody tr.overall-row .dt-predictor{color:var(--tu-blue-dark);}
-
-    /* ── Level 2: Guide for Improvement ── */
     .guide-card{background:white;border-radius:var(--radius-lg);border:1.5px solid var(--border);box-shadow:var(--shadow-sm);padding:26px 28px;margin-bottom:28px;}
     .guide-steps{list-style:none;}
     .guide-step{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--bg);}
@@ -155,8 +129,6 @@
     .guide-step-desc{font-size:13px;color:var(--text-secondary);line-height:1.6;}
     .priority-list{list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
     .priority-item{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--bg);color:var(--text-secondary);border:1px solid var(--border);}
-
-    /* ── Level 3: Detailed Next Steps ── */
     .level3-section{margin-bottom:20px;}
     .improvement-card{background:white;border-radius:var(--radius-lg);border:1.5px solid var(--border);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:16px;}
     .improvement-header{display:flex;align-items:center;gap:12px;padding:16px 22px;border-bottom:1px solid var(--bg);}
@@ -183,13 +155,9 @@
     .sub-imp-item{background:var(--bg);border-radius:var(--radius-sm);padding:12px 14px;}
     .sub-imp-key{font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-primary);margin-bottom:4px;}
     .sub-imp-text{font-size:12px;color:var(--text-secondary);line-height:1.55;}
-
-    /* ── Closing Note ── */
     .closing-note{background:var(--tu-blue-dark);color:white;border-radius:var(--radius-lg);padding:26px 28px;margin-bottom:32px;}
     .closing-note p{font-size:14px;line-height:1.75;color:rgba(255,255,255,0.85);}
     .closing-note a{color:#7EFFC0;text-decoration:none;}
-
-    /* ── Leader Report ── */
     .leader-report-section{margin-top:40px;padding-top:32px;border-top:3px solid var(--tu-orange);}
     .leader-report-heading{display:flex;align-items:center;gap:14px;margin-bottom:8px;flex-wrap:wrap;}
     .leader-badge{background:var(--tu-orange);color:white;padding:5px 13px;border-radius:20px;font-size:12px;font-weight:700;}
@@ -200,18 +168,15 @@
     .leader-contrib-bar{background:white;border-radius:var(--radius-md);border:1.5px solid var(--border);padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:16px;}
     .leader-contrib-pct{font-family:'Outfit',sans-serif;font-size:32px;font-weight:800;color:var(--tu-orange);}
     .leader-contrib-label{font-size:13px;color:var(--text-secondary);}
-
-    /* ── Footer ── */
     .footer{text-align:center;padding:20px 32px;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted);background:white;}
     .footer a{color:var(--tu-blue);text-decoration:none;}
-    .divider{height:1px;background:var(--border);margin:28px 0;}
   </style>
 </head>
 <body>
 
   <header class="header">
     <div class="header-inner">
-      <div class="logo-group">
+      <div style="display:flex;align-items:center;gap:14px;">
         <img src="https://images.squarespace-cdn.com/content/v1/690c66c9a788d325e51c13c2/ccc5ce6d-31b4-41ea-94cd-34a6d4ea0b60/TeamUp_Artwork_Logo_Black_v2.png?format=1500w" alt="Team Up" style="height:44px;width:auto;filter:brightness(0) invert(1);" />
         <div style="width:1px;height:36px;background:rgba(255,255,255,0.3);margin:0 12px;"></div>
         <div class="logo-text">
@@ -243,7 +208,7 @@
       </div>
 
       <span class="form-section-label">Meeting Type</span>
-      <div class="toggle-group" style="margin-bottom:24px;">
+      <div class="toggle-group">
         <button class="toggle-btn active" onclick="setMeetingType('intact', this)">Intact Team</button>
         <button class="toggle-btn" onclick="setMeetingType('cross-functional', this)">Cross-Functional</button>
       </div>
@@ -259,7 +224,7 @@
 
       <div class="leader-section dimmed" id="leaderSection">
         <span class="form-section-label">Leader Report <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(optional)</span></span>
-        <div class="form-group" style="max-width:360px;">
+        <div class="form-group" style="max-width:360px;margin-bottom:20px;">
           <label for="leaderName">Leader's name (as it appears in the transcript)</label>
           <input type="text" id="leaderName" class="form-input" placeholder="e.g. Sarah, or Speaker A" autocomplete="off" disabled />
         </div>
@@ -308,7 +273,7 @@
       </div>
 
       <div class="section-heading">Level 1 &mdash; Dashboard <span class="section-badge">9 Metrics</span></div>
-      <table class="dashboard-table" id="dashboardTable">
+      <table class="dashboard-table">
         <thead>
           <tr>
             <th style="width:28%;">Effectiveness Predictor</th>
@@ -371,29 +336,38 @@
   </footer>
 
   <script>
-    // ── State ─────────────────────────────────────────────────────────────────
     let currentMeetingType = 'intact';
     let currentReportData  = null;
     let currentMeetingName = '';
     let currentMeetingDate = '';
 
-    // ── Priority order for improvement (Level 2 / Level 3) ───────────────────
-    // From George's report layout: Close > Start > Clarity > SAFE > RACE > Contrib > Tone
-    const PRIORITY_ORDER = [
-      { key: 'effectiveClose',  label: 'Effective Close'          },
-      { key: 'effectiveStart',  label: 'Effective Start'          },
-      { key: 'startRecovery',   label: 'Start Recovery'           },
-      { key: 'dialogueClarity', label: 'Clarity'                  },
-      { key: 'safe',            label: 'Psychological Safety'      },
-      { key: 'race',            label: 'Decision Efficiency'       },
-      { key: 'contributions',   label: 'Contribution Balance'      },
-      { key: 'tone',            label: 'Tonal Balance'             },
+    // ── Level 2: coaching priority order (George's specification — Close first)
+    const IMPROVEMENT_PRIORITY = [
+      { key: 'effectiveClose',  label: 'Effective Close'     },
+      { key: 'effectiveStart',  label: 'Effective Start'     },
+      { key: 'startRecovery',   label: 'Start Recovery'      },
+      { key: 'dialogueClarity', label: 'Clarity'             },
+      { key: 'safe',            label: 'Psychological Safety' },
+      { key: 'race',            label: 'Decision Efficiency'  },
+      { key: 'contributions',   label: 'Contribution Balance' },
+      { key: 'tone',            label: 'Tonal Balance'        },
     ];
 
-    // ── Dashboard row definitions ─────────────────────────────────────────────
+    // ── Level 3: logical meeting chronology (Start to Close)
+    const LEVEL3_ORDER = [
+      { key: 'effectiveStart',  label: 'Effective Start'     },
+      { key: 'startRecovery',   label: 'Start Recovery'      },
+      { key: 'dialogueClarity', label: 'Clarity'             },
+      { key: 'safe',            label: 'Psychological Safety' },
+      { key: 'race',            label: 'Decision Efficiency'  },
+      { key: 'contributions',   label: 'Contribution Balance' },
+      { key: 'tone',            label: 'Tonal Balance'        },
+      { key: 'effectiveClose',  label: 'Effective Close'     },
+    ];
+
     const DASHBOARD_ROWS = [
-      { key: 'effectiveStart',  label: 'Effective Start',       desc: 'How informed, prepared, and ready were the participants, to add value from the get go?' },
-      { key: 'startRecovery',   label: 'Start Recovery',        desc: 'The levels of adaption by participants, in the face of an ineffective start, to get informed, prepared and ready to add value.' },
+      { key: 'effectiveStart',  label: 'Effective Start',      desc: 'How informed, prepared, and ready were the participants, to add value from the get go?' },
+      { key: 'startRecovery',   label: 'Start Recovery',       desc: 'The levels of adaption by participants, in the face of an ineffective start, to get informed, prepared and ready to add value.' },
       { key: 'safe',            label: 'Psychological Safety',  desc: 'The levels of safety generated in the meeting — enabling participants to speak truthfully, openly and fearlessly by feeling supported, trusted and respected.' },
       { key: 'race',            label: 'Decision Efficiency',   desc: 'The standard of quality, efficient, creative and collective decision-making, under pressure of time.' },
       { key: 'tone',            label: 'Tonal Balance',         desc: 'The balance struck between building an environment of psychological safety and one of constructive challenge, and efficient and quality decision making.' },
@@ -402,7 +376,6 @@
       { key: 'effectiveClose',  label: 'Effective Close',       desc: 'The meeting closes in such a way that everyone is clear on what has been agreed and what happens next.' },
     ];
 
-    // ── Descriptor functions ──────────────────────────────────────────────────
     function standardDescriptor(rag) {
       if (rag === 'green') return 'High';
       if (rag === 'amber') return 'Average';
@@ -413,8 +386,8 @@
     function toneDescriptor(rag, direction) {
       if (!rag || rag === 'n/a') return 'N/A';
       if (rag === 'green') return 'Balanced';
-      if (rag === 'amber' && direction === 'safety-heavy')    return 'Safety Imbalanced';
-      if (rag === 'red'   && direction === 'safety-heavy')    return 'Highly Safety Imbalanced';
+      if (rag === 'amber' && direction === 'safety-heavy')     return 'Safety Imbalanced';
+      if (rag === 'red'   && direction === 'safety-heavy')     return 'Highly Safety Imbalanced';
       if (rag === 'amber' && direction === 'efficiency-heavy') return 'Decision Efficiency Imbalanced';
       if (rag === 'red'   && direction === 'efficiency-heavy') return 'Highly Decision Efficiency Imbalanced';
       return 'Imbalanced';
@@ -427,30 +400,19 @@
       return 'Not Measured';
     }
 
-    function startRecoveryDescriptor(applicable, rag) {
-      if (!applicable) return 'N/A';
-      return standardDescriptor(rag);
-    }
-
     function getMetricFromData(data, key) {
-      switch(key) {
-        case 'effectiveStart':  return data.effectiveStart;
-        case 'startRecovery':   return data.startRecovery;
-        case 'safe':            return data.safe;
-        case 'race':            return data.race;
-        case 'tone':            return data.tone;
-        case 'contributions':   return data.contributions;
-        case 'dialogueClarity': return data.dialogueClarity;
-        case 'effectiveClose':  return data.effectiveClose;
-        default: return null;
-      }
+      const map = { effectiveStart: data.effectiveStart, startRecovery: data.startRecovery,
+        safe: data.safe, race: data.race, tone: data.tone, contributions: data.contributions,
+        dialogueClarity: data.dialogueClarity, effectiveClose: data.effectiveClose };
+      return map[key] || null;
     }
 
     function getMetricRag(data, key) {
       const m = getMetricFromData(data, key);
       if (!m) return 'na';
-      if (key === 'startRecovery' && !m.applicable) return 'na';
-      if (key === 'contributions' && m.note) return 'na';
+      if (key === 'startRecovery'  && !m.applicable) return 'na';
+      if (key === 'contributions'  && m.note)        return 'na';
+      if (key === 'tone'           && m.score === null) return 'na';
       return m.rag || 'na';
     }
 
@@ -458,7 +420,7 @@
       const m = getMetricFromData(data, key);
       if (!m) return null;
       if (key === 'startRecovery' && !m.applicable) return null;
-      if (key === 'contributions' && m.note) return null;
+      if (key === 'contributions' && m.note)        return null;
       if (m.score === null) return null;
       return m.score;
     }
@@ -467,63 +429,55 @@
       const m = getMetricFromData(data, key);
       if (!m) return 'N/A';
       const rag = getMetricRag(data, key);
-      switch(key) {
-        case 'startRecovery':  return startRecoveryDescriptor(m.applicable, m.rag);
-        case 'tone':           return toneDescriptor(m.rag, m.direction);
-        case 'contributions':  return m.note ? 'Not Measured' : contributionDescriptor(m.rag);
-        default:               return standardDescriptor(rag);
-      }
+      if (key === 'startRecovery')  return m.applicable ? standardDescriptor(m.rag) : 'N/A';
+      if (key === 'tone')           return toneDescriptor(m.rag, m.direction);
+      if (key === 'contributions')  return m.note ? 'Not Measured' : contributionDescriptor(m.rag);
+      return standardDescriptor(rag);
     }
 
-    // ── Level 3 improvement content ───────────────────────────────────────────
+    // ── Level 3 card builders ─────────────────────────────────────────────────
     function buildImprovementCard(data, key) {
       const rag = getMetricRag(data, key);
       if (rag !== 'red' && rag !== 'amber') return '';
       const score = getMetricScore(data, key);
       const scoreLabel = score !== null ? score + '%' : 'N/A';
+      const chipLabel  = rag === 'red' ? 'Poor' : 'Average';
 
       switch(key) {
-        case 'effectiveClose': return buildPortCard('Improving Effective Close using PORT-Out', 'imp-icon-close', 'EC', rag, scoreLabel, [
-          { key: 'P — Plan',            text: 'Were any agreed plans, decisions and actions clear, understood and agreed by all present?' },
-          { key: 'O — Outcomes',        text: 'Were the outcomes from these plans, decisions or actions either plainly obvious or clarified to avoid any ambiguity?' },
-          { key: 'R — Responsibilities',text: 'Did every action have an owner, and was it clearly understood and agreed who each owner was? Was it also agreed who else needs to know about this?' },
-          { key: 'T — Timings',         text: 'Did each action have a clearly agreed deadline by which owners would either commit to completing it, or confirm a date by which they would commit?' }
+        case 'effectiveStart': return portCard('Improving Effective Start with PORT-In', 'imp-icon-start', 'ES', rag, scoreLabel, chipLabel, [
+          { k: 'P &mdash; Purpose',          t: 'Did those present understand why the meeting or discussion was taking place?' },
+          { k: 'O &mdash; Outcomes',         t: 'Were the desired outcomes from the discussion clear, understood and agreed by the team?' },
+          { k: 'R &mdash; Responsibilities', t: 'Were those present the right people in the room, ready to participate, having completed any pre-reading? Were the leadership and decision-making responsibilities clearly understood?' },
+          { k: 'T &mdash; Timings',          t: 'Did the discussion follow a timed approach, or agenda, that helped optimise efficiency?' }
         ]);
 
-        case 'effectiveStart': return buildPortCard('Improving Effective Start with PORT-In', 'imp-icon-start', 'ES', rag, scoreLabel, [
-          { key: 'P — Purpose',         text: 'Did those present understand why the meeting or discussion was taking place?' },
-          { key: 'O — Outcomes',        text: 'Were the desired outcomes from the discussion clear, understood and agreed by the team?' },
-          { key: 'R — Responsibilities',text: 'Were those present the right people in the room, ready to participate, having completed any pre-reading? Were the leadership and decision-making responsibilities clearly understood?' },
-          { key: 'T — Timings',         text: 'Did the discussion follow a timed approach, or agenda, that helped optimise efficiency?' }
+        case 'startRecovery': return portCard('Improving Start Recovery with PORT-In Recovery', 'imp-icon-start', 'SR', rag, scoreLabel, chipLabel, [
+          { k: 'P &mdash; Purpose',          t: 'If there was confusion as to why the discussion was taking place &mdash; was it quickly resolved?' },
+          { k: 'O &mdash; Outcomes',         t: 'If the exam question was not clearly understood, did you spend the necessary time agreeing on the specific outcomes sought from the meeting?' },
+          { k: 'R &mdash; Responsibilities', t: 'Were unprepared or late attendees quickly brought up to speed? Did you remove any confusion as to who is leading the discussion and how decisions will be made?' },
+          { k: 'T &mdash; Timings',          t: 'Did you quickly agree how to use your available time effectively?' }
         ]);
 
-        case 'startRecovery': return buildPortCard('Improving Start Recovery with PORT-In Recovery', 'imp-icon-start', 'SR', rag, scoreLabel, [
-          { key: 'P — Purpose',         text: 'If there was confusion as to why the discussion was taking place — was it quickly resolved?' },
-          { key: 'O — Outcomes',        text: 'If the exam question was not clearly understood, did you spend the necessary time agreeing on the specific outcomes sought from the meeting?' },
-          { key: 'R — Responsibilities',text: 'Were unprepared or late attendees quickly brought up to speed? Did you remove any confusion as to who is leading the discussion and how decisions will be made?' },
-          { key: 'T — Timings',         text: 'Did you quickly agree how to use your available time effectively?' }
-        ]);
-
-        case 'dialogueClarity': return buildSimpleCard('Improving Clarity between Beginning and End of Meeting', 'imp-icon-clarity', 'CL', rag, scoreLabel,
+        case 'dialogueClarity': return simpleCard('Improving Clarity between Beginning and End of Meeting', 'imp-icon-clarity', 'CL', rag, scoreLabel, chipLabel,
           'Encourage participants to restate and paraphrase to ensure they are picking up accurately what is being said when others speak at length or with complexity. Encourage questions that seek clarity and answers that address questions first time round. Pick up and feedback on participants speaking clearly and concisely. Ensure discussions stay on topic and complete any threads before moving on to new ones.');
 
-        case 'safe': return buildSkillCard('Improving Psychological Safety with SAFE Skills', 'imp-icon-safe', 'SAFE', rag, scoreLabel, [
-          { key: 'S — Share',     text: 'Were participants volunteering observations, opinions and insights, especially emotions and any information that revealed some vulnerability — such as what they don\'t know, understand or need help with?' },
-          { key: 'A — Ask',       text: 'Were participants asking questions, with a genuine open mind and with curiosity, in order to gain clarity or more understanding?' },
-          { key: 'F — Facilitate',text: 'Were participants summarising, paraphrasing to check understanding or actively inviting others into the conversation?' },
-          { key: 'E — Energise',  text: 'Were participants exemplifying positivity, appreciation, optimism, self-confidence, humour, and etiquette?' }
+        case 'safe': return skillCard('Improving Psychological Safety with SAFE Skills', 'imp-icon-safe', 'SAFE', rag, scoreLabel, chipLabel, [
+          { k: 'S &mdash; Share',      t: 'Were participants volunteering observations, opinions and insights, especially emotions and any information that revealed some vulnerability &mdash; such as what they don\'t know, understand or need help with?' },
+          { k: 'A &mdash; Ask',        t: 'Were participants asking questions, with a genuine open mind and with curiosity, in order to gain clarity or more understanding?' },
+          { k: 'F &mdash; Facilitate', t: 'Were participants summarising, paraphrasing to check understanding or actively inviting others into the conversation?' },
+          { k: 'E &mdash; Energise',   t: 'Were participants exemplifying positivity, appreciation, optimism, self-confidence, humour, and etiquette?' }
         ]);
 
-        case 'race': return buildSkillCard('Improving Decision Efficiency with RACE Skills', 'imp-icon-race', 'RACE', rag, scoreLabel, [
-          { key: 'R — Resolve',   text: 'Participants stand behind what they believe in, despite resistance from those with more power or from the majority, by influencing others and adapting to find a third way.' },
-          { key: 'A — Actioning', text: 'Participants propose or initiate solutions, creative ideas, offer help, and ideally frame them in the context of \'us\'.' },
-          { key: 'C — Challenge', text: 'Participants critique, scrutinise or disagree with others\' views, progress, or behaviours and challenge the status quo with creativity.' },
-          { key: 'E — Economise', text: 'Participants speak concisely and clearly, stay on topic, redirect discussions back on track, and tune into the clock.' }
+        case 'race': return skillCard('Improving Decision Efficiency with RACE Skills', 'imp-icon-race', 'RACE', rag, scoreLabel, chipLabel, [
+          { k: 'R &mdash; Resolve',    t: 'Participants stand behind what they believe in, despite resistance from those with more power or from the majority, by influencing others and adapting to find a third way.' },
+          { k: 'A &mdash; Actioning',  t: 'Participants propose or initiate solutions, creative ideas, offer help, and ideally frame them in the context of \'us\'.' },
+          { k: 'C &mdash; Challenge',  t: 'Participants critique, scrutinise or disagree with others\' views, progress, or behaviours and challenge the status quo with creativity.' },
+          { k: 'E &mdash; Economise',  t: 'Participants speak concisely and clearly, stay on topic, redirect discussions back on track, and tune into the clock.' }
         ]);
 
         case 'contributions': {
           if (data.contributions && data.contributions.note) return '';
-          return buildSimpleCard('Improving Contribution Balance across the Whole Meeting', 'imp-icon-contrib', 'TDI', rag, scoreLabel,
+          return simpleCard('Improving Contribution Balance across the Whole Meeting', 'imp-icon-contrib', 'TDI', rag, scoreLabel, chipLabel,
             'Encourage more of the team to display the skills of PORT-In, PORT-Out, SAFE and RACE. Even if they are not subject matter experts, many of these skills do not require domain expertise and could make a significant difference to meeting success.');
         }
 
@@ -531,56 +485,61 @@
           const tone = data.tone;
           if (!tone || tone.score === null) return '';
           const dir = tone.direction || 'balanced';
-          const toneText = dir === 'safety-heavy'
+          const text = dir === 'safety-heavy'
             ? 'Focus participant attention on displaying more RACE dialogue so that a more constructive and balanced tone is achieved between SAFE and RACE.'
             : dir === 'efficiency-heavy'
             ? 'Focus participant attention on displaying more SAFE dialogue so that a more constructive and balanced tone is achieved between SAFE and RACE.'
             : 'The tonal balance between SAFE and RACE behaviours is within the ideal range.';
-          return buildSimpleCard('Improving Tonal Balance between SAFE and RACE', 'imp-icon-tone', 'TB', rag, scoreLabel, toneText);
+          return simpleCard('Improving Tonal Balance between SAFE and RACE', 'imp-icon-tone', 'TB', rag, scoreLabel, chipLabel, text);
         }
+
+        case 'effectiveClose': return portCard('Improving Effective Close using PORT-Out', 'imp-icon-close', 'EC', rag, scoreLabel, chipLabel, [
+          { k: 'P &mdash; Plan',             t: 'Were any agreed plans, decisions and actions clear, understood and agreed by all present?' },
+          { k: 'O &mdash; Outcomes',         t: 'Were the outcomes from these plans, decisions or actions either plainly obvious or clarified to avoid any ambiguity?' },
+          { k: 'R &mdash; Responsibilities', t: 'Did every action have an owner, and was it clearly understood and agreed who each owner was? Was it also agreed who else needs to know about this?' },
+          { k: 'T &mdash; Timings',          t: 'Did each action have a clearly agreed deadline by which owners would either commit to completing it, or confirm a date by which they would commit?' }
+        ]);
 
         default: return '';
       }
     }
 
-    function buildPortCard(title, iconClass, iconLabel, rag, scoreLabel, items) {
+    function portCard(title, iconClass, iconLabel, rag, scoreLabel, chipLabel, items) {
       return `<div class="improvement-card">
         <div class="improvement-header">
-          <div class="improvement-icon ${iconClass}">${esc(iconLabel)}</div>
-          <div class="improvement-title">${esc(title)}</div>
-          <div class="score-chip ${rag}">${esc(scoreLabel)} &mdash; ${rag === 'red' ? 'Poor' : 'Average'}</div>
+          <div class="improvement-icon ${iconClass}">${iconLabel}</div>
+          <div class="improvement-title">${title}</div>
+          <div class="score-chip ${rag}">${scoreLabel} &mdash; ${chipLabel}</div>
         </div>
         <div class="improvement-body">
           <ul class="port-items">
-            ${items.map(i => `<li class="port-item"><span class="port-key">${esc(i.key)}</span><span>${esc(i.text)}</span></li>`).join('')}
+            ${items.map(i => `<li class="port-item"><span class="port-key">${i.k}</span><span>${i.t}</span></li>`).join('')}
           </ul>
         </div>
       </div>`;
     }
 
-    function buildSimpleCard(title, iconClass, iconLabel, rag, scoreLabel, text) {
+    function simpleCard(title, iconClass, iconLabel, rag, scoreLabel, chipLabel, text) {
       return `<div class="improvement-card">
         <div class="improvement-header">
-          <div class="improvement-icon ${iconClass}">${esc(iconLabel)}</div>
-          <div class="improvement-title">${esc(title)}</div>
-          <div class="score-chip ${rag}">${esc(scoreLabel)} &mdash; ${rag === 'red' ? 'Poor' : 'Average'}</div>
+          <div class="improvement-icon ${iconClass}">${iconLabel}</div>
+          <div class="improvement-title">${title}</div>
+          <div class="score-chip ${rag}">${scoreLabel} &mdash; ${chipLabel}</div>
         </div>
-        <div class="improvement-body">
-          <p class="improvement-text">${esc(text)}</p>
-        </div>
+        <div class="improvement-body"><p class="improvement-text">${text}</p></div>
       </div>`;
     }
 
-    function buildSkillCard(title, iconClass, iconLabel, rag, scoreLabel, items) {
+    function skillCard(title, iconClass, iconLabel, rag, scoreLabel, chipLabel, items) {
       return `<div class="improvement-card">
         <div class="improvement-header">
-          <div class="improvement-icon ${iconClass}">${esc(iconLabel)}</div>
-          <div class="improvement-title">${esc(title)}</div>
-          <div class="score-chip ${rag}">${esc(scoreLabel)} &mdash; ${rag === 'red' ? 'Poor' : 'Average'}</div>
+          <div class="improvement-icon ${iconClass}">${iconLabel}</div>
+          <div class="improvement-title">${title}</div>
+          <div class="score-chip ${rag}">${scoreLabel} &mdash; ${chipLabel}</div>
         </div>
         <div class="improvement-body">
           <div class="sub-improvement-grid">
-            ${items.map(i => `<div class="sub-imp-item"><div class="sub-imp-key">${esc(i.key)}</div><div class="sub-imp-text">${esc(i.text)}</div></div>`).join('')}
+            ${items.map(i => `<div class="sub-imp-item"><div class="sub-imp-key">${i.k}</div><div class="sub-imp-text">${i.t}</div></div>`).join('')}
           </div>
         </div>
       </div>`;
@@ -593,18 +552,14 @@
       btn.classList.add('active');
     }
 
-    function toggleSpeakers(checkbox) {
+    function toggleSpeakers(cb) {
       const section = document.getElementById('leaderSection');
       const input   = document.getElementById('leaderName');
-      if (checkbox.checked) {
-        section.classList.remove('dimmed');
-        input.disabled = false;
-      } else {
-        section.classList.add('dimmed');
-        input.disabled = true;
-        input.value = '';
-      }
+      if (cb.checked) { section.classList.remove('dimmed'); input.disabled = false; }
+      else            { section.classList.add('dimmed');    input.disabled = true; input.value = ''; }
     }
+
+    function esc(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
     // ── API call ──────────────────────────────────────────────────────────────
     async function runEvaluation() {
@@ -613,37 +568,25 @@
       const speakersIdentified = document.getElementById('speakersIdentified').checked;
       currentMeetingName       = document.getElementById('meetingName').value.trim();
       currentMeetingDate       = document.getElementById('meetingDate').value;
-
-      if (!transcript || transcript.length < 50) {
-        showError('Please paste a meeting transcript before evaluating.');
-        return;
-      }
+      if (!transcript || transcript.length < 50) { showError('Please paste a meeting transcript before evaluating.'); return; }
       setUI('loading');
       try {
         const res = await fetch('/api/evaluate', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ transcript, meetingType: currentMeetingType, leaderName: leaderName || null, speakersIdentified })
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ transcript, meetingType: currentMeetingType, leaderName: leaderName || null, speakersIdentified })
         });
         const rawText = await res.text();
         let data;
-        try { data = JSON.parse(rawText); }
-        catch (_) {
-          showError('The evaluation timed out — please try again. If this keeps happening, try a shorter transcript.');
-          setUI('form'); return;
+        try { data = JSON.parse(rawText); } catch (_) {
+          showError('The evaluation timed out — please try again.'); setUI('form'); return;
         }
-        if (!res.ok) {
-          showError(data.error || 'Something went wrong. Please try again.');
-          setUI('form'); return;
-        }
+        if (!res.ok) { showError(data.error || 'Something went wrong. Please try again.'); setUI('form'); return; }
         currentReportData = data;
         renderReport(data);
         setUI('report');
         setTimeout(() => document.getElementById('report').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
       } catch (err) {
-        console.error(err);
-        showError('A network error occurred. Please check your connection and try again.');
-        setUI('form');
+        console.error(err); showError('A network error occurred. Please check your connection and try again.'); setUI('form');
       }
     }
 
@@ -653,16 +596,16 @@
       document.getElementById('evaluateBtn').disabled =               (state === 'loading');
       if (state !== 'form') hideError();
     }
-
     function showError(msg) { const e = document.getElementById('errorBox'); e.textContent = msg; e.classList.add('visible'); }
     function hideError()    { document.getElementById('errorBox').classList.remove('visible'); }
-    function esc(str)       { if (!str) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
     // ── Main renderer ─────────────────────────────────────────────────────────
     function renderReport(data) {
-      // Overall hero
       const o    = data.overall;
-      const date = currentMeetingDate ? new Date(currentMeetingDate + 'T00:00:00').toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' }) : '';
+      const date = currentMeetingDate
+        ? new Date(currentMeetingDate + 'T00:00:00').toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' })
+        : '';
+
       document.getElementById('overallHero').innerHTML = `
         <div class="overall-left">
           <div class="hero-label">Overall Meeting Effectiveness</div>
@@ -670,7 +613,7 @@
           <div class="hero-score-row"><span class="hero-number">${o.score}</span><span class="hero-pct">%</span></div>
           <div class="hero-rag-pill ${o.rag}">${o.rag === 'green' ? 'High' : o.rag === 'amber' ? 'Average' : 'Poor'}</div>
         </div>
-        <div class="overall-right">
+        <div>
           <div class="meeting-meta">
             ${currentMeetingName ? `<strong>${esc(currentMeetingName)}</strong><br>` : ''}
             ${date ? `${esc(date)}<br>` : ''}
@@ -679,22 +622,20 @@
         </div>`;
 
       // Dashboard table
-      const tbody = document.getElementById('dashboardBody');
-      tbody.innerHTML = DASHBOARD_ROWS.map(row => {
+      document.getElementById('dashboardBody').innerHTML = DASHBOARD_ROWS.map(row => {
         const rag   = getMetricRag(data, row.key);
         const score = getMetricScore(data, row.key);
         const desc  = getMetricDescriptor(data, row.key);
-        const scoreDisplay = score !== null ? score + '%' : 'N/A';
         return `<tr>
           <td><div class="dt-predictor">${esc(row.label)}</div><div class="dt-desc">${esc(row.desc)}</div></td>
           <td style="font-size:13px;color:var(--text-secondary);line-height:1.5;"></td>
           <td class="dt-score-cell">
-            <span class="dt-score ${rag}">${esc(scoreDisplay)}</span>
+            <span class="dt-score ${rag}">${score !== null ? score + '%' : 'N/A'}</span>
             <span class="dt-rating ${rag}">${esc(desc)}</span>
           </td>
         </tr>`;
       }).join('') + `<tr class="overall-row">
-        <td><div class="dt-predictor">Overall Meeting Effectiveness</div><div class="dt-desc">How effective was this meeting — what was the Return on Time Invested?</div></td>
+        <td><div class="dt-predictor">Overall Meeting Effectiveness</div><div class="dt-desc">How effective was this meeting &mdash; what was the Return on Time Invested?</div></td>
         <td></td>
         <td class="dt-score-cell">
           <span class="dt-score ${o.rag}">${o.score}%</span>
@@ -702,20 +643,20 @@
         </td>
       </tr>`;
 
-      // Level 2 — priority lists
-      const redItems   = PRIORITY_ORDER.filter(p => getMetricRag(data, p.key) === 'red');
-      const amberItems = PRIORITY_ORDER.filter(p => getMetricRag(data, p.key) === 'amber');
+      // Level 2 priority lists — coaching order (Close first)
+      const redItems   = IMPROVEMENT_PRIORITY.filter(p => getMetricRag(data, p.key) === 'red');
+      const amberItems = IMPROVEMENT_PRIORITY.filter(p => getMetricRag(data, p.key) === 'amber');
 
       document.getElementById('redPriorityList').innerHTML = redItems.length
         ? redItems.map(p => `<li class="priority-item" style="background:var(--rag-red-bg);color:var(--rag-red);border-color:#fca5a5;">${esc(p.label)}</li>`).join('')
-        : '<li class="priority-item" style="color:var(--rag-green);">No Red scores — well done</li>';
+        : '<li class="priority-item" style="color:var(--rag-green);">No Red scores &mdash; well done</li>';
 
       document.getElementById('amberPriorityList').innerHTML = amberItems.length
         ? amberItems.map(p => `<li class="priority-item" style="background:var(--rag-amber-bg);color:var(--rag-amber);border-color:#fcd34d;">${esc(p.label)}</li>`).join('')
         : '<li class="priority-item" style="color:var(--rag-green);">No Amber scores</li>';
 
-      // Level 3 — improvement cards in priority order
-      const level3HTML = PRIORITY_ORDER
+      // Level 3 — meeting chronology order (Start to Close)
+      const level3HTML = LEVEL3_ORDER
         .map(p => buildImprovementCard(data, p.key))
         .filter(Boolean)
         .join('');
@@ -727,7 +668,6 @@
         level3El.innerHTML = `<div class="section-heading">Level 3 &mdash; Detailed Next Steps</div><div class="guide-card"><p style="font-size:14px;color:var(--rag-green);font-weight:600;">&#x2713; All metrics are scoring Green. No improvement areas identified. Focus on maintaining your current performance.</p></div>`;
       }
 
-      // Leader report
       renderLeaderReport(data);
     }
 
@@ -736,7 +676,6 @@
       const section = document.getElementById('leaderReportSection');
       if (!section) return;
       if (!data.leaderReport && !data.leaderNotFound) { section.style.display = 'none'; return; }
-
       section.style.display = 'block';
 
       if (data.leaderNotFound) {
@@ -762,28 +701,27 @@
             <div class="leader-contrib-label">share of meeting speaking time &nbsp;&middot;&nbsp; informational only &nbsp;&middot;&nbsp; not included in the leader overall score</div>
           </div>` : '';
 
-      // Leader dashboard table
       const LEADER_ROWS = [
-        { key: 'effectiveStart',  label: 'Effective Start',      contrib: 'Same as whole team' },
-        { key: 'startRecovery',   label: 'Start Recovery',       contrib: 'Same as whole team' },
-        { key: 'safe',            label: 'Psychological Safety',  contrib: '% contribution of total' },
-        { key: 'race',            label: 'Decision Efficiency',   contrib: '% contribution of total' },
-        { key: 'tone',            label: 'Tonal Balance',         contrib: 'Individual calculation' },
-        { key: 'dialogueClarity', label: 'Clarity',               contrib: 'Same as whole team' },
-        { key: 'effectiveClose',  label: 'Effective Close',       contrib: 'Same as whole team' },
+        { key: 'effectiveStart',  label: 'Effective Start',     note: 'Same as whole team' },
+        { key: 'startRecovery',   label: 'Start Recovery',      note: 'Same as whole team' },
+        { key: 'safe',            label: 'Psychological Safety', note: '% contribution of total' },
+        { key: 'race',            label: 'Decision Efficiency',  note: '% contribution of total' },
+        { key: 'tone',            label: 'Tonal Balance',        note: 'Individual calculation' },
+        { key: 'dialogueClarity', label: 'Clarity',              note: 'Same as whole team' },
+        { key: 'effectiveClose',  label: 'Effective Close',      note: 'Same as whole team' },
       ];
 
-      const leaderTableRows = LEADER_ROWS.map(row => {
+      const leaderRows = LEADER_ROWS.map(row => {
         const m    = lr[row.key];
-        const rag  = !m || (row.key === 'startRecovery' && !m.applicable) ? 'na' : (m.rag || 'na');
+        const rag  = !m || (row.key === 'startRecovery' && !m.applicable) || (row.key === 'tone' && m.score === null) ? 'na' : (m.rag || 'na');
         const score = !m || m.score === null ? null : m.score;
         const desc  = row.key === 'tone'
           ? toneDescriptor(m && m.rag, m && m.direction)
           : row.key === 'startRecovery'
-          ? startRecoveryDescriptor(m && m.applicable, m && m.rag)
+          ? (m && m.applicable ? standardDescriptor(m.rag) : 'N/A')
           : standardDescriptor(rag);
         return `<tr>
-          <td><div class="dt-predictor">${esc(row.label)}</div><div class="dt-desc" style="font-size:11px;color:var(--text-muted);">${esc(row.contrib)}</div></td>
+          <td><div class="dt-predictor">${esc(row.label)}</div><div class="dt-desc" style="font-size:11px;color:var(--text-muted);">${esc(row.note)}</div></td>
           <td class="dt-score-cell">
             <span class="dt-score ${rag}">${score !== null ? score + '%' : 'N/A'}</span>
             <span class="dt-rating ${rag}">${esc(desc)}</span>
@@ -809,7 +747,7 @@
             <th>Dashboard Item</th>
             <th style="text-align:center;">% Score &amp; Leadership Value</th>
           </tr></thead>
-          <tbody>${leaderTableRows}</tbody>
+          <tbody>${leaderRows}</tbody>
         </table>
       </div>`;
     }
@@ -822,8 +760,7 @@
       const dateDisplay = currentMeetingDate
         ? new Date(currentMeetingDate + 'T00:00:00').toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' })
         : now;
-      const logoSrc = 'https://images.squarespace-cdn.com/content/v1/690c66c9a788d325e51c13c2/ccc5ce6d-31b4-41ea-94cd-34a6d4ea0b60/TeamUp_Artwork_Logo_Black_v2.png?format=1500w';
-
+      const logo = 'https://images.squarespace-cdn.com/content/v1/690c66c9a788d325e51c13c2/ccc5ce6d-31b4-41ea-94cd-34a6d4ea0b60/TeamUp_Artwork_Logo_Black_v2.png?format=1500w';
       const rc = r => r==='green'?'#1A7F4B':r==='amber'?'#D97706':r==='red'?'#C53030':'#8898AA';
       const rb = r => r==='green'?'background:#EAF7EF;color:#1A7F4B;':r==='amber'?'background:#FEF3C7;color:#D97706;':r==='red'?'background:#FEE8E8;color:#C53030;':'background:#F2F5F9;color:#8898AA;';
 
@@ -832,94 +769,82 @@
         const score = getMetricScore(d, row.key);
         const desc  = getMetricDescriptor(d, row.key);
         return `<tr style="border-bottom:1px solid #DDE3EC;">
-          <td style="padding:10px 12px;font-size:11px;font-weight:700;color:#12243A;">${row.label}</td>
-          <td style="padding:10px 12px;font-size:10px;color:#4A5568;line-height:1.4;">${row.desc}</td>
-          <td style="padding:10px 12px;text-align:center;">
-            <span style="font-family:'Outfit',Arial,sans-serif;font-size:16px;font-weight:800;display:block;color:${rc(rag)};">${score !== null ? score + '%' : 'N/A'}</span>
+          <td style="padding:9px 12px;font-size:11px;font-weight:700;color:#12243A;">${row.label}</td>
+          <td style="padding:9px 12px;font-size:10px;color:#4A5568;line-height:1.4;">${row.desc}</td>
+          <td style="padding:9px 12px;text-align:center;">
+            <span style="font-family:'Outfit',Arial,sans-serif;font-size:15px;font-weight:800;display:block;color:${rc(rag)};">${score !== null ? score + '%' : 'N/A'}</span>
             <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;${rb(rag)};display:inline-block;margin-top:3px;text-transform:uppercase;">${desc}</span>
           </td>
         </tr>`;
       }).join('') + `<tr style="background:#E8F3FB;border-top:2px solid #1375B7;">
-        <td style="padding:10px 12px;font-size:11px;font-weight:700;color:#0d5a91;">Overall Meeting Effectiveness</td>
-        <td style="padding:10px 12px;font-size:10px;color:#4A5568;">How effective was this meeting — what was the Return on Time Invested?</td>
-        <td style="padding:10px 12px;text-align:center;">
-          <span style="font-family:'Outfit',Arial,sans-serif;font-size:16px;font-weight:800;display:block;color:${rc(d.overall.rag)};">${d.overall.score}%</span>
+        <td style="padding:9px 12px;font-size:11px;font-weight:700;color:#0d5a91;">Overall Meeting Effectiveness</td>
+        <td style="padding:9px 12px;font-size:10px;color:#4A5568;">How effective was this meeting?</td>
+        <td style="padding:9px 12px;text-align:center;">
+          <span style="font-family:'Outfit',Arial,sans-serif;font-size:15px;font-weight:800;display:block;color:${rc(d.overall.rag)};">${d.overall.score}%</span>
           <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;background:#0d5a91;color:white;display:inline-block;margin-top:3px;">${d.overall.descriptor}</span>
         </td>
       </tr>`;
 
-      // Build level 3 for download
-      const level3DL = PRIORITY_ORDER
-        .map(p => {
-          const rag = getMetricRag(d, p.key);
-          if (rag !== 'red' && rag !== 'amber') return '';
-          const card = buildImprovementCard(d, p.key);
-          return card;
-        })
+      const level3DL = LEVEL3_ORDER
+        .map(p => buildImprovementCard(d, p.key))
         .filter(Boolean)
         .join('');
 
       const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
-<title>Periscope Report &mdash; ${esc(currentMeetingName || 'Meeting')} &mdash; ${dateDisplay}</title>
+<title>Periscope &mdash; ${esc(currentMeetingName || 'Meeting Report')}</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'DM Sans',Arial,sans-serif;background:#fff;color:#12243A;font-size:12px;line-height:1.6;}@media print{body{font-size:10px;}@page{margin:12mm;}}</style>
+<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'DM Sans',Arial,sans-serif;background:#fff;color:#12243A;font-size:12px;line-height:1.6;}@media print{body{font-size:10px;}@page{margin:12mm;}}.improvement-card{border:1px solid #DDE3EC;border-radius:8px;margin-bottom:10px;overflow:hidden;}.improvement-header{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #F2F5F9;background:#fafbfd;}.improvement-title{font-size:11px;font-weight:700;color:#12243A;flex:1;}.score-chip{font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;}.score-chip.red{background:#FEE8E8;color:#C53030;}.score-chip.amber{background:#FEF3C7;color:#D97706;}.improvement-body{padding:10px 14px;}.port-items{list-style:none;}.port-item{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid #F2F5F9;font-size:10px;color:#4A5568;line-height:1.5;}.port-item:last-child{border-bottom:none;}.port-key{font-weight:700;color:#12243A;width:55px;flex-shrink:0;font-size:9px;}.improvement-text{font-size:10px;color:#4A5568;line-height:1.6;}.sub-improvement-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}.sub-imp-item{background:#F2F5F9;border-radius:4px;padding:8px 10px;}.sub-imp-key{font-size:9px;font-weight:700;text-transform:uppercase;color:#12243A;margin-bottom:2px;}.sub-imp-text{font-size:9px;color:#4A5568;line-height:1.4;}</style>
 </head><body>
-<div style="background:linear-gradient(135deg,#0d5a91 0%,#1375B7 100%);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+<div style="background:linear-gradient(135deg,#0d5a91 0%,#1375B7 100%);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
   <div>
-    <div style="font-family:'Outfit',Arial,sans-serif;font-size:18px;font-weight:700;color:white;">Periscope &middot; Powered by the Polaris Formula&trade;</div>
+    <div style="font-family:'Outfit',Arial,sans-serif;font-size:16px;font-weight:700;color:white;">Periscope &middot; Powered by the Polaris Formula&trade;</div>
     <div style="font-size:10px;color:rgba(255,255,255,0.65);margin-top:2px;">Team Up &middot; Meeting Effectiveness Analysis</div>
   </div>
-  <div style="display:flex;align-items:center;gap:14px;">
-    <div style="text-align:right;color:rgba(255,255,255,0.80);font-size:10px;line-height:1.9;">${currentMeetingName ? `<strong style="color:white;">${esc(currentMeetingName)}</strong><br>` : ''}${esc(dateDisplay)}<br>Confidential</div>
-    <img src="${logoSrc}" style="height:36px;filter:brightness(0) invert(1);" alt="Team Up"/>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div style="text-align:right;color:rgba(255,255,255,0.80);font-size:10px;line-height:1.8;">${currentMeetingName ? `<strong style="color:white;">${esc(currentMeetingName)}</strong><br>` : ''}${esc(dateDisplay)}<br>Confidential</div>
+    <img src="${logo}" style="height:32px;filter:brightness(0) invert(1);" alt="Team Up"/>
   </div>
 </div>
-<div style="padding:0 24px 24px;">
-  <div style="background:linear-gradient(135deg,#0d5a91 0%,#1375B7 100%);border-radius:10px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+<div style="padding:0 22px 22px;">
+  <div style="background:linear-gradient(135deg,#0d5a91 0%,#1375B7 100%);border-radius:8px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
     <div>
-      <div style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.65);">Overall Meeting Effectiveness</div>
-      <div style="font-family:'Outfit',Arial,sans-serif;font-size:14px;font-weight:600;color:rgba(255,255,255,0.9);margin:2px 0;">${esc(d.overall.descriptor)}</div>
-      <div style="font-family:'Outfit',Arial,sans-serif;font-size:48px;font-weight:800;line-height:1;color:white;">${d.overall.score}<span style="font-size:20px;font-weight:400;">%</span></div>
+      <div style="font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.65);">Overall Meeting Effectiveness</div>
+      <div style="font-family:'Outfit',Arial,sans-serif;font-size:13px;font-weight:600;color:rgba(255,255,255,0.9);margin:2px 0;">${esc(d.overall.descriptor)}</div>
+      <div style="font-family:'Outfit',Arial,sans-serif;font-size:44px;font-weight:800;line-height:1;color:white;">${d.overall.score}<span style="font-size:18px;font-weight:400;">%</span></div>
     </div>
-    <div style="text-align:right;font-size:10px;color:rgba(255,255,255,0.60);line-height:1.9;">Green &nbsp;80%+<br>Amber &nbsp;61&ndash;79%<br>Red &nbsp;&nbsp;&nbsp;60% and below</div>
+    <div style="text-align:right;font-size:9px;color:rgba(255,255,255,0.55);line-height:1.8;">Green &nbsp;80%+<br>Amber &nbsp;61&ndash;79%<br>Red &nbsp;&nbsp;&nbsp;60% and below</div>
   </div>
-
-  <div style="background:white;border:1px solid #DDE3EC;border-radius:8px;padding:14px 16px;font-size:11px;color:#4A5568;line-height:1.75;margin-bottom:18px;">
-    Thank you for submitting your meeting transcript to Periscope. This report is based on the Polaris Formula&trade;, a derivative of the Fast Teaming Formula&reg;, documented in <em>Build Better Teams</em> by George Karseras, endorsed by Amy Edmondson. The Polaris Formula&trade; is a practical way to generate more value from any meeting you lead or attend.
+  <div style="background:white;border:1px solid #DDE3EC;border-radius:6px;padding:12px 14px;font-size:10px;color:#4A5568;line-height:1.7;margin-bottom:14px;">
+    Thank you for submitting your meeting transcript to Periscope. This report is based on the Polaris Formula&trade;, a derivative of the Fast Teaming Formula&reg;, documented in <em>Build Better Teams</em> by George Karseras, endorsed by Amy Edmondson.
   </div>
-
-  <div style="font-family:'Outfit',Arial,sans-serif;font-size:12px;font-weight:700;color:#12243A;margin:14px 0 8px;padding-bottom:5px;border-bottom:2px solid #1375B7;">Level 1 &mdash; Dashboard</div>
-  <table style="width:100%;border-collapse:collapse;border:1px solid #DDE3EC;border-radius:8px;overflow:hidden;margin-bottom:18px;">
+  <div style="font-family:'Outfit',Arial,sans-serif;font-size:11px;font-weight:700;color:#12243A;margin:12px 0 7px;padding-bottom:4px;border-bottom:2px solid #1375B7;">Level 1 &mdash; Dashboard</div>
+  <table style="width:100%;border-collapse:collapse;border:1px solid #DDE3EC;border-radius:6px;overflow:hidden;margin-bottom:14px;">
     <thead><tr style="background:#0d5a91;">
-      <th style="padding:9px 12px;text-align:left;font-size:9px;font-weight:600;text-transform:uppercase;color:rgba(255,255,255,0.85);width:28%;">Effectiveness Predictor</th>
-      <th style="padding:9px 12px;text-align:left;font-size:9px;font-weight:600;text-transform:uppercase;color:rgba(255,255,255,0.85);">Description</th>
-      <th style="padding:9px 12px;text-align:center;font-size:9px;font-weight:600;text-transform:uppercase;color:rgba(255,255,255,0.85);width:20%;">% Score &amp; Rating</th>
+      <th style="padding:8px 11px;text-align:left;font-size:9px;font-weight:600;text-transform:uppercase;color:rgba(255,255,255,0.85);width:25%;">Predictor</th>
+      <th style="padding:8px 11px;text-align:left;font-size:9px;font-weight:600;text-transform:uppercase;color:rgba(255,255,255,0.85);">Description</th>
+      <th style="padding:8px 11px;text-align:center;font-size:9px;font-weight:600;text-transform:uppercase;color:rgba(255,255,255,0.85);width:18%;">Score &amp; Rating</th>
     </tr></thead>
     <tbody>${dashRows}</tbody>
   </table>
-
-  <div style="font-family:'Outfit',Arial,sans-serif;font-size:12px;font-weight:700;color:#12243A;margin:14px 0 8px;padding-bottom:5px;border-bottom:2px solid #1375B7;">Level 2 &mdash; Guide for Improvement</div>
-  <div style="background:white;border:1px solid #DDE3EC;border-radius:8px;padding:14px 16px;margin-bottom:18px;font-size:11px;color:#4A5568;line-height:1.7;">
-    <div style="margin-bottom:8px;"><strong style="color:#12243A;">Step 1:</strong> Familiarise yourself with SAFE RACE to PORT&reg; skills via a Team Up Coaching session.</div>
-    <div style="margin-bottom:8px;"><strong style="color:#12243A;">Step 2:</strong> Identify and improve any Red scores in this order: Effective Close &rsaquo; Effective Start &rsaquo; Clarity &rsaquo; Psychological Safety &rsaquo; Decision Efficiency &rsaquo; Contribution Balance &rsaquo; Tonal Balance.</div>
-    <div style="margin-bottom:8px;"><strong style="color:#12243A;">Step 3:</strong> Identify and improve any Amber scores using the same order of priority.</div>
+  <div style="font-family:'Outfit',Arial,sans-serif;font-size:11px;font-weight:700;color:#12243A;margin:12px 0 7px;padding-bottom:4px;border-bottom:2px solid #1375B7;">Level 2 &mdash; Guide for Improvement</div>
+  <div style="background:white;border:1px solid #DDE3EC;border-radius:6px;padding:12px 14px;margin-bottom:14px;font-size:10px;color:#4A5568;line-height:1.7;">
+    <div style="margin-bottom:6px;"><strong style="color:#12243A;">Step 1:</strong> Familiarise yourself with SAFE RACE to PORT&reg; skills via a Team Up Coaching session.</div>
+    <div style="margin-bottom:6px;"><strong style="color:#12243A;">Step 2:</strong> Improve Red scores in order: Effective Close &rsaquo; Effective Start &rsaquo; Start Recovery &rsaquo; Clarity &rsaquo; Psychological Safety &rsaquo; Decision Efficiency &rsaquo; Contribution Balance &rsaquo; Tonal Balance.</div>
+    <div style="margin-bottom:6px;"><strong style="color:#12243A;">Step 3:</strong> Improve Amber scores using the same order of priority.</div>
     <div><strong style="color:#12243A;">Step 4:</strong> Maintain your Green scores over time with frequent check-ins.</div>
   </div>
-
-  ${level3DL ? `<div style="font-family:'Outfit',Arial,sans-serif;font-size:12px;font-weight:700;color:#12243A;margin:14px 0 8px;padding-bottom:5px;border-bottom:2px solid #1375B7;">Level 3 &mdash; Detailed Next Steps</div>${level3DL}` : ''}
-
-  <div style="background:#0d5a91;border-radius:8px;padding:14px 16px;margin-top:18px;margin-bottom:18px;">
-    <p style="font-size:11px;color:rgba(255,255,255,0.85);line-height:1.75;">Team Up uses the Polaris Formula&reg;, the Fast Teaming Formula&reg; and the Shackleton Formula&trade; to align cultures, improve team working and transform meeting effectiveness. Contact us at <a href="mailto:info@teamup.company" style="color:#7EFFC0;">info@teamup.company</a> if you would like to learn more.</p>
+  ${level3DL ? `<div style="font-family:'Outfit',Arial,sans-serif;font-size:11px;font-weight:700;color:#12243A;margin:12px 0 7px;padding-bottom:4px;border-bottom:2px solid #1375B7;">Level 3 &mdash; Detailed Next Steps</div>${level3DL}` : ''}
+  <div style="background:#0d5a91;border-radius:6px;padding:12px 14px;margin-top:14px;margin-bottom:14px;">
+    <p style="font-size:10px;color:rgba(255,255,255,0.85);line-height:1.7;">Team Up uses the Polaris Formula&reg;, the Fast Teaming Formula&reg; and the Shackleton Formula&trade; to align cultures, improve team working and transform meeting effectiveness. Contact us at <a href="mailto:info@teamup.company" style="color:#7EFFC0;">info@teamup.company</a>.</p>
   </div>
-
-  <div style="margin-top:16px;padding-top:8px;border-top:1px solid #DDE3EC;text-align:center;font-size:9px;color:#8898AA;">Periscope &middot; Team Up &middot; Polaris Formula &middot; Confidential &middot; ${now}</div>
+  <div style="margin-top:12px;padding-top:8px;border-top:1px solid #DDE3EC;text-align:center;font-size:9px;color:#8898AA;">Periscope &middot; Team Up &middot; Polaris Formula &middot; Confidential &middot; ${now}</div>
 </div></body></html>`;
 
       const blob = new Blob([html], { type: 'text/html' });
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');
       a.href     = url;
-      a.download = `periscope-report-${(currentMeetingName || 'meeting').replace(/\s+/g,'-').toLowerCase()}-${new Date().toISOString().slice(0,10)}.html`;
+      a.download = `periscope-${(currentMeetingName || 'report').replace(/\s+/g,'-').toLowerCase()}-${new Date().toISOString().slice(0,10)}.html`;
       a.click();
       URL.revokeObjectURL(url);
     }
