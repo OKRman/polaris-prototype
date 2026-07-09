@@ -9,12 +9,15 @@
 // — Leader report gated by same checkbox
 // — temperature: 0 for deterministic output
 // — TARGET_DENSITY constants isolated for calibration without logic changes
-// — Tone returns N/A when combined SAFE + RACE event count is below 10
-// — Tone N/A redistributes 7.5% weight proportionally across remaining items
+// — Tone N/A threshold: Tone is N/A when NEITHER SAFE nor RACE individually
+//   reaches 10 interventions. Confirmed by George Karseras 09/07/2026.
+//   (Previously used combined total — corrected per v4 brief clarification.)
+// — Tone N/A redistributes 8.11% weight proportionally across remaining items
 // — Tone quality cap: Tone cannot exceed average of SAFE and RACE scores
 //   Agreed by George Karseras 04/07/2026
-// — Score floor fixed at 0 — negative scores no longer possible
-//   Applied to both per-item normalisation AND leader behaviour scores
+// — Score floor fixed at 0 — negative scores not possible for team or leader
+// — Leader report descriptors updated to: Great / OK / Poor Leadership
+//   Per George Karseras MVP brief v4 08/07/2026
 
 import { buildPrompt } from '../lib/prompt.js';
 
@@ -22,7 +25,7 @@ export const config = { maxDuration: 60 };
 
 // ─── Calibration constants ────────────────────────────────────────────────────
 //
-// Adjust these values during calibration sessions against demo transcripts.
+// Adjust these values during calibration sessions against real transcripts.
 // No other code changes are needed to tune scores.
 //
 // Derived from George's Green thresholds ÷ 20-minute baseline meeting.
@@ -46,11 +49,21 @@ const TARGET_DENSITY = {
   economise:  0.50,
 };
 
-// Minimum combined SAFE + RACE event count for Tone to be reported.
-// Below this threshold Tone returns N/A — the ratio is not statistically meaningful.
+// Tone minimum-evidence threshold.
+// Tone is N/A when NEITHER SAFE nor RACE individually reaches this value.
+// If either SAFE >= 10 OR RACE >= 10, Tone is calculated.
+// Confirmed by George Karseras 09/07/2026.
 const TONE_MIN_EVENTS = 10;
 
 // ─── Score weights ────────────────────────────────────────────────────────────
+//
+// Weights reflect pro-rata redistribution after Contributions (7.5%) was
+// removed from the overall score. Verified against v4 brief 08/07/2026:
+//   Start/Recovery  16.22%  (15 / 92.5)
+//   SAFE            27.03%  (25 / 92.5)
+//   RACE            27.03%  (25 / 92.5)
+//   Tone             8.11%  (7.5 / 92.5)
+//   Close           21.62%  (20 / 92.5)
 
 // Default team weights — Contributions excluded, remaining rescaled to 100%
 // Used when speakersIdentified = false (checkbox unticked)
@@ -161,10 +174,11 @@ function overallDescriptor(score) {
   return 'Poor Meeting';
 }
 
+// Leader descriptors per George Karseras MVP brief v4 08/07/2026
 function leaderDescriptor(score) {
-  if (score >= 80) return 'Strong Contribution';
-  if (score >= 61) return 'Average Contribution';
-  return 'Negative Contribution';
+  if (score >= 80) return 'Great Leadership';
+  if (score >= 61) return 'OK Leadership';
+  return 'Poor Leadership';
 }
 
 // ─── Per-behaviour normalisation ──────────────────────────────────────────────
@@ -377,8 +391,10 @@ function computeStart(effectiveStart, startRecovery) {
 
 // ─── Tone ─────────────────────────────────────────────────────────────────────
 //
-// Returns null score when combined SAFE + RACE event count is below TONE_MIN_EVENTS.
-// When null, the 7.5% weight is redistributed across remaining scored items.
+// N/A when NEITHER SAFE nor RACE individually reaches TONE_MIN_EVENTS (10).
+// If either SAFE >= 10 OR RACE >= 10, Tone is calculated.
+// Confirmed by George Karseras 09/07/2026.
+// When N/A, the 8.11% weight is redistributed across remaining scored items.
 // Quality cap applied separately after SAFE and RACE scores are available.
 
 function scoreFromRatio(ratio) {
@@ -392,18 +408,18 @@ function scoreFromRatio(ratio) {
 }
 
 function computeTone(tone) {
-  const safeCount  = tone?.safeEventCount || 0;
-  const raceCount  = tone?.raceEventCount || 0;
-  const totalCount = safeCount + raceCount;
+  const safeCount = tone?.safeEventCount || 0;
+  const raceCount = tone?.raceEventCount || 0;
 
-  if (totalCount < TONE_MIN_EVENTS) {
+  // N/A when neither dimension individually reaches the threshold
+  if (safeCount < TONE_MIN_EVENTS && raceCount < TONE_MIN_EVENTS) {
     return {
       score:            null,
       rag:              'n/a',
       ratio:            null,
       direction:        null,
       insufficientData: true,
-      note:             'Insufficient behavioural data to assess tone reliably',
+      note:             'Insufficient behavioural data to assess tone reliably — requires at least 10 interventions in either SAFE or RACE',
     };
   }
 
@@ -417,11 +433,10 @@ function computeTone(tone) {
 }
 
 function computeLeaderTone(tone) {
-  const safeCount  = tone?.leaderSafeEventCount || 0;
-  const raceCount  = tone?.leaderRaceEventCount || 0;
-  const totalCount = safeCount + raceCount;
+  const safeCount = tone?.leaderSafeEventCount || 0;
+  const raceCount = tone?.leaderRaceEventCount || 0;
 
-  if (totalCount < TONE_MIN_EVENTS) {
+  if (safeCount < TONE_MIN_EVENTS && raceCount < TONE_MIN_EVENTS) {
     return {
       score:            null,
       rag:              'n/a',
@@ -443,11 +458,10 @@ function computeLeaderTone(tone) {
 
 // ─── Contributions (TDI) ─────────────────────────────────────────────────────
 //
-// NOTE FOR CALIBRATION: Contributions measures speaking time distribution only,
-// not meeting quality. A bad meeting can legitimately score well here if
-// speakers happened to share time evenly. Whether this should be subject to
-// a quality cap (similar to Tone) is a decision for George to make once
-// real client transcripts have been analysed.
+// NOTE: Contributions measures speaking time distribution only, not meeting
+// quality. A bad meeting can legitimately score well here if speakers happened
+// to share time evenly. Whether this should be subject to a quality cap is
+// a decision for George to make once real client transcripts have been analysed.
 
 function computeGini(shares) {
   if (!shares || shares.length < 2) return 0;
@@ -489,6 +503,7 @@ function computeContributions(contributions, leaderLabel) {
 }
 
 // ─── Effective Close ──────────────────────────────────────────────────────────
+// Weights: P 25%, O 10%, R 25%, T 40% — confirmed v4 brief 08/07/2026
 
 function computeClose(effectiveClose) {
   const { planned, organised, responsible, timeConscious } = effectiveClose;
@@ -529,7 +544,7 @@ function computeClarity(dialogueClarity) {
 // ─── Overall scores ───────────────────────────────────────────────────────────
 //
 // Four paths depending on whether Contributions and Tone are available.
-// When Tone is null, its 7.5% is redistributed proportionally.
+// When Tone is null (N/A), its 8.11% is redistributed proportionally.
 
 // Without Contributions, without Tone (Start 15 + SAFE 25 + RACE 25 + Close 20 = 85)
 function computeOverallNoTone({ start, safe, race, close }) {
@@ -555,7 +570,7 @@ function computeOverall({ start, safe, race, tone, close }) {
 }
 
 // With Contributions, without Tone
-// Tone 7.5% redistributed — same proportions as TEAM_WEIGHTS
+// Tone 8.11% redistributed — same proportions as TEAM_WEIGHTS
 function computeOverallWithContributionsNoTone({ start, safe, race, contributions, close }) {
   const score = Math.round(
     start         * TEAM_WEIGHTS.start +
@@ -719,7 +734,7 @@ async function runEvaluation(transcript, meetingType, leaderName, speakersIdenti
     raceResult.score
   );
 
-  const toneScore = toneResult.score; // null if insufficient data
+  const toneScore = toneResult.score; // null if N/A
 
   // Step 5: compute overall — four paths depending on checkbox and Tone availability
   let overall;
