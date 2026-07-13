@@ -321,7 +321,7 @@
       <div id="level3Section"></div>
 
       <div class="closing-note">
-        <p>Team Up uses the Polaris Formula&reg;, the Fast Teaming Formula&reg; and the Shackleton Formula&trade; to align cultures, improve team working and transform meeting effectiveness. Contact us at <a href="mailto:info@teamup.company">info@teamup.company</a> if you would like to learn more.</p>
+        <p>Team Up uses the Polaris Formula&reg; and the Fast Teaming Formula&reg; to align cultures, improve team working and transform meeting effectiveness. Contact us at <a href="mailto:info@teamup.company">info@teamup.company</a> if you would like to learn more.</p>
       </div>
 
       <div id="leaderReportSection" style="display:none;"></div>
@@ -473,7 +473,7 @@
           { k: 'A &mdash; Actioning',  t: 'Participants propose or initiate solutions, creative ideas, offer help, and ideally frame them in the context of \'us\'.' },
           { k: 'C &mdash; Challenge',  t: 'Participants critique, scrutinise or disagree with others\' views, progress, or behaviours and challenge the status quo with creativity.' },
           { k: 'E &mdash; Economise',  t: 'Participants speak concisely and clearly, stay on topic, redirect discussions back on track, and tune into the clock.' }
-        ]);
+        ], ' data-key="race"');
 
         case 'contributions': {
           if (data.contributions && data.contributions.note) return '';
@@ -530,8 +530,9 @@
       </div>`;
     }
 
-    function skillCard(title, iconClass, iconLabel, rag, scoreLabel, chipLabel, items) {
-      return `<div class="improvement-card">
+    function skillCard(title, iconClass, iconLabel, rag, scoreLabel, chipLabel, items, extraAttr) {
+      extraAttr = extraAttr || '';
+      return `<div class="improvement-card"${extraAttr}>
         <div class="improvement-header">
           <div class="improvement-icon ${iconClass}">${iconLabel}</div>
           <div class="improvement-title">${title}</div>
@@ -793,7 +794,7 @@
       const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
 <title>Periscope &mdash; ${esc(currentMeetingName || 'Meeting Report')}</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'DM Sans',Arial,sans-serif;background:#fff;color:#12243A;font-size:12px;line-height:1.6;}@media print{body{font-size:10px;}@page{margin:12mm;}}.improvement-card{border:1px solid #DDE3EC;border-radius:8px;margin-bottom:10px;overflow:hidden;}.improvement-header{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #F2F5F9;background:#fafbfd;}.improvement-title{font-size:11px;font-weight:700;color:#12243A;flex:1;}.score-chip{font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;}.score-chip.red{background:#FEE8E8;color:#C53030;}.score-chip.amber{background:#FEF3C7;color:#D97706;}.improvement-body{padding:10px 14px;}.port-items{list-style:none;}.port-item{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid #F2F5F9;font-size:10px;color:#4A5568;line-height:1.5;}.port-item:last-child{border-bottom:none;}.port-key{font-weight:700;color:#12243A;width:55px;flex-shrink:0;font-size:9px;}.improvement-text{font-size:10px;color:#4A5568;line-height:1.6;}.sub-improvement-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}.sub-imp-item{background:#F2F5F9;border-radius:4px;padding:8px 10px;}.sub-imp-key{font-size:9px;font-weight:700;text-transform:uppercase;color:#12243A;margin-bottom:2px;}.sub-imp-text{font-size:9px;color:#4A5568;line-height:1.4;}</style>
+<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'DM Sans',Arial,sans-serif;background:#fff;color:#12243A;font-size:12px;line-height:1.6;}@media print{body{font-size:10px;}@page{margin:12mm;}}.improvement-card{border:1px solid #DDE3EC;border-radius:8px;margin-bottom:10px;overflow:hidden;}.improvement-header{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #F2F5F9;background:#fafbfd;}.improvement-title{font-size:11px;font-weight:700;color:#12243A;flex:1;}.score-chip{font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;}.score-chip.red{background:#FEE8E8;color:#C53030;}.score-chip.amber{background:#FEF3C7;color:#D97706;}.improvement-body{padding:10px 14px;}.port-items{list-style:none;}.port-item{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid #F2F5F9;font-size:10px;color:#4A5568;line-height:1.5;}.port-item:last-child{border-bottom:none;}.port-key{font-weight:700;color:#12243A;width:55px;flex-shrink:0;font-size:9px;}.improvement-text{font-size:10px;color:#4A5568;line-height:1.6;}.sub-improvement-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}.sub-imp-item{background:#F2F5F9;border-radius:4px;padding:8px 10px;}.sub-imp-key{font-size:9px;font-weight:700;text-transform:uppercase;color:#12243A;margin-bottom:2px;}.sub-imp-text{font-size:9px;color:#4A5568;line-height:1.4;}.improvement-card[data-key="race"]{page-break-inside:avoid;break-inside:avoid;}</style>
 </head><body>
 <div style="background:linear-gradient(135deg,#0d5a91 0%,#1375B7 100%);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
   <div>
@@ -826,7 +827,7 @@
     </tr></thead>
     <tbody>${dashRows}</tbody>
   </table>
-  <div style="font-family:'Outfit',Arial,sans-serif;font-size:11px;font-weight:700;color:#12243A;margin:12px 0 7px;padding-bottom:4px;border-bottom:2px solid #1375B7;">Level 2 &mdash; Guide for Improvement</div>
+  <div style="font-family:'Outfit',Arial,sans-serif;font-size:11px;font-weight:700;color:#12243A;margin:12px 0 7px;padding-bottom:4px;border-bottom:2px solid #1375B7;page-break-before:always;">Level 2 &mdash; Guide for Improvement</div>
   <div style="background:white;border:1px solid #DDE3EC;border-radius:6px;padding:12px 14px;margin-bottom:14px;font-size:10px;color:#4A5568;line-height:1.7;">
     <div style="margin-bottom:6px;"><strong style="color:#12243A;">Step 1:</strong> Familiarise yourself with SAFE RACE to PORT&reg; skills via a Team Up Coaching session.</div>
     <div style="margin-bottom:6px;"><strong style="color:#12243A;">Step 2:</strong> Improve Red scores in order: Effective Close &rsaquo; Effective Start &rsaquo; Start Recovery &rsaquo; Clarity &rsaquo; Psychological Safety &rsaquo; Decision Efficiency &rsaquo; Contribution Balance &rsaquo; Tonal Balance.</div>
@@ -835,7 +836,7 @@
   </div>
   ${level3DL ? `<div style="font-family:'Outfit',Arial,sans-serif;font-size:11px;font-weight:700;color:#12243A;margin:12px 0 7px;padding-bottom:4px;border-bottom:2px solid #1375B7;">Level 3 &mdash; Detailed Next Steps</div>${level3DL}` : ''}
   <div style="background:#0d5a91;border-radius:6px;padding:12px 14px;margin-top:14px;margin-bottom:14px;">
-    <p style="font-size:10px;color:rgba(255,255,255,0.85);line-height:1.7;">Team Up uses the Polaris Formula&reg;, the Fast Teaming Formula&reg; and the Shackleton Formula&trade; to align cultures, improve team working and transform meeting effectiveness. Contact us at <a href="mailto:info@teamup.company" style="color:#7EFFC0;">info@teamup.company</a>.</p>
+    <p style="font-size:10px;color:rgba(255,255,255,0.85);line-height:1.7;">Team Up uses the Polaris Formula&reg; and the Fast Teaming Formula&reg; to align cultures, improve team working and transform meeting effectiveness. Contact us at <a href="mailto:info@teamup.company" style="color:#7EFFC0;">info@teamup.company</a>.</p>
   </div>
   <div style="margin-top:12px;padding-top:8px;border-top:1px solid #DDE3EC;text-align:center;font-size:9px;color:#8898AA;">Periscope &middot; Team Up &middot; Polaris Formula &middot; Confidential &middot; ${now}</div>
 </div></body></html>`;
